@@ -1,0 +1,8 @@
+dependencies {
+    implementation "org.springframework.boot:spring-boot-starter-cache"
+    implementation "javax.cache:cache-api"
+    implementation libs.spring.cache
+    implementation libs.xmemcached
+    implementation libs.xmemcached.provider
+    // jhipster-needle-gradle-dependency - JHipster will add additional dependencies here
+}
