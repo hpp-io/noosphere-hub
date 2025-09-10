@@ -15,7 +15,7 @@
 
 spring:
   application:
-    name: NoosphereHub
+    name: NooSphereHub
   cloud:
     consul:
       discovery:
@@ -24,6 +24,14 @@ spring:
       config:
         enabled: false
       enabled: false
+    function:
+      definition: testStringSupplier;testStringConsumer
+    stream:
+      bindings:
+        testStringSupplier-out-0:
+          destination: noo-sphere-hub
+        testStringConsumer-in-0:
+          destination: noo-sphere-hub
   # Replace by 'prod, faker' to add the faker context and have sample data loaded in production
   liquibase:
     contexts: test
@@ -47,13 +55,13 @@ spring:
           principal-claim-name: preferred_username
   task:
     execution:
-      thread-name-prefix: noosphere-hub-task-
+      thread-name-prefix: noo-sphere-hub-task-
       pool:
         core-size: 1
         max-size: 50
         queue-capacity: 10000
     scheduling:
-      thread-name-prefix: noosphere-hub-scheduling-
+      thread-name-prefix: noo-sphere-hub-scheduling-
       pool:
         size: 20
   thymeleaf:
@@ -70,10 +78,10 @@ server:
 # ===================================================================
 jhipster:
   clientApp:
-    name: 'noosphereHubApp'
+    name: 'nooSphereHubApp'
   mail:
-    from: NoosphereHub@localhost.com
-    base-url: http://127.0.0.1:8080
+    from: NooSphereHub@localhost.com
+    base-url: http://127.0.0.1:8085
   logging:
     # To test json console appender
     use-json-format: false

@@ -1,7 +1,7 @@
 apply plugin: "war"
 
 bootWar {
-    mainClass = "io.hpp.noosphere.hub.NoosphereHubApp"
+    mainClass = "ai.hpp.noosphere.hub.NooSphereHubApp"
     includes = ["WEB-INF/**", "META-INF/**"]
     webXml = file("${project.rootDir}/src/main/webapp/WEB-INF/web.xml")
 }

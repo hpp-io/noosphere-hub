@@ -1,18 +1,23 @@
 # This configuration is intended for development purpose, it's **your** responsibility to harden it for production
 name: noospherehub
 services:
-  mysql:
+  noosphere-mysql:
+    container_name: noosphere-mysql
     image: mysql:9.2.0
     volumes:
       - ./config/mysql:/etc/mysql/conf.d
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
-      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
-      - MYSQL_DATABASE=noospherehub
+      - MYSQL_ALLOW_EMPTY_PASSWORD=no
+      - MYSQL_USER=nsuser
+      - MYSQL_PASSWORD=nshub2025!1
+      - MYSQL_ROOT_PASSWORD=nshub2025!1
+      - MYSQL_DATABASE=keycloak
     # If you want to expose these ports outside your dev PC,
     # remove the "127.0.0.1:" prefix
     ports:
-      - 127.0.0.1:3306:3306
-    command: mysqld --lower_case_table_names=1 --skip-mysqlx --character_set_server=utf8mb4 --explicit_defaults_for_timestamp
+      - 0.0.0.0:3356:3306
+    command: mysqld --lower_case_table_names=1 --max-allowed-packet=64M --skip-mysqlx --character_set_server=utf8mb4 --explicit_defaults_for_timestamp --collation_server=utf8mb4_general_ci
     healthcheck:
       test: ['CMD-SHELL', 'mysql -e "SHOW DATABASES;" && sleep 5']
       interval: 5s

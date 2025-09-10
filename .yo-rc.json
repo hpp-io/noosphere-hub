@@ -29,7 +29,7 @@
     "packageName": "io.hpp.noosphere.hub",
     "prodDatabaseType": "mysql",
     "reactive": false,
-    "serverPort": 8081,
+    "serverPort": 7070,
     "serviceDiscoveryType": "consul",
     "skipUserManagement": true,
     "syncUserWithIdp": true,

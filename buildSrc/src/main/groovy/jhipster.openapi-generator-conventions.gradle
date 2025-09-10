@@ -6,12 +6,12 @@ openApiGenerate {
     generatorName = "spring"
     inputSpec = "$rootDir/src/main/resources/swagger/api.yml".toString()
     outputDir = "$buildDir/openapi".toString()
-    apiPackage = "io.hpp.noosphere.hub.web.api"
-    modelPackage = "io.hpp.noosphere.hub.service.api.dto"
+    apiPackage = "ai.hpp.noosphere.hub.web.api"
+    modelPackage = "ai.hpp.noosphere.hub.service.api.dto"
     apiFilesConstrainedTo = [""]
     modelFilesConstrainedTo = [""]
     supportingFilesConstrainedTo = ["ApiUtil.java"]
-    configOptions = [delegatePattern: "true", title: "noosphere-hub", useSpringBoot3: "true"]
+    configOptions = [delegatePattern: "true", title: "noo-sphere-hub", useSpringBoot3: "true"]
     validateSpec = true
     importMappings = [Problem:"org.springframework.http.ProblemDetail"]
 }

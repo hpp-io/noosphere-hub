@@ -1,2 +1,4 @@
 org.springframework.test.context.ContextCustomizerFactory = \
-    io.hpp.noosphere.hub.config.SqlTestContainersSpringContextCustomizerFactory
+    ai.hpp.noosphere.hub.config.\
+    SqlTestContainersSpringContextCustomizerFactory,ai.hpp.noosphere.hub.config.\
+    PulsarTestContainersSpringContextCustomizerFactory

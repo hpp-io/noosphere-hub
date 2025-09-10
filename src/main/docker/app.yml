@@ -7,45 +7,46 @@ services:
       - _JAVA_OPTIONS=-Xmx512m -Xms256m
       - SPRING_PROFILES_ACTIVE=prod,api-docs
       - MANAGEMENT_PROMETHEUS_METRICS_EXPORT_ENABLED=true
-      - SPRING_CLOUD_CONSUL_HOST=consul
+      - SPRING_CLOUD_CONSUL_HOST=noosphere-consul
       - SPRING_CLOUD_CONSUL_PORT=8500
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/noospherehub?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
-      - SPRING_LIQUIBASE_URL=jdbc:mysql://mysql:3306/noospherehub?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
-      - JHIPSTER_CACHE_MEMCACHED_SERVERS=memcached:11211
-      - SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI=http://keycloak:9080/realms/jhipster
+      - SPRING_DATASOURCE_URL=jdbc:noosphere-mysql://mysql:3306/nshub?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
+      - SPRING_LIQUIBASE_URL=jdbc:noosphere-mysql://mysql:3306/nshub?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
+      - SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI=http://noosphere-auth:9080/realms/jhipster
       - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_ID=internal
       - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET=internal
+      - SPRING_PULSAR_CLIENT_SERVICE_URL=pulsar://noosphere-pulsar:6650
+      - SPRING_PULSAR_ADMINISTRATION_SERVICE_URL=http://noosphere-pulsar:8080
     healthcheck:
       test:
         - CMD
         - curl
         - -f
-        - http://localhost:8081/management/health
+        - http://localhost:8085/management/health
       interval: 5s
       timeout: 5s
       retries: 40
     depends_on:
-      mysql:
+      noosphere-mysql:
         condition: service_healthy
-      keycloak:
+      noosphere-auth:
         condition: service_healthy
-  mysql:
+  noosphere-mysql:
     extends:
       file: ./mysql.yml
-      service: mysql
-  keycloak:
+      service: noosphere-mysql
+  noosphere-auth:
     extends:
       file: ./keycloak.yml
-      service: keycloak
-  memcached:
+      service: noosphere-auth
+  noosphere-pulsar:
     extends:
-      file: ./memcached.yml
-      service: memcached
-  consul:
-    extends:
-      file: ./consul.yml
-      service: consul
-  consul-config-loader:
+      file: ./pulsar.yml
+      service: noosphere-pulsar
+  noosphere-consul:
     extends:
       file: ./consul.yml
-      service: consul-config-loader
+      service: noosphere-consul
+  noosphere-consul-config-loader:
+    extends:
+      file: ./consul.yml
+      service: noosphere-consul-config-loader

@@ -18,7 +18,7 @@ logging:
     ROOT: DEBUG
     tech.jhipster: DEBUG
     org.hibernate.SQL: DEBUG
-    io.hpp.noosphere.hub: DEBUG
+    ai.hpp.noosphere.hub: DEBUG
 
 management:
   zipkin: # Use the "zipkin" Maven profile to have the Spring Cloud Zipkin dependencies
@@ -55,10 +55,10 @@ spring:
       host: localhost
       port: 8500
   datasource:
-    type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:mysql://localhost:3306/NoosphereHub?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
-    username: root
-    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3356/nshub?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=Asia/Seoul&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true
+    username: nsuser
+    password: nshub2025!1
     hikari:
       poolName: Hikari
       auto-commit: false
@@ -74,9 +74,20 @@ spring:
     cache-duration: PT1S # 1 second, see the ISO 8601 standard
   thymeleaf:
     cache: false
+  security:
+    oauth2:
+      client:
+        provider:
+          oidc:
+            issuer-uri: http://127.0.0.1:7080/realms/noosphere
+        registration:
+          oidc:
+            client-id: web_app
+            client-secret: CDjVklSVbPIkyAWSyZcGHl1igK8PJICD
+            scope: openid, profile, email, offline_access # last one for refresh tokens
 
 server:
-  port: 8081
+  port: 8085
   # make sure requests the proxy uri instead of the server one
   forward-headers-strategy: native
 
@@ -88,10 +99,9 @@ server:
 
 jhipster:
   cache: # Cache configuration
-    memcached: # Memcached configuration
-      # Disabled by default in dev mode as Memcached does not work with Spring Boot Devtools
-      # If you want to use Memcached, you must also enable it in CacheConfiguration
-      enabled: false
+    hazelcast: # Hazelcast distributed cache
+      time-to-live-seconds: 3600
+      backup-count: 1
   # CORS is disabled by default on microservices, as you should access them through a gateway.
   # If you want to enable it, please uncomment the configuration below.
   # cors:

@@ -12,11 +12,12 @@ plugins {
     id "jhipster.docker-conventions"
     id "jhipster.code-quality-conventions"
     id "org.liquibase.gradle"
+    id "jhipster.pulsar-conventions"
     id "jhipster.node-gradle-conventions"
     // jhipster-needle-gradle-plugins - JHipster will add additional gradle plugins here
 }
 
-group = "io.hpp.noosphere.hub"
+group = "ai.hpp.noosphere.hub"
 version = "0.0.1-SNAPSHOT"
 
 description = ""
@@ -80,7 +81,7 @@ eclipse {
 defaultTasks "bootRun"
 
 springBoot {
-    mainClass = "io.hpp.noosphere.hub.NoosphereHubApp"
+    mainClass = "ai.hpp.noosphere.hub.NooSphereHubApp"
 }
 
 test {

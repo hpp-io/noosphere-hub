@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-import { Translate } from 'react-jhipster'; // eslint-disable-line
+import { Translate } from 'react-jhipster';
 
-import MenuItem from 'app/shared/layout/menus/menu-item'; // eslint-disable-line
+import MenuItem from 'app/shared/layout/menus/menu-item';
 import { addTranslationSourcePrefix } from 'app/shared/reducers/locale';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 

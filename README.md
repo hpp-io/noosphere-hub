@@ -1,4 +1,4 @@
-# NoosphereHub
+# NooSphereHub
 
 This application was generated using JHipster 8.11.0, you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v8.11.0](https://www.jhipster.tech/documentation-archive/v8.11.0).
 
@@ -98,7 +98,7 @@ spring:
 security:
 ```
 
-Create an OIDC App in Okta to get a `{clientId}` and `{clientSecret}`. To do this, log in to your Okta Developer account and navigate to **Applications** > **Add Application**. Click **Web** and click the **Next** button. Give the app a name you’ll remember, specify `http://localhost:8080` as a Base URI, and `http://localhost:8080/login/oauth2/code/oidc` as a Login Redirect URI. Click **Done**, then Edit and add `http://localhost:8080` as a Logout redirect URI. Copy and paste the client ID and secret into your `application.yml` file.
+Create an OIDC App in Okta to get a `{clientId}` and `{clientSecret}`. To do this, log in to your Okta Developer account and navigate to **Applications** > **Add Application**. Click **Web** and click the **Next** button. Give the app a name you’ll remember, specify `http://localhost:8085` as a Base URI, and `http://localhost:8085/login/oauth2/code/oidc` as a Login Redirect URI. Click **Done**, then Edit and add `http://localhost:8085` as a Logout redirect URI. Copy and paste the client ID and secret into your `application.yml` file.
 
 Create a `ROLE_ADMIN` and `ROLE_USER` group and add users into them. Modify e2e tests to use this account when running integration tests. You'll need to change credentials in `src/test/javascript/e2e/account/account.spec.ts` and `src/test/javascript/e2e/admin/administration.spec.ts`.
 
@@ -112,8 +112,8 @@ If you'd like to use [Auth0](https://auth0.com/) instead of Keycloak, follow the
 
 - Create a free developer account at <https://auth0.com/signup>. After successful sign-up, your account will be associated with a unique domain like `dev-xxx.us.auth0.com`
 - Create a new application of type `Regular Web Applications`. Switch to the `Settings` tab, and configure your application settings like:
-  - Allowed Callback URLs: `http://localhost:8080/login/oauth2/code/oidc`
-  - Allowed Logout URLs: `http://localhost:8080/`
+  - Allowed Callback URLs: `http://localhost:8085/login/oauth2/code/oidc`
+  - Allowed Logout URLs: `http://localhost:8085/`
 - Navigate to **User Management** > **Roles** and create new roles named `ROLE_ADMIN`, and `ROLE_USER`.
 - Navigate to **User Management** > **Users** and create a new user account. Click on the **Role** tab to assign roles to the newly created user account.
 - Navigate to **Auth Pipeline** > **Rules** and create a new Rule. Choose `Empty rule` template. Provide a meaningful name like `JHipster claims` and replace `Script` content with the following and Save.
@@ -201,11 +201,11 @@ You will only need to run this command when dependencies change in [package.json
 
 We use npm scripts and [Webpack][] as our build system.
 
-If you are using memcached as a cache, you will have to launch a cache server.
+If you are using hazelcast as a cache, you will have to launch a cache server.
 To start your cache server, run:
 
 ```
-docker compose -f src/main/docker/memcached.yml up -d
+docker compose -f src/main/docker/hazelcast-management-center.yml up -d
 ```
 
 Run the following commands in two separate terminals to create a blissful development experience where your browser
@@ -294,7 +294,7 @@ cd microfrontend
 
 ### Packaging as jar
 
-To build the final jar and optimize the NoosphereHub application for production, run:
+To build the final jar and optimize the NooSphereHub application for production, run:
 
 ```
 ./gradlew -Pprod clean bootJar
@@ -307,7 +307,7 @@ To ensure everything worked, run:
 java -jar build/libs/*.jar
 ```
 
-Then navigate to [http://localhost:8081](http://localhost:8081) in your browser.
+Then navigate to [http://localhost:8085](http://localhost:8085) in your browser.
 
 Refer to [Using JHipster in production][] for more details.
 
@@ -324,7 +324,7 @@ To package your application as a war in order to deploy it to an application ser
 JHipster Control Center can help you manage and control your application(s). You can start a local control center server (accessible on http://localhost:7419) with:
 
 ```
-docker compose -f src/main/docker/jhipster-control-center.yml up
+docker compose -f src/main/docker/noosphere-control-center.yml up
 ```
 
 ## Testing

@@ -1,23 +1,23 @@
 # This configuration is intended for development purpose, it's **your** responsibility to harden it for production
 name: noospherehub
 services:
-  mysql:
+  noosphere-mysql:
     extends:
       file: ./mysql.yml
-      service: mysql
-  keycloak:
+      service: noosphere-mysql
+  noosphere-auth:
     extends:
       file: ./keycloak.yml
-      service: keycloak
-  memcached:
+      service: noosphere-auth
+  noosphere-pulsar:
     extends:
-      file: ./memcached.yml
-      service: memcached
-  consul:
-    extends:
-      file: ./consul.yml
-      service: consul
-  consul-config-loader:
+      file: ./pulsar.yml
+      service: noosphere-pulsar
+  noosphere-consul:
     extends:
       file: ./consul.yml
-      service: consul-config-loader
+      service: noosphere-consul
+  noosphere-consul-config-loader:
+    extends:
+      file: ./consul.yml
+      service: noosphere-consul-config-loader
