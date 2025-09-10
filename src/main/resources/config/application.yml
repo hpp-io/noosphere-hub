@@ -178,13 +178,13 @@ spring:
             scope: openid, profile, email, offline_access # last one for refresh tokens
   task:
     execution:
-      thread-name-prefix: noo-sphere-hub-task-
+      thread-name-prefix: nshub-task-
       pool:
         core-size: 2
         max-size: 50
         queue-capacity: 10000
     scheduling:
-      thread-name-prefix: noo-sphere-hub-scheduling-
+      thread-name-prefix: nshub-scheduling-
       pool:
         size: 2
   thymeleaf:
