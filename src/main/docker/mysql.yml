@@ -12,7 +12,7 @@ services:
       - MYSQL_USER=nsuser
       - MYSQL_PASSWORD=nshub2025!1
       - MYSQL_ROOT_PASSWORD=nshub2025!1
-      - MYSQL_DATABASE=keycloak
+#      - MYSQL_DATABASE=keycloak
     # If you want to expose these ports outside your dev PC,
     # remove the "127.0.0.1:" prefix
     ports:

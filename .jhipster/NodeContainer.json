@@ -1,0 +1,52 @@
+{
+  "annotations": {
+    "changelogDate": "20250911052103"
+  },
+  "applications": "*",
+  "clientRootFolder": "NoosphereHub",
+  "databaseType": "sql",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "id",
+      "fieldType": "UUID",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "statusCode",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength", "required"],
+      "fieldValidateRulesMaxlength": "20"
+    },
+    {
+      "fieldName": "createdAt",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "updatedAt",
+      "fieldType": "Instant"
+    }
+  ],
+  "microserviceName": "NoosphereHub",
+  "name": "NodeContainer",
+  "pagination": "infinite-scroll",
+  "relationships": [
+    {
+      "otherEntityName": "node",
+      "otherEntityRelationshipName": "nodeContainer",
+      "relationshipName": "node",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityName": "container",
+      "otherEntityRelationshipName": "nodeContainer",
+      "relationshipName": "container",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}
