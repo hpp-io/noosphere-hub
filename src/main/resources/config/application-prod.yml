@@ -17,7 +17,7 @@ logging:
   level:
     ROOT: INFO
     tech.jhipster: INFO
-    ai.hpp.noosphere.hub: INFO
+    io.hpp.noosphere.hub: INFO
 
 management:
   prometheus:

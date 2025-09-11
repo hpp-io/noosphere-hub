@@ -17,7 +17,7 @@ plugins {
     // jhipster-needle-gradle-plugins - JHipster will add additional gradle plugins here
 }
 
-group = "ai.hpp.noosphere.hub"
+group = "io.hpp.noosphere.hub"
 version = "0.0.1-SNAPSHOT"
 
 description = ""
@@ -81,7 +81,7 @@ eclipse {
 defaultTasks "bootRun"
 
 springBoot {
-    mainClass = "ai.hpp.noosphere.hub.NooSphereHubApp"
+    mainClass = "io.hpp.noosphere.hub.NooSphereHubApp"
 }
 
 test {

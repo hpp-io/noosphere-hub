@@ -6,8 +6,8 @@ openApiGenerate {
     generatorName = "spring"
     inputSpec = "$rootDir/src/main/resources/swagger/api.yml".toString()
     outputDir = "$buildDir/openapi".toString()
-    apiPackage = "ai.hpp.noosphere.hub.web.api"
-    modelPackage = "ai.hpp.noosphere.hub.service.api.dto"
+    apiPackage = "io.hpp.noosphere.hub.web.api"
+    modelPackage = "io.hpp.noosphere.hub.service.api.dto"
     apiFilesConstrainedTo = [""]
     modelFilesConstrainedTo = [""]
     supportingFilesConstrainedTo = ["ApiUtil.java"]
