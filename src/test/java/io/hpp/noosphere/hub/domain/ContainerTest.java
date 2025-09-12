@@ -1,7 +1,7 @@
 package io.hpp.noosphere.hub.domain;
 
+import static io.hpp.noosphere.hub.domain.AgentContainerTestSamples.*;
 import static io.hpp.noosphere.hub.domain.ContainerTestSamples.*;
-import static io.hpp.noosphere.hub.domain.NodeContainerTestSamples.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.hpp.noosphere.hub.web.rest.TestUtil;
@@ -26,24 +26,24 @@ class ContainerTest {
     }
 
     @Test
-    void nodeContainerTest() {
+    void agentContainerTest() {
         Container container = getContainerRandomSampleGenerator();
-        NodeContainer nodeContainerBack = getNodeContainerRandomSampleGenerator();
+        AgentContainer agentContainerBack = getAgentContainerRandomSampleGenerator();
 
-        container.addNodeContainer(nodeContainerBack);
-        assertThat(container.getNodeContainers()).containsOnly(nodeContainerBack);
-        assertThat(nodeContainerBack.getContainer()).isEqualTo(container);
+        container.addAgentContainer(agentContainerBack);
+        assertThat(container.getAgentContainers()).containsOnly(agentContainerBack);
+        assertThat(agentContainerBack.getContainer()).isEqualTo(container);
 
-        container.removeNodeContainer(nodeContainerBack);
-        assertThat(container.getNodeContainers()).doesNotContain(nodeContainerBack);
-        assertThat(nodeContainerBack.getContainer()).isNull();
+        container.removeAgentContainer(agentContainerBack);
+        assertThat(container.getAgentContainers()).doesNotContain(agentContainerBack);
+        assertThat(agentContainerBack.getContainer()).isNull();
 
-        container.nodeContainers(new HashSet<>(Set.of(nodeContainerBack)));
-        assertThat(container.getNodeContainers()).containsOnly(nodeContainerBack);
-        assertThat(nodeContainerBack.getContainer()).isEqualTo(container);
+        container.agentContainers(new HashSet<>(Set.of(agentContainerBack)));
+        assertThat(container.getAgentContainers()).containsOnly(agentContainerBack);
+        assertThat(agentContainerBack.getContainer()).isEqualTo(container);
 
-        container.setNodeContainers(new HashSet<>());
-        assertThat(container.getNodeContainers()).doesNotContain(nodeContainerBack);
-        assertThat(nodeContainerBack.getContainer()).isNull();
+        container.setAgentContainers(new HashSet<>());
+        assertThat(container.getAgentContainers()).doesNotContain(agentContainerBack);
+        assertThat(agentContainerBack.getContainer()).isNull();
     }
 }

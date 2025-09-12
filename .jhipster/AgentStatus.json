@@ -1,0 +1,39 @@
+{
+  "annotations": {
+    "changelogDate": "20250912014036"
+  },
+  "applications": "*",
+  "clientRootFolder": "NoosphereHub",
+  "databaseType": "sql",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "id",
+      "fieldType": "UUID",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "createdAt",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "lastKeepAliveAt",
+      "fieldType": "Instant"
+    }
+  ],
+  "microserviceName": "NoosphereHub",
+  "name": "AgentStatus",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "agent",
+      "otherEntityRelationshipName": "agentStatus",
+      "relationshipName": "agent",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

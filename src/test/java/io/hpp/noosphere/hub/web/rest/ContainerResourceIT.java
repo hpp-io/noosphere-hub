@@ -414,7 +414,13 @@ class ContainerResourceIT {
         Container partialUpdatedContainer = new Container();
         partialUpdatedContainer.setId(container.getId());
 
-        partialUpdatedContainer.price(UPDATED_PRICE).statusCode(UPDATED_STATUS_CODE).updatedAt(UPDATED_UPDATED_AT);
+        partialUpdatedContainer
+            .name(UPDATED_NAME)
+            .walletAddress(UPDATED_WALLET_ADDRESS)
+            .statusCode(UPDATED_STATUS_CODE)
+            .description(UPDATED_DESCRIPTION)
+            .createdAt(UPDATED_CREATED_AT)
+            .updatedAt(UPDATED_UPDATED_AT);
 
         restContainerMockMvc
             .perform(

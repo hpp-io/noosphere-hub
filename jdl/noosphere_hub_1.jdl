@@ -1,5 +1,5 @@
 
-entity Node {
+entity Agent {
   id UUID required,
   name String,
   apiUrl String maxlength(1024) required,
@@ -30,7 +30,7 @@ entity Container {
 
 
 
-entity NodeContainer {
+entity AgentContainer {
   id UUID required,
 //  nodeId UUID required,
 //  containerId UUID required,
@@ -39,7 +39,7 @@ entity NodeContainer {
   updatedAt Instant,
 }
 
-entity NodeStatus {
+entity AgentStatus {
   id UUID required,
 //  nodeId UUID required,
   createdAt Instant required,
@@ -47,26 +47,26 @@ entity NodeStatus {
 }
 
 relationship OneToMany {
-  Node{nodeContainer} to NodeContainer{node}
-  Container{nodeContainer} to NodeContainer{container}
+  Agent{agentContainer} to AgentContainer{node}
+  Container{agentContainer} to AgentContainer{container}
 
 }
 
 relationship OneToOne {
 //  NodeContainer{node} to Node
-  NodeStatus{node} to Node{nodeStatus}
+  AgentStatus{agent} to Agent{agentStatus}
 
 //  NodeContainer{container} to Container
 
-  Node{createdByUser} to User with builtInEntity
-  Node{updatedByUser} to User with builtInEntity
+  Agent{createdByUser} to User with builtInEntity
+  Agent{updatedByUser} to User with builtInEntity
   Container{createdByUser} to User with builtInEntity
   Container{updatedByUser} to User with builtInEntity
 }
 
-dto Node, Container, NodeContainer, NodeStatus with mapstruct
+dto Agent, Container, AgentContainer, AgentStatus with mapstruct
 
-service Node, Container, NodeContainer, NodeStatus with serviceClass
+service Agent, Container, AgentContainer, AgentStatus with serviceClass
 
-paginate Node, Container, NodeContainer with infinite-scroll
-paginate NodeStatus with pagination
+paginate Agent, Container, AgentContainer with infinite-scroll
+paginate AgentStatus with pagination

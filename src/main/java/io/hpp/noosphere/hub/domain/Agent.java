@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
@@ -13,12 +12,12 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 /**
- * A Container.
+ * A Agent.
  */
 @Entity
-@Table(name = "container")
+@Table(name = "agent")
 @SuppressWarnings("common-java:DuplicatedBlocks")
-public class Container implements Serializable {
+public class Agent implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -33,12 +32,13 @@ public class Container implements Serializable {
     private String name;
 
     @NotNull
-    @Column(name = "wallet_address", nullable = false)
-    private String walletAddress;
+    @Size(max = 1024)
+    @Column(name = "api_url", length = 1024, nullable = false)
+    private String apiUrl;
 
     @NotNull
-    @Column(name = "price", precision = 21, scale = 2, nullable = false)
-    private BigDecimal price;
+    @Column(name = "api_key", nullable = false)
+    private String apiKey;
 
     @NotNull
     @Size(max = 20)
@@ -48,10 +48,6 @@ public class Container implements Serializable {
     @Lob
     @Column(name = "description")
     private String description;
-
-    @Lob
-    @Column(name = "parameters", nullable = false)
-    private String parameters;
 
     @NotNull
     @Column(name = "created_at", nullable = false)
@@ -68,9 +64,13 @@ public class Container implements Serializable {
     @JoinColumn(unique = true)
     private User updatedByUser;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "container")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "node")
     @JsonIgnoreProperties(value = { "node", "container" }, allowSetters = true)
     private Set<AgentContainer> agentContainers = new HashSet<>();
+
+    @JsonIgnoreProperties(value = { "agent" }, allowSetters = true)
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "agent")
+    private AgentStatus agentStatus;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -78,7 +78,7 @@ public class Container implements Serializable {
         return this.id;
     }
 
-    public Container id(UUID id) {
+    public Agent id(UUID id) {
         this.setId(id);
         return this;
     }
@@ -91,7 +91,7 @@ public class Container implements Serializable {
         return this.name;
     }
 
-    public Container name(String name) {
+    public Agent name(String name) {
         this.setName(name);
         return this;
     }
@@ -100,37 +100,37 @@ public class Container implements Serializable {
         this.name = name;
     }
 
-    public String getWalletAddress() {
-        return this.walletAddress;
+    public String getApiUrl() {
+        return this.apiUrl;
     }
 
-    public Container walletAddress(String walletAddress) {
-        this.setWalletAddress(walletAddress);
+    public Agent apiUrl(String apiUrl) {
+        this.setApiUrl(apiUrl);
         return this;
     }
 
-    public void setWalletAddress(String walletAddress) {
-        this.walletAddress = walletAddress;
+    public void setApiUrl(String apiUrl) {
+        this.apiUrl = apiUrl;
     }
 
-    public BigDecimal getPrice() {
-        return this.price;
+    public String getApiKey() {
+        return this.apiKey;
     }
 
-    public Container price(BigDecimal price) {
-        this.setPrice(price);
+    public Agent apiKey(String apiKey) {
+        this.setApiKey(apiKey);
         return this;
     }
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
     }
 
     public String getStatusCode() {
         return this.statusCode;
     }
 
-    public Container statusCode(String statusCode) {
+    public Agent statusCode(String statusCode) {
         this.setStatusCode(statusCode);
         return this;
     }
@@ -143,7 +143,7 @@ public class Container implements Serializable {
         return this.description;
     }
 
-    public Container description(String description) {
+    public Agent description(String description) {
         this.setDescription(description);
         return this;
     }
@@ -152,24 +152,11 @@ public class Container implements Serializable {
         this.description = description;
     }
 
-    public String getParameters() {
-        return this.parameters;
-    }
-
-    public Container parameters(String parameters) {
-        this.setParameters(parameters);
-        return this;
-    }
-
-    public void setParameters(String parameters) {
-        this.parameters = parameters;
-    }
-
     public Instant getCreatedAt() {
         return this.createdAt;
     }
 
-    public Container createdAt(Instant createdAt) {
+    public Agent createdAt(Instant createdAt) {
         this.setCreatedAt(createdAt);
         return this;
     }
@@ -182,7 +169,7 @@ public class Container implements Serializable {
         return this.updatedAt;
     }
 
-    public Container updatedAt(Instant updatedAt) {
+    public Agent updatedAt(Instant updatedAt) {
         this.setUpdatedAt(updatedAt);
         return this;
     }
@@ -199,7 +186,7 @@ public class Container implements Serializable {
         this.createdByUser = user;
     }
 
-    public Container createdByUser(User user) {
+    public Agent createdByUser(User user) {
         this.setCreatedByUser(user);
         return this;
     }
@@ -212,7 +199,7 @@ public class Container implements Serializable {
         this.updatedByUser = user;
     }
 
-    public Container updatedByUser(User user) {
+    public Agent updatedByUser(User user) {
         this.setUpdatedByUser(user);
         return this;
     }
@@ -223,28 +210,47 @@ public class Container implements Serializable {
 
     public void setAgentContainers(Set<AgentContainer> agentContainers) {
         if (this.agentContainers != null) {
-            this.agentContainers.forEach(i -> i.setContainer(null));
+            this.agentContainers.forEach(i -> i.setNode(null));
         }
         if (agentContainers != null) {
-            agentContainers.forEach(i -> i.setContainer(this));
+            agentContainers.forEach(i -> i.setNode(this));
         }
         this.agentContainers = agentContainers;
     }
 
-    public Container agentContainers(Set<AgentContainer> agentContainers) {
+    public Agent agentContainers(Set<AgentContainer> agentContainers) {
         this.setAgentContainers(agentContainers);
         return this;
     }
 
-    public Container addAgentContainer(AgentContainer agentContainer) {
+    public Agent addAgentContainer(AgentContainer agentContainer) {
         this.agentContainers.add(agentContainer);
-        agentContainer.setContainer(this);
+        agentContainer.setNode(this);
         return this;
     }
 
-    public Container removeAgentContainer(AgentContainer agentContainer) {
+    public Agent removeAgentContainer(AgentContainer agentContainer) {
         this.agentContainers.remove(agentContainer);
-        agentContainer.setContainer(null);
+        agentContainer.setNode(null);
+        return this;
+    }
+
+    public AgentStatus getAgentStatus() {
+        return this.agentStatus;
+    }
+
+    public void setAgentStatus(AgentStatus agentStatus) {
+        if (this.agentStatus != null) {
+            this.agentStatus.setAgent(null);
+        }
+        if (agentStatus != null) {
+            agentStatus.setAgent(this);
+        }
+        this.agentStatus = agentStatus;
+    }
+
+    public Agent agentStatus(AgentStatus agentStatus) {
+        this.setAgentStatus(agentStatus);
         return this;
     }
 
@@ -255,10 +261,10 @@ public class Container implements Serializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Container)) {
+        if (!(o instanceof Agent)) {
             return false;
         }
-        return getId() != null && getId().equals(((Container) o).getId());
+        return getId() != null && getId().equals(((Agent) o).getId());
     }
 
     @Override
@@ -270,14 +276,13 @@ public class Container implements Serializable {
     // prettier-ignore
     @Override
     public String toString() {
-        return "Container{" +
+        return "Agent{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
-            ", walletAddress='" + getWalletAddress() + "'" +
-            ", price=" + getPrice() +
+            ", apiUrl='" + getApiUrl() + "'" +
+            ", apiKey='" + getApiKey() + "'" +
             ", statusCode='" + getStatusCode() + "'" +
             ", description='" + getDescription() + "'" +
-            ", parameters='" + getParameters() + "'" +
             ", createdAt='" + getCreatedAt() + "'" +
             ", updatedAt='" + getUpdatedAt() + "'" +
             "}";

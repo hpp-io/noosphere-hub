@@ -1,6 +1,6 @@
 {
   "annotations": {
-    "changelogDate": "20250912014033"
+    "changelogDate": "20250912014034"
   },
   "applications": "*",
   "clientRootFolder": "NoosphereHub",
@@ -17,13 +17,14 @@
       "fieldType": "String"
     },
     {
-      "fieldName": "walletAddress",
+      "fieldName": "apiUrl",
       "fieldType": "String",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": ["maxlength", "required"],
+      "fieldValidateRulesMaxlength": "1024"
     },
     {
-      "fieldName": "price",
-      "fieldType": "BigDecimal",
+      "fieldName": "apiKey",
+      "fieldType": "String",
       "fieldValidateRules": ["required"]
     },
     {
@@ -37,11 +38,6 @@
       "fieldType": "TextBlob"
     },
     {
-      "fieldName": "parameters",
-      "fieldType": "TextBlob",
-      "fieldValidateRules": ["required"]
-    },
-    {
       "fieldName": "createdAt",
       "fieldType": "Instant",
       "fieldValidateRules": ["required"]
@@ -52,7 +48,7 @@
     }
   ],
   "microserviceName": "NoosphereHub",
-  "name": "Container",
+  "name": "Agent",
   "pagination": "infinite-scroll",
   "relationships": [
     {
@@ -71,10 +67,17 @@
     },
     {
       "otherEntityName": "agentContainer",
-      "otherEntityRelationshipName": "container",
+      "otherEntityRelationshipName": "node",
       "relationshipName": "agentContainer",
       "relationshipSide": "left",
       "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "agentStatus",
+      "otherEntityRelationshipName": "agent",
+      "relationshipName": "agentStatus",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-one"
     }
   ],
   "searchEngine": "no",
