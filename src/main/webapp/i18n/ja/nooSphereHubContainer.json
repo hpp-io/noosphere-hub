@@ -1,0 +1,34 @@
+{
+  "nooSphereHubApp": {
+    "nooSphereHubContainer": {
+      "home": {
+        "title": "Containers",
+        "refreshListLabel": "リストの更新",
+        "createLabel": "Container の作成",
+        "createOrEditLabel": "Containerの作成または編集",
+        "notFound": "Containers が見つかりません。"
+      },
+      "created": "新しい Container がID {{ param }} で作成されました。",
+      "updated": "ID {{ param }} の Container が更新されました。",
+      "deleted": "ID {{ param }} の Container が削除されました。",
+      "delete": {
+        "question": "Container {{ id }}を削除してもよろしいですか？"
+      },
+      "detail": {
+        "title": "Container"
+      },
+      "id": "Id",
+      "name": "Name",
+      "walletAddress": "Wallet Address",
+      "price": "Price",
+      "statusCode": "Status Code",
+      "description": "Description",
+      "parameters": "Parameters",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "createdByUser": "Created By User",
+      "updatedByUser": "Updated By User",
+      "agentContainer": "Agent Container"
+    }
+  }
+}

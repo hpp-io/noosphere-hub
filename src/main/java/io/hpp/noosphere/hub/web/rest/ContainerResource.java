@@ -34,7 +34,7 @@ public class ContainerResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(ContainerResource.class);
 
-    private static final String ENTITY_NAME = "noosphereHubContainer";
+    private static final String ENTITY_NAME = "nooSphereHubContainer";
 
     @Value("${jhipster.clientApp.name}")
     private String applicationName;

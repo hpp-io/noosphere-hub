@@ -9,6 +9,8 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -17,6 +19,7 @@ import org.hibernate.type.SqlTypes;
  */
 @Entity
 @Table(name = "container")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class Container implements Serializable {
 
@@ -69,6 +72,7 @@ public class Container implements Serializable {
     private User updatedByUser;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "container")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "node", "container" }, allowSetters = true)
     private Set<AgentContainer> agentContainers = new HashSet<>();
 

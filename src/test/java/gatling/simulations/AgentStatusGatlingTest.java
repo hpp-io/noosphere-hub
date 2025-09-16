@@ -25,7 +25,7 @@ import java.util.Optional;
  */
 public class AgentStatusGatlingTest extends Simulation {
 
-    String baseURL = Optional.ofNullable(System.getProperty("baseURL")).orElse("http://localhost:7070");
+    String baseURL = Optional.ofNullable(System.getProperty("baseURL")).orElse("http://localhost:8085");
 
     HttpProtocolBuilder httpConf = http
         .baseUrl(baseURL)

@@ -1,0 +1,28 @@
+{
+  "nooSphereHubApp": {
+    "nooSphereHubAgentContainer": {
+      "home": {
+        "title": "AgentContainers",
+        "refreshListLabel": "リストの更新",
+        "createLabel": "Agent Container の作成",
+        "createOrEditLabel": "Agent Containerの作成または編集",
+        "notFound": "Agent Containers が見つかりません。"
+      },
+      "created": "新しい Agent Container がID {{ param }} で作成されました。",
+      "updated": "ID {{ param }} の Agent Container が更新されました。",
+      "deleted": "ID {{ param }} の Agent Container が削除されました。",
+      "delete": {
+        "question": "Agent Container {{ id }}を削除してもよろしいですか？"
+      },
+      "detail": {
+        "title": "Agent Container"
+      },
+      "id": "Id",
+      "statusCode": "Status Code",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "node": "Node",
+      "container": "Container"
+    }
+  }
+}

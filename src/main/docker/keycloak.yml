@@ -10,16 +10,13 @@ services:
       - ./realm-config/keycloak-health-check.sh:/opt/keycloak/health-check.sh
     environment:
       - KC_DB=mysql
-      - KC_DB_URL=jdbc:mysql://noosphere-mysql:3306/keycloak
-      - KC_DB_USERNAME=nsuser
-      - KC_DB_PASSWORD=nshub2025!1
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=nshub2025!1
       - KC_FEATURES=scripts
-      - KC_HTTP_PORT=7080
-      - KC_HTTPS_PORT=7443
+      - KC_HTTP_PORT=9080
+      - KC_HTTPS_PORT=9443
       - KC_HEALTH_ENABLED=true
-      - KC_HTTP_MANAGEMENT_PORT=7990
+      - KC_HTTP_MANAGEMENT_PORT=9990
       - KC_HOSTNAME_STRICT=false
       - KC_HOSTNAME_STRICT_HTTPS=false
       - JDBC_PARAMS='useUnicode=true&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=Asia/Seoul&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true'
@@ -28,9 +25,9 @@ services:
     # If you want to expose these ports outside your dev PC,
     # remove the "127.0.0.1:" prefix
     ports:
-      - 0.0.0.0:7080:7080
-      - 0.0.0.0:7443:7443
-      - 0.0.0.0:7990:7990
+      - 127.0.0.1:7080:9080
+      - 127.0.0.1:7990:9990
+      - 127.0.0.1:7443:9443
     healthcheck:
       test: 'bash /opt/keycloak/health-check.sh'
       interval: 5s

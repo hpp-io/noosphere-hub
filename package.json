@@ -2,7 +2,7 @@
   "name": "noosphere-hub",
   "version": "0.0.1-SNAPSHOT",
   "private": true,
-  "description": "Description for Noo Sphere Hub",
+  "description": "Description for NooSphere Hub",
   "license": "UNLICENSED",
   "scripts": {
     "app:start": "./gradlew",
@@ -27,7 +27,7 @@
     "ci:e2e:teardown": "npm run ci:e2e:teardown:docker --if-present",
     "ci:e2e:teardown:docker": "docker compose -f src/main/docker/services.yml down -v && docker ps -a",
     "ci:frontend:test": "npm run webapp:build:$npm_package_config_default_environment && npm run test-ci",
-    "ci:server:await": "echo \"Waiting for server at port $npm_package_config_backend_port to start\" && wait-on -t 360000 http-get://127.0.0.1:8085/services/noospherehub/management/health/readiness && echo \"Server at port $npm_package_config_backend_port started\"",
+    "ci:server:await": "echo \"Waiting for server at port $npm_package_config_backend_port to start\" && wait-on -t 360000 http-get://127.0.0.1:8080/services/noospherehub/management/health/readiness && echo \"Server at port $npm_package_config_backend_port started\"",
     "clean-www": "rimraf build/resources/main/static/",
     "cleanup": "rimraf build/",
     "cypress": "cypress open --e2e",
@@ -83,7 +83,7 @@
     "webpack-dev-server": "webpack serve"
   },
   "config": {
-    "backend_port": 8085,
+    "backend_port": 8080,
     "default_environment": "prod",
     "packaging": "jar"
   },

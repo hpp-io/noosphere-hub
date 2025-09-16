@@ -133,8 +133,6 @@ spring:
       repositories:
         bootstrap-mode: deferred
   jpa:
-    database-platform: org.hibernate.dialect.MySQL8Dialect
-    database: MYSQL
     open-in-view: false
     properties:
       hibernate.jdbc.time_zone: UTC
@@ -160,23 +158,6 @@ spring:
       naming:
         physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
         implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
-  liquibase:
-    url: jdbc:mysql://127.0.0.1:3356/nshub?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
-#    user: nsuser
-#    password: nshub2025!1
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3356/nshub?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
-    username: nsuser
-    password: nshub2025!1
-    hikari:
-      poolName: Hikari
-      auto-commit: false
-      data-source-properties:
-        cachePrepStmts: true
-        prepStmtCacheSize: 250
-        prepStmtCacheSqlLimit: 2048
-        useServerPrepStmts: true
   messages:
     basename: i18n/messages
   main:
@@ -189,11 +170,11 @@ spring:
       client:
         provider:
           oidc:
-            issuer-uri: http://127.0.0.1:7080/realms/noosphere
+            issuer-uri: http://localhost:7080/realms/noosphere
         registration:
           oidc:
-            client-id: internal
-            client-secret: internal
+            client-id: web_app
+            client-secret: CDjVklSVbPIkyAWSyZcGHl1igK8PJICD
             scope: openid, profile, email, offline_access # last one for refresh tokens
   task:
     execution:
@@ -248,8 +229,8 @@ jhipster:
   api-docs:
     default-include-pattern: /api/**
     management-include-pattern: /management/**
-    title: NooSphere Hub API
-    description: NooSphere Hub API documentation
+    title: Noo Sphere Hub API
+    description: Noo Sphere Hub API documentation
     version: 0.0.1
     terms-of-service-url:
     contact-name:

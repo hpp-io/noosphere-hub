@@ -403,7 +403,7 @@ class AgentResourceIT {
         partialUpdatedAgent.setId(agent.getId());
 
         partialUpdatedAgent
-            .apiUrl(UPDATED_API_URL)
+            .name(UPDATED_NAME)
             .apiKey(UPDATED_API_KEY)
             .statusCode(UPDATED_STATUS_CODE)
             .description(UPDATED_DESCRIPTION)

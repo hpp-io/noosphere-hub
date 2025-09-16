@@ -1,0 +1,34 @@
+{
+  "nooSphereHubApp": {
+    "nooSphereHubAgent": {
+      "home": {
+        "title": "Agents",
+        "refreshListLabel": "リストの更新",
+        "createLabel": "Agent の作成",
+        "createOrEditLabel": "Agentの作成または編集",
+        "notFound": "Agents が見つかりません。"
+      },
+      "created": "新しい Agent がID {{ param }} で作成されました。",
+      "updated": "ID {{ param }} の Agent が更新されました。",
+      "deleted": "ID {{ param }} の Agent が削除されました。",
+      "delete": {
+        "question": "Agent {{ id }}を削除してもよろしいですか？"
+      },
+      "detail": {
+        "title": "Agent"
+      },
+      "id": "Id",
+      "name": "Name",
+      "apiUrl": "Api Url",
+      "apiKey": "Api Key",
+      "statusCode": "Status Code",
+      "description": "Description",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "createdByUser": "Created By User",
+      "updatedByUser": "Updated By User",
+      "agentContainer": "Agent Container",
+      "agentStatus": "Agent Status"
+    }
+  }
+}

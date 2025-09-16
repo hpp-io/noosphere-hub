@@ -4,4 +4,4 @@ services:
   noosphere-zipkin:
     image: openzipkin/zipkin:3.5.1
     ports:
-      - 0.0.0.0:9411:9411
+      - 127.0.0.1:9411:9411

@@ -1,0 +1,28 @@
+{
+  "nooSphereHubApp": {
+    "nooSphereHubAgentContainer": {
+      "home": {
+        "title": "Agent Containers",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Agent Container",
+        "createOrEditLabel": "Create or edit a Agent Container",
+        "notFound": "No Agent Containers found"
+      },
+      "created": "A new Agent Container is created with identifier {{ param }}",
+      "updated": "A Agent Container is updated with identifier {{ param }}",
+      "deleted": "A Agent Container is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Agent Container {{ id }}?"
+      },
+      "detail": {
+        "title": "Agent Container"
+      },
+      "id": "Id",
+      "statusCode": "Status Code",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "node": "Node",
+      "container": "Container"
+    }
+  }
+}

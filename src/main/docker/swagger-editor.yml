@@ -4,4 +4,4 @@ services:
   noosphere-swagger-editor:
     image: swaggerapi/swagger-editor:latest
     ports:
-      - 0.0.0.0:7742:8080
+      - 127.0.0.1:7742:8080

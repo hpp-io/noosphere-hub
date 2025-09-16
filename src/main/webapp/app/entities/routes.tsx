@@ -9,6 +9,10 @@ import getStore from 'app/config/store';
 
 import entitiesReducers from './reducers';
 
+import Agent from './agent';
+import Container from './container';
+import AgentContainer from './agent-container';
+import AgentStatus from './agent-status';
 /* jhipster-needle-add-route-import - JHipster will add routes here */
 
 export default () => {
@@ -18,6 +22,10 @@ export default () => {
     <div>
       <ErrorBoundaryRoutes>
         {/* prettier-ignore */}
+        <Route path="/agent/*" element={<Agent />} />
+        <Route path="/container/*" element={<Container />} />
+        <Route path="/agent-container/*" element={<AgentContainer />} />
+        <Route path="/agent-status/*" element={<AgentStatus />} />
         {/* jhipster-needle-add-route-path - JHipster will add routes here */}
       </ErrorBoundaryRoutes>
     </div>

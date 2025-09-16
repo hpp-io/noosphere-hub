@@ -54,32 +54,26 @@ spring:
           - git-branch=${git.branch:}
       host: localhost
       port: 8500
-  jpa:
-    show-sql: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3356/nshub?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
     username: nsuser
     password: nshub2025!1
+    hikari:
+      poolName: Hikari
+      auto-commit: false
+      data-source-properties:
+        cachePrepStmts: true
+        prepStmtCacheSize: 250
+        prepStmtCacheSqlLimit: 2048
+        useServerPrepStmts: true
   liquibase:
     # Remove 'faker' if you do not want the sample data to be loaded automatically
-#    contexts: dev, faker
-    contexts: dev
+    contexts: dev, faker
   messages:
     cache-duration: PT1S # 1 second, see the ISO 8601 standard
   thymeleaf:
     cache: false
-  security:
-    oauth2:
-      client:
-        provider:
-          oidc:
-            issuer-uri: http://127.0.0.1:7080/realms/noosphere
-        registration:
-          oidc:
-            client-id: web_app
-            client-secret: CDjVklSVbPIkyAWSyZcGHl1igK8PJICD
-            scope: openid, profile, email, offline_access # last one for refresh tokens
 
 server:
   port: 8085

@@ -1,0 +1,26 @@
+{
+  "nooSphereHubApp": {
+    "nooSphereHubAgentStatus": {
+      "home": {
+        "title": "Agent Statuses",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Agent Status",
+        "createOrEditLabel": "Create or edit a Agent Status",
+        "notFound": "No Agent Statuses found"
+      },
+      "created": "A new Agent Status is created with identifier {{ param }}",
+      "updated": "A Agent Status is updated with identifier {{ param }}",
+      "deleted": "A Agent Status is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Agent Status {{ id }}?"
+      },
+      "detail": {
+        "title": "Agent Status"
+      },
+      "id": "Id",
+      "createdAt": "Created At",
+      "lastKeepAliveAt": "Last Keep Alive At",
+      "agent": "Agent"
+    }
+  }
+}

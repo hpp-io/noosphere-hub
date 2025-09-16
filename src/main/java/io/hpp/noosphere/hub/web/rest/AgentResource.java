@@ -35,7 +35,7 @@ public class AgentResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(AgentResource.class);
 
-    private static final String ENTITY_NAME = "noosphereHubAgent";
+    private static final String ENTITY_NAME = "nooSphereHubAgent";
 
     @Value("${jhipster.clientApp.name}")
     private String applicationName;

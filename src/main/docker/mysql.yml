@@ -2,7 +2,6 @@
 name: noospherehub
 services:
   noosphere-mysql:
-    container_name: noosphere-mysql
     image: mysql:9.2.0
     volumes:
       - ./config/mysql:/etc/mysql/conf.d
@@ -16,7 +15,7 @@ services:
     # If you want to expose these ports outside your dev PC,
     # remove the "127.0.0.1:" prefix
     ports:
-      - 0.0.0.0:3356:3306
+      - 127.0.0.1:3356:3306
     command: mysqld --lower_case_table_names=1 --max-allowed-packet=64M --skip-mysqlx --character_set_server=utf8mb4 --explicit_defaults_for_timestamp --collation_server=utf8mb4_general_ci
     healthcheck:
       test: ['CMD-SHELL', 'mysql -e "SHOW DATABASES;" && sleep 5']

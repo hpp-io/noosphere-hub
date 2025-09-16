@@ -335,6 +335,8 @@ class AgentContainerResourceIT {
         AgentContainer partialUpdatedAgentContainer = new AgentContainer();
         partialUpdatedAgentContainer.setId(agentContainer.getId());
 
+        partialUpdatedAgentContainer.createdAt(UPDATED_CREATED_AT);
+
         restAgentContainerMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedAgentContainer.getId())

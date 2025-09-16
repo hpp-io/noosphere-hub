@@ -306,6 +306,8 @@ class AgentStatusResourceIT {
         AgentStatus partialUpdatedAgentStatus = new AgentStatus();
         partialUpdatedAgentStatus.setId(agentStatus.getId());
 
+        partialUpdatedAgentStatus.lastKeepAliveAt(UPDATED_LAST_KEEP_ALIVE_AT);
+
         restAgentStatusMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedAgentStatus.getId())

@@ -7,15 +7,15 @@ services:
       - _JAVA_OPTIONS=-Xmx512m -Xms256m
       - SPRING_PROFILES_ACTIVE=prod,api-docs
       - MANAGEMENT_PROMETHEUS_METRICS_EXPORT_ENABLED=true
-      - SPRING_CLOUD_CONSUL_HOST=noosphere-consul
+      - SPRING_CLOUD_CONSUL_HOST=consul
       - SPRING_CLOUD_CONSUL_PORT=8500
-      - SPRING_DATASOURCE_URL=jdbc:mysql://noosphere-mysql:3306/nshub?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
-      - SPRING_LIQUIBASE_URL=jdbc:mysql://noosphere-mysql:3306/nshub?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
-      - SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI=http://noosphere-auth:7080/realms/jhipster
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/noospherehub?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
+      - SPRING_LIQUIBASE_URL=jdbc:mysql://mysql:3306/noospherehub?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
+      - SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI=http://keycloak:9080/realms/jhipster
       - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_ID=internal
       - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET=internal
-      - SPRING_PULSAR_CLIENT_SERVICE_URL=pulsar://noosphere-pulsar:6650
-      - SPRING_PULSAR_ADMINISTRATION_SERVICE_URL=http://noosphere-pulsar:8080
+      - SPRING_PULSAR_CLIENT_SERVICE_URL=pulsar://pulsar:6650
+      - SPRING_PULSAR_ADMINISTRATION_SERVICE_URL=http://pulsar:8080
     healthcheck:
       test:
         - CMD
@@ -26,9 +26,9 @@ services:
       timeout: 5s
       retries: 40
     depends_on:
-      noosphere-mysql:
+      mysql:
         condition: service_healthy
-      noosphere-auth:
+      keycloak:
         condition: service_healthy
   noosphere-mysql:
     extends:

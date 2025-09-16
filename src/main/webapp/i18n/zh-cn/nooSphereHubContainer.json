@@ -1,0 +1,34 @@
+{
+  "nooSphereHubApp": {
+    "nooSphereHubContainer": {
+      "home": {
+        "title": "Containers",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "创建新 Container",
+        "createOrEditLabel": "创建或编辑 Container",
+        "notFound": "No Containers found"
+      },
+      "created": "Container {{ param }} 创建成功",
+      "updated": "Container {{ param }} 更新成功",
+      "deleted": "Container {{ param }} 删除成功",
+      "delete": {
+        "question": "你确定要删除 Container {{ id }} 吗？"
+      },
+      "detail": {
+        "title": "Container"
+      },
+      "id": "Id",
+      "name": "Name",
+      "walletAddress": "Wallet Address",
+      "price": "Price",
+      "statusCode": "Status Code",
+      "description": "Description",
+      "parameters": "Parameters",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "createdByUser": "Created By User",
+      "updatedByUser": "Updated By User",
+      "agentContainer": "Agent Container"
+    }
+  }
+}
