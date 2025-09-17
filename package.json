@@ -1,8 +1,8 @@
 {
   "name": "noosphere-hub",
-  "version": "0.0.1-SNAPSHOT",
+  "version": "1.0.0-SNAPSHOT",
   "private": true,
-  "description": "Description for NooSphere Hub",
+  "description": "Description for Noosphere Hub",
   "license": "UNLICENSED",
   "scripts": {
     "app:start": "./gradlew",

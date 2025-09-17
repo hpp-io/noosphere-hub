@@ -21,18 +21,18 @@ import tech.jhipster.config.JHipsterConstants;
 
 @SpringBootApplication
 @EnableConfigurationProperties({ LiquibaseProperties.class, ApplicationProperties.class })
-public class NooSphereHubApp {
+public class NoosphereHubApp {
 
-    private static final Logger LOG = LoggerFactory.getLogger(NooSphereHubApp.class);
+    private static final Logger LOG = LoggerFactory.getLogger(NoosphereHubApp.class);
 
     private final Environment env;
 
-    public NooSphereHubApp(Environment env) {
+    public NoosphereHubApp(Environment env) {
         this.env = env;
     }
 
     /**
-     * Initializes NooSphereHub.
+     * Initializes NoosphereHub.
      * <p>
      * Spring profiles can be configured with a program argument --spring.profiles.active=your-active-profile
      * <p>
@@ -80,7 +80,7 @@ public class NooSphereHubApp {
             // Devtools not found, ignore
         }
 
-        SpringApplication app = new SpringApplication(NooSphereHubApp.class);
+        SpringApplication app = new SpringApplication(NoosphereHubApp.class);
         DefaultProfileUtil.addDefaultProfile(app);
         Environment env = app.run(args).getEnvironment();
         logApplicationStartup(env);

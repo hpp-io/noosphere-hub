@@ -1,8 +1,8 @@
 {
   "id": "noosphere",
   "realm": "noosphere",
-  "displayName": "NooSphere",
-  "displayNameHtml": "<div class=\"kc-logo-text\"><span>NooSphere</span></div>",
+  "displayName": "Noosphere",
+  "displayNameHtml": "<div class=\"kc-logo-text\"><span>Noosphere</span></div>",
   "notBefore": 0,
   "defaultSignatureAlgorithm": "RS256",
   "revokeRefreshToken": false,
@@ -50,7 +50,7 @@
       {
         "id": "8e986fb5-dafb-43bf-a7c2-7e57572d3d80",
         "name": "ROLE_ADMIN",
-        "description": "NooSphere administrator role",
+        "description": "Noosphere administrator role",
         "composite": false,
         "clientRole": false,
         "containerId": "noosphere",
@@ -68,7 +68,7 @@
       {
         "id": "ec5705e1-fc1d-4d21-8364-abd3bd4efcd0",
         "name": "ROLE_USER",
-        "description": "NooSphere user role",
+        "description": "Noosphere user role",
         "composite": false,
         "clientRole": false,
         "containerId": "noosphere",
@@ -890,7 +890,7 @@
     {
       "id": "9816de82-24b7-42fe-a85a-1264868ec293",
       "name": "noosphere",
-      "description": "NooSphere specific claims",
+      "description": "Noosphere specific claims",
       "protocol": "openid-connect",
       "attributes": {
         "include.in.token.scope": "false",

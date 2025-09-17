@@ -5,7 +5,7 @@ import sinon from 'sinon';
 import { parseHeaderForLinks } from 'react-jhipster';
 
 import { EntityState } from 'app/shared/reducers/reducer.utils';
-import { IAgentContainer, defaultValue } from 'app/shared/model/NooSphereHub/agent-container.model';
+import { IAgentContainer, defaultValue } from 'app/shared/model/NoosphereHub/agent-container.model';
 import reducer, {
   createEntity,
   deleteEntity,

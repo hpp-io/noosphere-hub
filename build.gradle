@@ -18,7 +18,7 @@ plugins {
 }
 
 group = "io.hpp.noosphere.hub"
-version = "0.0.1-SNAPSHOT"
+version = "1.0.0-SNAPSHOT"
 
 description = ""
 
@@ -81,7 +81,7 @@ eclipse {
 defaultTasks "bootRun"
 
 springBoot {
-    mainClass = "io.hpp.noosphere.hub.NooSphereHubApp"
+    mainClass = "io.hpp.noosphere.hub.NoosphereHubApp"
 }
 
 test {

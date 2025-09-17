@@ -1,4 +1,4 @@
-# NooSphereHub
+# NoosphereHub
 
 This application was generated using JHipster 8.11.0, you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v8.11.0](https://www.jhipster.tech/documentation-archive/v8.11.0).
 
@@ -294,7 +294,7 @@ cd microfrontend
 
 ### Packaging as jar
 
-To build the final jar and optimize the NooSphereHub application for production, run:
+To build the final jar and optimize the NoosphereHub application for production, run:
 
 ```
 ./gradlew -Pprod clean bootJar

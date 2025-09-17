@@ -4,7 +4,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import sinon from 'sinon';
 
 import { EntityState } from 'app/shared/reducers/reducer.utils';
-import { IAgentStatus, defaultValue } from 'app/shared/model/NooSphereHub/agent-status.model';
+import { IAgentStatus, defaultValue } from 'app/shared/model/NoosphereHub/agent-status.model';
 import reducer, {
   createEntity,
   deleteEntity,

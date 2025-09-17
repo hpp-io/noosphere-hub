@@ -17,7 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @SpringBootTest(
-    classes = { NooSphereHubApp.class, JacksonConfiguration.class, AsyncSyncConfiguration.class, TestSecurityConfiguration.class }
+    classes = { NoosphereHubApp.class, JacksonConfiguration.class, AsyncSyncConfiguration.class, TestSecurityConfiguration.class }
 )
 @EmbeddedSQL
 @EmbeddedPulsar

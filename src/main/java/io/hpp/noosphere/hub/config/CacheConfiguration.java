@@ -66,13 +66,13 @@ public class CacheConfiguration {
     @Bean
     public HazelcastInstance hazelcastInstance(JHipsterProperties jHipsterProperties) {
         LOG.debug("Configuring Hazelcast");
-        HazelcastInstance hazelCastInstance = Hazelcast.getHazelcastInstanceByName("NooSphereHub");
+        HazelcastInstance hazelCastInstance = Hazelcast.getHazelcastInstanceByName("NoosphereHub");
         if (hazelCastInstance != null) {
             LOG.debug("Hazelcast already initialized");
             return hazelCastInstance;
         }
         Config config = new Config();
-        config.setInstanceName("NooSphereHub");
+        config.setInstanceName("NoosphereHub");
         config.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(false);
         if (this.registration == null) {
             LOG.warn("No discovery service is set up, Hazelcast cannot create a cluster.");

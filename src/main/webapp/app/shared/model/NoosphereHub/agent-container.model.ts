@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
-import { IAgent } from 'app/shared/model/NooSphereHub/agent.model';
-import { IContainer } from 'app/shared/model/NooSphereHub/container.model';
+import { IAgent } from 'app/shared/model/NoosphereHub/agent.model';
+import { IContainer } from 'app/shared/model/NoosphereHub/container.model';
 
 export interface IAgentContainer {
   id?: string;

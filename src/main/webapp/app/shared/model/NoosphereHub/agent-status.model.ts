@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { IAgent } from 'app/shared/model/NooSphereHub/agent.model';
+import { IAgent } from 'app/shared/model/NoosphereHub/agent.model';
 
 export interface IAgentStatus {
   id?: string;

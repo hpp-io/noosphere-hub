@@ -3,7 +3,7 @@ import { createAsyncThunk, isFulfilled, isPending } from '@reduxjs/toolkit';
 import { loadMoreDataWhenScrolled, parseHeaderForLinks } from 'react-jhipster';
 import { cleanEntity } from 'app/shared/util/entity-utils';
 import { EntityState, IQueryParams, createEntitySlice, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
-import { IAgentContainer, defaultValue } from 'app/shared/model/NooSphereHub/agent-container.model';
+import { IAgentContainer, defaultValue } from 'app/shared/model/NoosphereHub/agent-container.model';
 
 const initialState: EntityState<IAgentContainer> = {
   loading: false,
