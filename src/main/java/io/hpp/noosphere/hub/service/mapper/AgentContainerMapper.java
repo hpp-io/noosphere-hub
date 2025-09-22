@@ -13,7 +13,7 @@ import org.mapstruct.*;
 /**
  * Mapper for the entity {@link AgentContainer} and its DTO {@link AgentContainerDTO}.
  */
-@Mapper(componentModel = "spring", uses = {AgentMapper.class, ContainerMapper.class})
+@Mapper(componentModel = "spring", uses = { AgentMapper.class, ContainerMapper.class, UserMapper.class })
 public interface AgentContainerMapper extends EntityMapper<AgentContainerDTO, AgentContainer> {
     @Mapping(target = "agent", source = "agent", qualifiedByName = "agentId")
     @Mapping(target = "container", source = "container", qualifiedByName = "containerId")
