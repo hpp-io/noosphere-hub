@@ -110,11 +110,11 @@ spring:
       config:
         watch:
           enabled: false
-  docker:
-    compose:
-      enabled: true
-      lifecycle-management: start-only
-      file: src/main/docker/mysql.yml
+#  docker:
+#    compose:
+#      enabled: true
+#      lifecycle-management: start-only
+#      file: src/main/docker/mysql.yml
   profiles:
     # The commented value for `active` can be replaced with valid Spring profiles to load.
     # Otherwise, it will be filled in by gradle when building the JAR file
@@ -158,6 +158,9 @@ spring:
       naming:
         physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
         implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+  liquibase:
+    url: jdbc:mysql://127.0.0.1:3356/nshub?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
+
   messages:
     basename: i18n/messages
   main:

@@ -3,7 +3,9 @@ package io.hpp.noosphere.hub.service;
 import io.hpp.noosphere.hub.domain.Agent;
 import io.hpp.noosphere.hub.repository.AgentRepository;
 import io.hpp.noosphere.hub.service.dto.AgentDTO;
+import io.hpp.noosphere.hub.service.dto.UserDTO;
 import io.hpp.noosphere.hub.service.mapper.AgentMapper;
+import java.time.Instant;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -41,8 +43,17 @@ public class AgentService {
      * @param agentDTO the entity to save.
      * @return the persisted entity.
      */
-    public AgentDTO save(AgentDTO agentDTO) {
+    public AgentDTO save(String userId, AgentDTO agentDTO, Instant timestamp) {
         LOG.debug("Request to save Agent : {}", agentDTO);
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(userId);
+        if (agentDTO.getId()==null) {
+            agentDTO.setCreatedByUser(userDTO);
+            agentDTO.setCreatedAt(timestamp);
+        } else {
+            agentDTO.setUpdatedByUser(userDTO);
+            agentDTO.setUpdatedAt(timestamp);
+        }
         Agent agent = agentMapper.toEntity(agentDTO);
         agent = agentRepository.save(agent);
         return agentMapper.toDto(agent);

@@ -11,7 +11,7 @@ import org.mapstruct.*;
 /**
  * Mapper for the entity {@link AgentStatus} and its DTO {@link AgentStatusDTO}.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {AgentMapper.class})
 public interface AgentStatusMapper extends EntityMapper<AgentStatusDTO, AgentStatus> {
     @Mapping(target = "agent", source = "agent", qualifiedByName = "agentId")
     AgentStatusDTO toDto(AgentStatus s);

@@ -8,6 +8,9 @@ import io.hpp.noosphere.hub.repository.UserRepository;
 import io.hpp.noosphere.hub.security.SecurityUtils;
 import io.hpp.noosphere.hub.service.dto.AdminUserDTO;
 import io.hpp.noosphere.hub.service.dto.UserDTO;
+import io.hpp.noosphere.hub.service.mapper.AgentMapper;
+import io.hpp.noosphere.hub.service.mapper.UserMapper;
+import io.hpp.noosphere.hub.service.uil.CommonUtils;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -37,11 +40,17 @@ public class UserService {
     private final AuthorityRepository authorityRepository;
 
     private final CacheManager cacheManager;
+    private final AgentMapper agentMapper;
+    private final UserMapper userMapper;
 
-    public UserService(UserRepository userRepository, AuthorityRepository authorityRepository, CacheManager cacheManager) {
+    public UserService(UserRepository userRepository, AuthorityRepository authorityRepository, CacheManager cacheManager,
+      AgentMapper agentMapper,
+      UserMapper userMapper) {
         this.userRepository = userRepository;
         this.authorityRepository = authorityRepository;
         this.cacheManager = cacheManager;
+        this.agentMapper = agentMapper;
+        this.userMapper = userMapper;
     }
 
     /**
@@ -57,6 +66,7 @@ public class UserService {
         SecurityUtils.getCurrentUserLogin()
             .flatMap(userRepository::findOneByLogin)
             .ifPresent(user -> {
+                user.setName(CommonUtils.buildFullName(langKey, firstName, lastName));
                 user.setFirstName(firstName);
                 user.setLastName(lastName);
                 if (email != null) {
@@ -77,7 +87,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public Page<UserDTO> getAllPublicUsers(Pageable pageable) {
-        return userRepository.findAllByIdNotNullAndActivatedIsTrue(pageable).map(UserDTO::new);
+        return userRepository.findAllByIdNotNullAndActivatedIsTrue(pageable).map(userMapper::userToUserDTO);
     }
 
     @Transactional(readOnly = true)

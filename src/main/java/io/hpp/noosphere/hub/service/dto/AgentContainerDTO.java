@@ -5,11 +5,22 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * A DTO for the {@link io.hpp.noosphere.hub.domain.AgentContainer} entity.
  */
 @SuppressWarnings("common-java:DuplicatedBlocks")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class AgentContainerDTO implements Serializable {
 
     @NotNull
@@ -24,89 +35,38 @@ public class AgentContainerDTO implements Serializable {
 
     private Instant updatedAt;
 
-    private AgentDTO node;
+    private AgentDTO agent;
 
     private ContainerDTO container;
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getStatusCode() {
-        return statusCode;
-    }
-
-    public void setStatusCode(String statusCode) {
-        this.statusCode = statusCode;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Instant getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Instant updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public AgentDTO getNode() {
-        return node;
-    }
-
-    public void setNode(AgentDTO node) {
-        this.node = node;
-    }
-
-    public ContainerDTO getContainer() {
-        return container;
-    }
-
-    public void setContainer(ContainerDTO container) {
-        this.container = container;
-    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof AgentContainerDTO)) {
+
+        if (!(o instanceof AgentContainerDTO that)) {
             return false;
         }
 
-        AgentContainerDTO agentContainerDTO = (AgentContainerDTO) o;
-        if (this.id == null) {
-            return false;
-        }
-        return Objects.equals(this.id, agentContainerDTO.id);
+      return new EqualsBuilder().append(id, that.id)
+          .append(agent, that.agent).append(container, that.container).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.id);
+        return new HashCodeBuilder(17, 37).append(id).append(agent).append(container).toHashCode();
     }
 
-    // prettier-ignore
     @Override
     public String toString() {
-        return "AgentContainerDTO{" +
-            "id='" + getId() + "'" +
-            ", statusCode='" + getStatusCode() + "'" +
-            ", createdAt='" + getCreatedAt() + "'" +
-            ", updatedAt='" + getUpdatedAt() + "'" +
-            ", node=" + getNode() +
-            ", container=" + getContainer() +
-            "}";
+        return new ToStringBuilder(this)
+          .append("id", id)
+          .append("statusCode", statusCode)
+          .append("createdAt", createdAt)
+          .append("updatedAt", updatedAt)
+          .append("agent", agent !=null ? agent.getId() : null)
+          .append("container", container !=null ? container.getId() : null)
+          .toString();
     }
 }

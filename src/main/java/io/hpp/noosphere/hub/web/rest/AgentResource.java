@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -40,11 +41,14 @@ public class AgentResource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
+    private final IAuthenticationFacade authenticationFacade;
     private final AgentService agentService;
 
     private final AgentRepository agentRepository;
 
-    public AgentResource(AgentService agentService, AgentRepository agentRepository) {
+    public AgentResource(AgentService agentService, AgentRepository agentRepository,
+      IAuthenticationFacade authenticationFacade) {
+        this.authenticationFacade = authenticationFacade;
         this.agentService = agentService;
         this.agentRepository = agentRepository;
     }
@@ -62,7 +66,8 @@ public class AgentResource {
         if (agentDTO.getId() != null) {
             throw new BadRequestAlertException("A new agent cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        agentDTO = agentService.save(agentDTO);
+        Instant now = Instant.now();
+        agentDTO = agentService.save(authenticationFacade.getUserId(), agentDTO, now);
         return ResponseEntity.created(new URI("/api/agents/" + agentDTO.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, agentDTO.getId().toString()))
             .body(agentDTO);
@@ -101,41 +106,6 @@ public class AgentResource {
             .body(agentDTO);
     }
 
-    /**
-     * {@code PATCH  /agents/:id} : Partial updates given fields of an existing agent, field will ignore if it is null
-     *
-     * @param id the id of the agentDTO to save.
-     * @param agentDTO the agentDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated agentDTO,
-     * or with status {@code 400 (Bad Request)} if the agentDTO is not valid,
-     * or with status {@code 404 (Not Found)} if the agentDTO is not found,
-     * or with status {@code 500 (Internal Server Error)} if the agentDTO couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
-    @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<AgentDTO> partialUpdateAgent(
-        @PathVariable(value = "id", required = false) final UUID id,
-        @NotNull @RequestBody AgentDTO agentDTO
-    ) throws URISyntaxException {
-        LOG.debug("REST request to partial update Agent partially : {}, {}", id, agentDTO);
-        if (agentDTO.getId() == null) {
-            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
-        }
-        if (!Objects.equals(id, agentDTO.getId())) {
-            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
-        }
-
-        if (!agentRepository.existsById(id)) {
-            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
-        }
-
-        Optional<AgentDTO> result = agentService.partialUpdate(agentDTO);
-
-        return ResponseUtil.wrapOrNotFound(
-            result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, agentDTO.getId().toString())
-        );
-    }
 
     /**
      * {@code GET  /agents} : get all the agents.

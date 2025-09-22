@@ -9,8 +9,9 @@ import org.mapstruct.*;
 /**
  * Mapper for the entity {@link Agent} and its DTO {@link AgentDTO}.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {UserMapper.class})
 public interface AgentMapper extends EntityMapper<AgentDTO, Agent> {
+
     @Mapping(target = "createdByUser", source = "createdByUser", qualifiedByName = "userId")
     @Mapping(target = "updatedByUser", source = "updatedByUser", qualifiedByName = "userId")
     AgentDTO toDto(Agent s);
@@ -18,5 +19,8 @@ public interface AgentMapper extends EntityMapper<AgentDTO, Agent> {
     @Named("userId")
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
+    @Mapping(target = "name", source = "name") // Include other fields if needed
+    @Mapping(target = "authorities", ignore = true) // Include other fields if needed
     UserDTO toDtoUserId(User user);
+
 }

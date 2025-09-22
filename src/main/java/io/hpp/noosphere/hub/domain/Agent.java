@@ -67,9 +67,9 @@ public class Agent implements Serializable {
     @JoinColumn(unique = true)
     private User updatedByUser;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "node")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "agent")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "node", "container" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "agent", "container" }, allowSetters = true)
     private Set<AgentContainer> agentContainers = new HashSet<>();
 
     @JsonIgnoreProperties(value = { "agent" }, allowSetters = true)
@@ -214,10 +214,10 @@ public class Agent implements Serializable {
 
     public void setAgentContainers(Set<AgentContainer> agentContainers) {
         if (this.agentContainers != null) {
-            this.agentContainers.forEach(i -> i.setNode(null));
+            this.agentContainers.forEach(i -> i.setAgent(null));
         }
         if (agentContainers != null) {
-            agentContainers.forEach(i -> i.setNode(this));
+            agentContainers.forEach(i -> i.setAgent(this));
         }
         this.agentContainers = agentContainers;
     }
@@ -229,13 +229,13 @@ public class Agent implements Serializable {
 
     public Agent addAgentContainer(AgentContainer agentContainer) {
         this.agentContainers.add(agentContainer);
-        agentContainer.setNode(this);
+        agentContainer.setAgent(this);
         return this;
     }
 
     public Agent removeAgentContainer(AgentContainer agentContainer) {
         this.agentContainers.remove(agentContainer);
-        agentContainer.setNode(null);
+        agentContainer.setAgent(null);
         return this;
     }
 

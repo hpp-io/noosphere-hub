@@ -6,11 +6,22 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * A DTO for the {@link io.hpp.noosphere.hub.domain.Agent} entity.
  */
 @SuppressWarnings("common-java:DuplicatedBlocks")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class AgentDTO implements Serializable {
 
     @NotNull
@@ -41,121 +52,38 @@ public class AgentDTO implements Serializable {
 
     private UserDTO updatedByUser;
 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getApiUrl() {
-        return apiUrl;
-    }
-
-    public void setApiUrl(String apiUrl) {
-        this.apiUrl = apiUrl;
-    }
-
-    public String getApiKey() {
-        return apiKey;
-    }
-
-    public void setApiKey(String apiKey) {
-        this.apiKey = apiKey;
-    }
-
-    public String getStatusCode() {
-        return statusCode;
-    }
-
-    public void setStatusCode(String statusCode) {
-        this.statusCode = statusCode;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Instant getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Instant updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public UserDTO getCreatedByUser() {
-        return createdByUser;
-    }
-
-    public void setCreatedByUser(UserDTO createdByUser) {
-        this.createdByUser = createdByUser;
-    }
-
-    public UserDTO getUpdatedByUser() {
-        return updatedByUser;
-    }
-
-    public void setUpdatedByUser(UserDTO updatedByUser) {
-        this.updatedByUser = updatedByUser;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof AgentDTO)) {
+
+        if (!(o instanceof AgentDTO agentDTO)) {
             return false;
         }
 
-        AgentDTO agentDTO = (AgentDTO) o;
-        if (this.id == null) {
-            return false;
-        }
-        return Objects.equals(this.id, agentDTO.id);
+      return new EqualsBuilder().append(id, agentDTO.id).append(name, agentDTO.name).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.id);
+        return new HashCodeBuilder(17, 37).append(id).append(name)
+          .toHashCode();
     }
 
-    // prettier-ignore
     @Override
     public String toString() {
-        return "AgentDTO{" +
-            "id='" + getId() + "'" +
-            ", name='" + getName() + "'" +
-            ", apiUrl='" + getApiUrl() + "'" +
-            ", apiKey='" + getApiKey() + "'" +
-            ", statusCode='" + getStatusCode() + "'" +
-            ", description='" + getDescription() + "'" +
-            ", createdAt='" + getCreatedAt() + "'" +
-            ", updatedAt='" + getUpdatedAt() + "'" +
-            ", createdByUser=" + getCreatedByUser() +
-            ", updatedByUser=" + getUpdatedByUser() +
-            "}";
+        return new ToStringBuilder(this)
+          .append("id", id)
+          .append("name", name)
+          .append("apiUrl", apiUrl)
+          .append("apiKey", apiKey)
+          .append("statusCode", statusCode)
+          .append("description", description)
+          .append("createdAt", createdAt)
+          .append("updatedAt", updatedAt)
+          .append("createdByUser", createdByUser !=null ? createdByUser.getId() : null)
+          .append("updatedByUser", updatedByUser !=null ? updatedByUser.getId() : null)
+          .toString();
     }
 }

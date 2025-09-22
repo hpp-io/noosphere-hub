@@ -23,7 +23,7 @@
             <column name="updated_at" type="${datetimeType}">
                 <constraints nullable="true" />
             </column>
-            <column name="node_id" type="${uuidType}">
+            <column name="agent_id" type="${uuidType}">
                 <constraints nullable="true" />
             </column>
             <column name="container_id" type="${uuidType}">

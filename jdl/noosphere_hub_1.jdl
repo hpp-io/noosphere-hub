@@ -47,7 +47,7 @@ entity AgentStatus {
 }
 
 relationship OneToMany {
-  Agent{agentContainer} to AgentContainer{node}
+  Agent{agentContainer} to AgentContainer{agent}
   Container{agentContainer} to AgentContainer{container}
 
 }

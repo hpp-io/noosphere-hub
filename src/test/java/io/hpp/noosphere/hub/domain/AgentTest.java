@@ -33,19 +33,19 @@ class AgentTest {
 
         agent.addAgentContainer(agentContainerBack);
         assertThat(agent.getAgentContainers()).containsOnly(agentContainerBack);
-        assertThat(agentContainerBack.getNode()).isEqualTo(agent);
+        assertThat(agentContainerBack.getAgent()).isEqualTo(agent);
 
         agent.removeAgentContainer(agentContainerBack);
         assertThat(agent.getAgentContainers()).doesNotContain(agentContainerBack);
-        assertThat(agentContainerBack.getNode()).isNull();
+        assertThat(agentContainerBack.getAgent()).isNull();
 
         agent.agentContainers(new HashSet<>(Set.of(agentContainerBack)));
         assertThat(agent.getAgentContainers()).containsOnly(agentContainerBack);
-        assertThat(agentContainerBack.getNode()).isEqualTo(agent);
+        assertThat(agentContainerBack.getAgent()).isEqualTo(agent);
 
         agent.setAgentContainers(new HashSet<>());
         assertThat(agent.getAgentContainers()).doesNotContain(agentContainerBack);
-        assertThat(agentContainerBack.getNode()).isNull();
+        assertThat(agentContainerBack.getAgent()).isNull();
     }
 
     @Test

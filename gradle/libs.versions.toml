@@ -5,6 +5,7 @@ hazelcast-spring = "5.5.0"
 hazelcast-hibernate53 = "5.2.0"
 jacoco = "0.8.13"
 checkstyle = "10.23.1"
+#lombok = "1.18.34"
 # jhipster-needle-gradle-dependency-catalog-version - JHipster will add additional versions for convention plugins heref
 
 [libraries]
@@ -16,6 +17,7 @@ cucumber-bom = { module = "io.cucumber:cucumber-bom", version = "7.22.1" }
 testng = { module = "org.testng:testng", version = "7.11.0" }
 hazelcast-spring = { module = "com.hazelcast:hazelcast-spring", version = "5.5.0" }
 hazelcast-hibernate53 = { module = "com.hazelcast:hazelcast-hibernate53", version = "5.2.0" }
+#lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
 # jhipster-needle-gradle-dependency-catalog-libraries - JHipster will add additional libraries versions
 
 [plugins]

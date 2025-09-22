@@ -29,11 +29,11 @@ class AgentContainerTest {
         AgentContainer agentContainer = getAgentContainerRandomSampleGenerator();
         Agent agentBack = getAgentRandomSampleGenerator();
 
-        agentContainer.setNode(agentBack);
-        assertThat(agentContainer.getNode()).isEqualTo(agentBack);
+        agentContainer.setAgent(agentBack);
+        assertThat(agentContainer.getAgent()).isEqualTo(agentBack);
 
-        agentContainer.node(null);
-        assertThat(agentContainer.getNode()).isNull();
+        agentContainer.agent(null);
+        assertThat(agentContainer.getAgent()).isNull();
     }
 
     @Test
