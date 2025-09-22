@@ -9,7 +9,7 @@ import org.mapstruct.*;
 /**
  * Mapper for the entity {@link Container} and its DTO {@link ContainerDTO}.
  */
-@Mapper(componentModel = "spring", uses = {UserMapper.class})
+@Mapper(componentModel = "spring", uses = { UserMapper.class })
 public interface ContainerMapper extends EntityMapper<ContainerDTO, Container> {
     @Mapping(target = "createdByUser", source = "createdByUser", qualifiedByName = "userId")
     @Mapping(target = "updatedByUser", source = "updatedByUser", qualifiedByName = "userId")
@@ -19,6 +19,5 @@ public interface ContainerMapper extends EntityMapper<ContainerDTO, Container> {
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
     @Mapping(target = "name", source = "name") // Include other fields if needed
-    @Mapping(target = "authorities", ignore = true) //
     UserDTO toDtoUserId(User user);
 }
