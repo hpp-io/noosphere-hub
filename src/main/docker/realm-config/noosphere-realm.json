@@ -1397,7 +1397,7 @@
     "auth": "true",
     "envelopeFrom": "",
     "ssl": "true",
-    "password": "nmbgpsgcydjhziyo",
+    "password": "",
     "port": "465",
     "host": "smtp.gmail.com",
     "replyTo": "",
