@@ -13,5 +13,8 @@ public final class Constants {
 
     public static final String NULL_STRING = "null";
 
+    public static final String HTTP_HEADER_API_KEY = "X-API-KEY";
+
+
     private Constants() {}
 }

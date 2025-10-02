@@ -1,7 +1,9 @@
 package io.hpp.noosphere.hub.service;
 
+import com.querydsl.core.BooleanBuilder;
 import io.hpp.noosphere.hub.config.Constants;
 import io.hpp.noosphere.hub.domain.Authority;
+import io.hpp.noosphere.hub.domain.QUser;
 import io.hpp.noosphere.hub.domain.User;
 import io.hpp.noosphere.hub.repository.AuthorityRepository;
 import io.hpp.noosphere.hub.repository.UserRepository;
@@ -62,15 +64,18 @@ public class UserService {
      * @param langKey   language key.
      * @param imageUrl  image URL of user.
      */
-    public void updateUser(String firstName, String lastName, String email, String langKey, String imageUrl) {
+    public void updateUser(String firstName, String lastName, String email, String apiKey, String langKey, String imageUrl) {
         SecurityUtils.getCurrentUserLogin()
-            .flatMap(userRepository::findOneByLogin)
+            .flatMap(userRepository::findOneByEmail)
             .ifPresent(user -> {
                 user.setName(CommonUtils.buildFullName(langKey, firstName, lastName));
                 user.setFirstName(firstName);
                 user.setLastName(lastName);
                 if (email != null) {
                     user.setEmail(email.toLowerCase());
+                }
+                if (apiKey != null) {
+                    user.setApiKey(apiKey.trim());
                 }
                 user.setLangKey(langKey);
                 user.setImageUrl(imageUrl);
@@ -80,25 +85,6 @@ public class UserService {
             });
     }
 
-    @Transactional(readOnly = true)
-    public Page<AdminUserDTO> getAllManagedUsers(Pageable pageable) {
-        return userRepository.findAll(pageable).map(AdminUserDTO::new);
-    }
-
-    @Transactional(readOnly = true)
-    public Page<UserDTO> getAllPublicUsers(Pageable pageable) {
-        return userRepository.findAllByIdNotNullAndActivatedIsTrue(pageable).map(userMapper::userToUserDTO);
-    }
-
-    @Transactional(readOnly = true)
-    public Optional<User> getUserWithAuthoritiesByLogin(String login) {
-        return userRepository.findOneWithAuthoritiesByLogin(login);
-    }
-
-    /**
-     * Gets a list of all the authorities.
-     * @return a list of all the authorities.
-     */
     @Transactional(readOnly = true)
     public List<String> getAuthorities() {
         return authorityRepository.findAll().stream().map(Authority::getName).toList();
@@ -117,7 +103,7 @@ public class UserService {
             }
         }
         // save account in to sync users between IdP and JHipster's local database
-        Optional<User> existingUser = userRepository.findOneByLogin(user.getLogin());
+        Optional<User> existingUser = userRepository.findOneByEmail(user.getEmail());
         if (existingUser.isPresent()) {
             // if IdP sends last updated information, use it to determine if an update should happen
             if (details.get("updated_at") != null) {
@@ -130,12 +116,12 @@ public class UserService {
                 }
                 if (idpModifiedDate.isAfter(dbModifiedDate)) {
                     LOG.debug("Updating user '{}' in local database", user.getLogin());
-                    updateUser(user.getFirstName(), user.getLastName(), user.getEmail(), user.getLangKey(), user.getImageUrl());
+                    updateUser(user.getFirstName(), user.getLastName(), user.getEmail(), user.getApiKey(), user.getLangKey(), user.getImageUrl());
                 }
                 // no last updated info, blindly update
             } else {
                 LOG.debug("Updating user '{}' in local database", user.getLogin());
-                updateUser(user.getFirstName(), user.getLastName(), user.getEmail(), user.getLangKey(), user.getImageUrl());
+                updateUser(user.getFirstName(), user.getLastName(), user.getEmail(), user.getApiKey(), user.getLangKey(), user.getImageUrl());
             }
         } else {
             LOG.debug("Saving user '{}' in local database", user.getLogin());
@@ -241,9 +227,20 @@ public class UserService {
     }
 
     private void clearUserCaches(User user) {
-        Objects.requireNonNull(cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE)).evictIfPresent(user.getLogin());
-        if (user.getEmail() != null) {
-            Objects.requireNonNull(cacheManager.getCache(UserRepository.USERS_BY_EMAIL_CACHE)).evictIfPresent(user.getEmail());
+        Objects.requireNonNull(cacheManager.getCache(UserRepository.USERS_BY_EMAIL_CACHE)).evictIfPresent(user.getEmail());
+        if (user.getApiKey() != null) {
+            Objects.requireNonNull(cacheManager.getCache(UserRepository.USERS_BY_API_KEY_CACHE)).evictIfPresent(user.getApiKey());
         }
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<User> findOptionalByApiKey(String apiKey, Boolean activated) {
+        return userRepository.findOneByApiKey(apiKey, activated);
+    }
+    @Transactional(readOnly = true)
+    public UserDTO findByApiKey(String apiKey, Boolean activated) {
+        Optional<User> optionalUser = this.findOptionalByApiKey(apiKey, activated);
+      //            throw new UserNotFoundException(apiKey);
+      return optionalUser.map(userMapper::userToUserDTO).orElse(null);
     }
 }

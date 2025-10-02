@@ -73,6 +73,10 @@ public class User extends AbstractAuditingEntity<String> implements Serializable
     @Column(name = "image_url", length = 256)
     private String imageUrl;
 
+    @Size(max = 100)
+    @Column(name = "api_key", length = 100)
+    private String apiKey;
+
     @JsonIgnore
     @ManyToMany
     @JoinTable(
@@ -106,10 +110,12 @@ public class User extends AbstractAuditingEntity<String> implements Serializable
     @Override
     public String toString() {
         return "User{" +
-            "login='" + login + '\'' +
+            "email='" + email + '\'' +
+            ", name='" + name + '\'' +
+            ", apiKey='" + apiKey + '\'' +
             ", firstName='" + firstName + '\'' +
             ", lastName='" + lastName + '\'' +
-            ", email='" + email + '\'' +
+            ", login='" + login + '\'' +
             ", imageUrl='" + imageUrl + '\'' +
             ", activated='" + activated + '\'' +
             ", langKey='" + langKey + '\'' +

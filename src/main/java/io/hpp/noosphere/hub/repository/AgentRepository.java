@@ -1,6 +1,10 @@
 package io.hpp.noosphere.hub.repository;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import io.hpp.noosphere.hub.domain.Agent;
+import io.hpp.noosphere.hub.domain.QAgent;
+import jakarta.persistence.EntityManager;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
@@ -10,4 +14,35 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface AgentRepository extends JpaRepository<Agent, UUID> {}
+public interface AgentRepository extends JpaRepository<Agent, UUID>, AgentRepositoryCustom {
+}
+
+interface AgentRepositoryCustom {
+  List<Agent> findByName(String name);
+  List<Agent> findByCreatedByUserId(String userId);
+}
+
+@Repository
+class AgentRepositoryCustomImpl implements AgentRepositoryCustom {
+  private final JPAQueryFactory queryFactory;
+
+  public AgentRepositoryCustomImpl(EntityManager entityManager) {
+    this.queryFactory = new JPAQueryFactory(entityManager);
+  }
+
+  @Override
+  public List<Agent> findByName(String name) {
+    QAgent qAgent = QAgent.agent;
+    return queryFactory.selectFrom(qAgent)
+      .where(qAgent.name.eq(name))
+      .fetch();
+  }
+
+  @Override
+  public List<Agent> findByCreatedByUserId(String userId) {
+    QAgent qAgent = QAgent.agent;
+    return queryFactory.selectFrom(qAgent)
+      .where(qAgent.createdByUser.id.eq(userId))
+      .fetch();
+  }
+}

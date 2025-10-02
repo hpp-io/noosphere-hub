@@ -1,10 +1,12 @@
 package io.hpp.noosphere.hub.repository;
 
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import io.hpp.noosphere.hub.domain.QUser;
 import io.hpp.noosphere.hub.domain.User;
+import jakarta.persistence.EntityManager;
 import java.util.Optional;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.*;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,16 +14,65 @@ import org.springframework.stereotype.Repository;
  * Spring Data JPA repository for the {@link User} entity.
  */
 @Repository
-public interface UserRepository extends JpaRepository<User, String> {
-    String USERS_BY_LOGIN_CACHE = "usersByLogin";
+public interface UserRepository extends JpaRepository<User, String>, UserRepositoryCustom {
+
+    String USERS_BY_API_KEY_CACHE = "usersByApiKey";
 
     String USERS_BY_EMAIL_CACHE = "usersByEmail";
+}
 
-    Optional<User> findOneByLogin(String login);
+interface UserRepositoryCustom {
 
-    @EntityGraph(attributePaths = "authorities")
-    @Cacheable(cacheNames = USERS_BY_LOGIN_CACHE, unless = "#result == null")
-    Optional<User> findOneWithAuthoritiesByLogin(String login);
+    @Cacheable(cacheNames = UserRepository.USERS_BY_EMAIL_CACHE, unless = "#result == null")
+    Optional<User> findOneByEmail(String email);
 
-    Page<User> findAllByIdNotNullAndActivatedIsTrue(Pageable pageable);
+    Optional<User> findOneByEmail(String email, Boolean activated);
+    @Cacheable(cacheNames = UserRepository.USERS_BY_API_KEY_CACHE, unless = "#result == null")
+    Optional<User> findOneByApiKey(String apiKey);
+
+    Optional<User> findOneByApiKey(String apiKey, Boolean activated);
+
+}
+
+@Repository
+class UserRepositoryCustomImpl implements UserRepositoryCustom {
+    private final JPAQueryFactory queryFactory;
+
+    public UserRepositoryCustomImpl(EntityManager entityManager) {
+        this.queryFactory = new JPAQueryFactory(entityManager);
+    }
+
+    @Override
+    public Optional<User> findOneByEmail(String email) {
+        return findOneByEmail(email, Boolean.TRUE);
+    }
+    @Override
+    public Optional<User> findOneByEmail(String email, Boolean activated) {
+        QUser qUser = QUser.user;
+        BooleanBuilder builder = new BooleanBuilder();
+        builder.and(qUser.email.eq(email));
+        if (activated != null) {
+            builder.and(qUser.activated.eq(activated));
+        }
+        return Optional.ofNullable(queryFactory.selectFrom(qUser)
+          .where(builder)
+          .fetchOne());
+    }
+
+    @Override
+    public Optional<User> findOneByApiKey(String apiKey) {
+        return findOneByApiKey(apiKey, Boolean.TRUE);
+    }
+    @Override
+    public Optional<User> findOneByApiKey(String apiKey, Boolean activated) {
+        QUser qUser = QUser.user;
+        BooleanBuilder builder = new BooleanBuilder();
+        builder.and(qUser.apiKey.eq(apiKey));
+        if (activated != null) {
+            builder.and(qUser.activated.eq(activated));
+        }
+        return Optional.ofNullable(queryFactory.selectFrom(qUser)
+          .where(builder)
+          .fetchOne());
+    }
 }

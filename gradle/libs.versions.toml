@@ -5,6 +5,7 @@ hazelcast-spring = "5.5.0"
 hazelcast-hibernate53 = "5.2.0"
 jacoco = "0.8.13"
 checkstyle = "10.23.1"
+querydsl = "5.1.0"
 #lombok = "1.18.34"
 # jhipster-needle-gradle-dependency-catalog-version - JHipster will add additional versions for convention plugins heref
 

@@ -10,9 +10,9 @@
     -->
     <changeSet id="20250916025111-2" author="jhipster">
 
-        <addForeignKeyConstraint baseColumnNames="node_id"
+        <addForeignKeyConstraint baseColumnNames="agent_id"
                                  baseTableName="agent_container"
-                                 constraintName="fk_agent_container__node_id"
+                                 constraintName="fk_agent_container__agent_id"
                                  referencedColumnNames="id"
                                  referencedTableName="agent"
                                  />
