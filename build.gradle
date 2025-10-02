@@ -1,10 +1,3 @@
-//buildscript {
-//    dependencies {
-//        classpath "gradle.plugin.com.ewerk.gradle.plugins:querydsl-plugin:1.0.10"
-//    }
-//}
-
-
 plugins {
     id "java"
     id "maven-publish"
@@ -21,7 +14,6 @@ plugins {
     id "org.liquibase.gradle"
     id "jhipster.pulsar-conventions"
     id "jhipster.node-gradle-conventions"
-//    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
     // jhipster-needle-gradle-plugins - JHipster will add additional gradle plugins here
 }
 
@@ -218,74 +210,3 @@ task cleanResources(type: Delete) {
 compileJava.dependsOn processResources
 processResources.dependsOn bootBuildInfo
 
-
-//def querydslDir = "$buildDir/generated/querydsl"
-
-//querydsl {
-//    jpa = true
-//    querydslSourcesDir = querydslDir
-//}
-//
-//sourceSets {
-//    main {
-//        java {
-//            srcDirs += ["$buildDir/generated/querydsl"]
-//        }
-//    }
-//}
-//
-//compileQuerydsl{
-//    options.annotationProcessorPath = configurations.querydsl
-//}
-//configurations {
-//    compileOnly {
-//        extendsFrom annotationProcessor
-//    }
-//    querydsl.extendsFrom compileClasspath
-//}
-
-
-//
-//configurations {
-//    annotationProcessor.exclude group: "org.hibernate.orm", module: "hibernate-jpamodelgen"
-//    querydsl.extendsFrom compileClasspath
-//    compileOnly {
-//        extendsFrom annotationProcessor
-//    }
-//}
-//
-//
-//
-//tasks.named("compileJava") {
-//    dependsOn "compileQuerydsl"
-//}
-//
-//tasks.named("compileQuerydsl") {
-//    doFirst {
-//        delete file("$buildDir/generated/querydsl") // Ensure stale files are removed
-//    }
-//    options.annotationProcessorPath = configurations.annotationProcessor
-//    outputs.dir("$buildDir/generated/querydsl") // Path for generated files
-//
-//}
-
-//tasks.named("compileJava") {
-//    dependsOn("compileQuerydsl")
-//}
-
-//tasks.named("openApiGenerate") {
-//    dependsOn("compileJava")
-//}
-
-//tasks.named("openApiGenerate") {
-//    dependsOn("compileQuerydsl")
-//}
-//
-//
-//tasks.named("openApiGenerate") {
-//    inputs.dir("$buildDir/openapi") // Path of openApiGenerate output directory
-//}
-//
-//tasks.named("compileQuerydsl") {
-//    outputs.dir("$buildDir/openapi")
-//}
