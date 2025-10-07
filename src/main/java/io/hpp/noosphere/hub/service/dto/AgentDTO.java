@@ -4,7 +4,6 @@ import jakarta.persistence.Lob;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.Objects;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,6 +12,7 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
 
 /**
  * A DTO for the {@link io.hpp.noosphere.hub.domain.Agent} entity.
@@ -37,8 +37,7 @@ public class AgentDTO implements Serializable {
     private String apiKey;
 
     @NotNull
-    @Size(max = 20)
-    private String statusCode;
+    private StatusCode statusCode;
 
     @Lob
     private String description;

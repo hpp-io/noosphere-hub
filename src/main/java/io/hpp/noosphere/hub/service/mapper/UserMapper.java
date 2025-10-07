@@ -64,7 +64,11 @@ public class UserMapper {
       user.setLogin(userDTO.getLogin());
       user.setImageUrl(userDTO.getImageUrl());
       user.setApiKey(userDTO.getApiKey());
-      user.setActivated(userDTO.getActivated());
+      if (Boolean.TRUE.equals(userDTO.getActivated())) {
+        user.setActivated(true);
+      } else {
+        user.setActivated(false);
+      }
       user.setLangKey(userDTO.getLangKey());
       Set<Authority> authorities = this.authoritiesFromStrings(userDTO.getAuthorities());
       user.setAuthorities(authorities);

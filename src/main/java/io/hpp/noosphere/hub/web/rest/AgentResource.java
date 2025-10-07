@@ -61,7 +61,7 @@ public class AgentResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
-    public ResponseEntity<AgentDTO> createAgent(@Valid @RequestBody AgentDTO agentDTO) throws URISyntaxException {
+    public ResponseEntity<AgentDTO> createAgent(@RequestBody AgentDTO agentDTO) throws URISyntaxException {
         LOG.debug("REST request to save Agent : {}", agentDTO);
         if (agentDTO.getId() != null) {
             throw new BadRequestAlertException("A new agent cannot already have an ID", ENTITY_NAME, "idexists");

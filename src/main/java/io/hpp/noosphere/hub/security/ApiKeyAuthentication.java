@@ -9,10 +9,12 @@ public class ApiKeyAuthentication extends AbstractAuthenticationToken {
 
   @Getter
   private final String apiKey;
-
-  public ApiKeyAuthentication(String apiKey, Collection<? extends GrantedAuthority> authorities) {
+  @Getter
+  private final String userId;
+  public ApiKeyAuthentication(String apiKey, String userId, Collection<? extends GrantedAuthority> authorities) {
     super(authorities);
     this.apiKey = apiKey;
+    this.userId = userId;
     setAuthenticated(true);
   }
 
@@ -24,6 +26,11 @@ public class ApiKeyAuthentication extends AbstractAuthenticationToken {
   @Override
   public Object getPrincipal() {
     return apiKey;
+  }
+
+  @Override
+  public String getName() {
+    return userId;
   }
 
 }

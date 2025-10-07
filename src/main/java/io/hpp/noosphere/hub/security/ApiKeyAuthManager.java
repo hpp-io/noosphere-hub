@@ -41,7 +41,7 @@ public class ApiKeyAuthManager implements AuthenticationManager {
       for (String authority: authorities){
         authorityList.add(new SimpleGrantedAuthority(authority));
       }
-     authentication = new ApiKeyAuthentication(apiKey, authorityList);
+     authentication = new ApiKeyAuthentication(apiKey, userDTO.getId(), authorityList);
 //      authentication.getAuthorities().addAll(authorityList);
     } catch (Exception e) {
       log.error("failed to find user by api key " + apiKey, e);

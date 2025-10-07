@@ -1,6 +1,7 @@
 package io.hpp.noosphere.hub.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
@@ -37,9 +38,9 @@ public class AgentContainer implements Serializable {
     private UUID id;
 
     @NotNull
-    @Size(max = 20)
     @Column(name = "status_code", length = 20, nullable = false)
-    private String statusCode;
+    @Enumerated(EnumType.STRING)
+    private StatusCode statusCode;
 
     @NotNull
     @Column(name = "created_at", nullable = false)

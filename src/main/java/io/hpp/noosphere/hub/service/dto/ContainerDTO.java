@@ -1,5 +1,6 @@
 package io.hpp.noosphere.hub.service.dto;
 
+import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
 import jakarta.persistence.Lob;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
@@ -37,8 +38,7 @@ public class ContainerDTO implements Serializable {
     private BigDecimal price;
 
     @NotNull
-    @Size(max = 20)
-    private String statusCode;
+    private StatusCode statusCode;
 
     @Lob
     private String description;

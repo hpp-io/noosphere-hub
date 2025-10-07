@@ -3,6 +3,7 @@ package io.hpp.noosphere.hub.repository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import io.hpp.noosphere.hub.domain.Agent;
 import io.hpp.noosphere.hub.domain.QAgent;
+import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
 import jakarta.persistence.EntityManager;
 import java.util.List;
 import java.util.UUID;
@@ -18,7 +19,8 @@ public interface AgentRepository extends JpaRepository<Agent, UUID>, AgentReposi
 }
 
 interface AgentRepositoryCustom {
-  List<Agent> findByName(String name);
+  List<Agent> findByName(StatusCode statusCode, String name);
+  List<Agent> findActiveByName(String name);
   List<Agent> findByCreatedByUserId(String userId);
 }
 
@@ -36,11 +38,17 @@ class AgentRepositoryCustomImpl implements AgentRepositoryCustom {
   }
 
   @Override
-  public List<Agent> findByName(String name) {
+  public List<Agent> findByName(StatusCode statusCode, String name) {
     QAgent qAgent = QAgent.agent;
     return jpaQueryFactory.selectFrom(qAgent)
-      .where(qAgent.name.eq(name))
+      .where(qAgent.name.eq(name)
+      .and(qAgent.statusCode.eq(statusCode)))
       .fetch();
+  }
+
+  @Override
+  public List<Agent> findActiveByName(String name) {
+    return this.findByName(StatusCode.ACTIVE, name);
   }
 
   @Override

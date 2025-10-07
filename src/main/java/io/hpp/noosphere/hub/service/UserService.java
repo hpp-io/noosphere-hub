@@ -304,6 +304,8 @@ public class UserService {
       userDTO.setId(keycloakUser.getId());
       userDTO.setLogin(keycloakUser.getUsername());
       userDTO.setLangKey(getAttributeValue(keycloakUser, ATTRIBUTE_LANG_KEY));
+      userDTO.setFirstName(keycloakUser.getFirstName());
+      userDTO.setLastName(keycloakUser.getLastName());
       userDTO.setName(CommonUtils.buildFullName(userDTO.getLangKey(), keycloakUser.getFirstName(), keycloakUser.getLastName()));
       userDTO.setEmail(keycloakUser.getEmail());
       userDTO.setImageUrl(getAttributeValue(keycloakUser, ATTRIBUTE_IMAGE_URL));

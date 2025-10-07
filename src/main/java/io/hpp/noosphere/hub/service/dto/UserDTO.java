@@ -2,6 +2,8 @@ package io.hpp.noosphere.hub.service.dto;
 
 import io.hpp.noosphere.hub.domain.Authority;
 import io.hpp.noosphere.hub.domain.User;
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -25,6 +27,8 @@ public class UserDTO implements Serializable {
     private String id;
 
     private String name;
+    private String firstName;
+    private String lastName;
 
     private String login;
     private String email;
@@ -39,6 +43,8 @@ public class UserDTO implements Serializable {
         this.id = user.getId();
         this.login = user.getLogin();
         this.name = user.getName();
+        this.firstName = user.getFirstName();
+        this.lastName = user.getLastName();
         this.email = user.getEmail();
         this.imageUrl = user.getImageUrl();
         this.apiKey = user.getApiKey();

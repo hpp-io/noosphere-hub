@@ -1,5 +1,6 @@
 package io.hpp.noosphere.hub.service.dto;
 
+import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.time.Instant;
@@ -27,8 +28,7 @@ public class AgentContainerDTO implements Serializable {
     private UUID id;
 
     @NotNull
-    @Size(max = 20)
-    private String statusCode;
+    private StatusCode statusCode;
 
     @NotNull
     private Instant createdAt;
