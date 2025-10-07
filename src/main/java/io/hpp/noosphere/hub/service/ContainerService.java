@@ -1,9 +1,12 @@
 package io.hpp.noosphere.hub.service;
 
 import io.hpp.noosphere.hub.domain.Container;
+import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
 import io.hpp.noosphere.hub.repository.ContainerRepository;
 import io.hpp.noosphere.hub.service.dto.ContainerDTO;
+import io.hpp.noosphere.hub.service.dto.UserDTO;
 import io.hpp.noosphere.hub.service.mapper.ContainerMapper;
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 import org.slf4j.Logger;
@@ -37,8 +40,18 @@ public class ContainerService {
      * @param containerDTO the entity to save.
      * @return the persisted entity.
      */
-    public ContainerDTO save(ContainerDTO containerDTO) {
+    public ContainerDTO save(String userId, ContainerDTO containerDTO, Instant timestamp) {
         LOG.debug("Request to save Container : {}", containerDTO);
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(userId);
+        if (containerDTO.getId() == null) {
+            containerDTO.setCreatedByUser(userDTO);
+            containerDTO.setCreatedAt(timestamp);
+            containerDTO.setStatusCode(StatusCode.ACTIVE);
+        } else {
+            containerDTO.setUpdatedByUser(userDTO);
+            containerDTO.setUpdatedAt(timestamp);
+        }
         Container container = containerMapper.toEntity(containerDTO);
         container = containerRepository.save(container);
         return containerMapper.toDto(container);
@@ -78,15 +91,15 @@ public class ContainerService {
     }
 
     /**
-     * Get all the containers.
+     * Search containers.
      *
      * @param pageable the pagination information.
      * @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public Page<ContainerDTO> findAll(Pageable pageable) {
-        LOG.debug("Request to get all Containers");
-        return containerRepository.findAll(pageable).map(containerMapper::toDto);
+    public Page<ContainerDTO> search(String name, StatusCode statusCode, String createdByUserId, Pageable pageable) {
+        LOG.debug("Request to search Containers");
+        return containerRepository.search(name, statusCode, createdByUserId, pageable).map(containerMapper::toDto);
     }
 
     /**

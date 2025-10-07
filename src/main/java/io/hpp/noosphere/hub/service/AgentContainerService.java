@@ -1,9 +1,11 @@
 package io.hpp.noosphere.hub.service;
 
 import io.hpp.noosphere.hub.domain.AgentContainer;
+import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
 import io.hpp.noosphere.hub.repository.AgentContainerRepository;
 import io.hpp.noosphere.hub.service.dto.AgentContainerDTO;
 import io.hpp.noosphere.hub.service.mapper.AgentContainerMapper;
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 import org.slf4j.Logger;
@@ -37,8 +39,14 @@ public class AgentContainerService {
      * @param agentContainerDTO the entity to save.
      * @return the persisted entity.
      */
-    public AgentContainerDTO save(AgentContainerDTO agentContainerDTO) {
+    public AgentContainerDTO save(AgentContainerDTO agentContainerDTO, Instant timestamp) {
         LOG.debug("Request to save AgentContainer : {}", agentContainerDTO);
+        if (agentContainerDTO.getId() == null) {
+            agentContainerDTO.setCreatedAt(timestamp);
+            agentContainerDTO.setStatusCode(StatusCode.ACTIVE);
+        } else {
+            agentContainerDTO.setUpdatedAt(timestamp);
+        }
         AgentContainer agentContainer = agentContainerMapper.toEntity(agentContainerDTO);
         agentContainer = agentContainerRepository.save(agentContainer);
         return agentContainerMapper.toDto(agentContainer);
@@ -84,9 +92,9 @@ public class AgentContainerService {
      * @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public Page<AgentContainerDTO> findAll(Pageable pageable) {
-        LOG.debug("Request to get all AgentContainers");
-        return agentContainerRepository.findAll(pageable).map(agentContainerMapper::toDto);
+    public Page<AgentContainerDTO> search(String agentName, String containerName, StatusCode statusCode, Pageable pageable) {
+        LOG.debug("Request to search AgentContainers");
+        return agentContainerRepository.search(agentName, containerName, statusCode, pageable).map(agentContainerMapper::toDto);
     }
 
     /**

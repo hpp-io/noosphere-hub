@@ -4,10 +4,13 @@ import io.hpp.noosphere.hub.repository.AgentStatusRepository;
 import io.hpp.noosphere.hub.service.AgentStatusService;
 import io.hpp.noosphere.hub.service.dto.AgentStatusDTO;
 import io.hpp.noosphere.hub.web.rest.errors.BadRequestAlertException;
+import io.hpp.noosphere.hub.web.rest.vm.SearchAgentStatusVm;
+import io.hpp.noosphere.hub.web.rest.vm.SearchAgentVm;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -19,7 +22,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
@@ -35,13 +46,11 @@ public class AgentStatusResource {
     private static final Logger LOG = LoggerFactory.getLogger(AgentStatusResource.class);
 
     private static final String ENTITY_NAME = "nooSphereHubAgentStatus";
+    private final AgentStatusService agentStatusService;
+    private final AgentStatusRepository agentStatusRepository;
 
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
-
-    private final AgentStatusService agentStatusService;
-
-    private final AgentStatusRepository agentStatusRepository;
 
     public AgentStatusResource(AgentStatusService agentStatusService, AgentStatusRepository agentStatusRepository) {
         this.agentStatusService = agentStatusService;
@@ -52,7 +61,8 @@ public class AgentStatusResource {
      * {@code POST  /agent-statuses} : Create a new agentStatus.
      *
      * @param agentStatusDTO the agentStatusDTO to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new agentStatusDTO, or with status {@code 400 (Bad Request)} if the agentStatus has already an ID.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new agentStatusDTO, or with status {@code 400 (Bad Request)} if the
+     * agentStatus has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
@@ -61,7 +71,8 @@ public class AgentStatusResource {
         if (agentStatusDTO.getId() != null) {
             throw new BadRequestAlertException("A new agentStatus cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        agentStatusDTO = agentStatusService.save(agentStatusDTO);
+        Instant now = Instant.now();
+        agentStatusDTO = agentStatusService.save(agentStatusDTO, now);
         return ResponseEntity.created(new URI("/api/agent-statuses/" + agentStatusDTO.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, agentStatusDTO.getId().toString()))
             .body(agentStatusDTO);
@@ -70,11 +81,10 @@ public class AgentStatusResource {
     /**
      * {@code PUT  /agent-statuses/:id} : Updates an existing agentStatus.
      *
-     * @param id the id of the agentStatusDTO to save.
+     * @param id             the id of the agentStatusDTO to save.
      * @param agentStatusDTO the agentStatusDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated agentStatusDTO,
-     * or with status {@code 400 (Bad Request)} if the agentStatusDTO is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the agentStatusDTO couldn't be updated.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated agentStatusDTO, or with status {@code 400 (Bad Request)} if the
+     * agentStatusDTO is not valid, or with status {@code 500 (Internal Server Error)} if the agentStatusDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
@@ -103,12 +113,11 @@ public class AgentStatusResource {
     /**
      * {@code PATCH  /agent-statuses/:id} : Partial updates given fields of an existing agentStatus, field will ignore if it is null
      *
-     * @param id the id of the agentStatusDTO to save.
+     * @param id             the id of the agentStatusDTO to save.
      * @param agentStatusDTO the agentStatusDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated agentStatusDTO,
-     * or with status {@code 400 (Bad Request)} if the agentStatusDTO is not valid,
-     * or with status {@code 404 (Not Found)} if the agentStatusDTO is not found,
-     * or with status {@code 500 (Internal Server Error)} if the agentStatusDTO couldn't be updated.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated agentStatusDTO, or with status {@code 400 (Bad Request)} if the
+     * agentStatusDTO is not valid, or with status {@code 404 (Not Found)} if the agentStatusDTO is not found, or with status {@code 500 (Internal Server Error)}
+     * if the agentStatusDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
@@ -137,15 +146,19 @@ public class AgentStatusResource {
     }
 
     /**
-     * {@code GET  /agent-statuses} : get all the agentStatuses.
+     * {@code POST  /agent-statuses/search} : search agentStatuses.
      *
+     * @param searchVm the search criteria of the request.
      * @param pageable the pagination information.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of agentStatuses in body.
      */
-    @GetMapping("")
-    public ResponseEntity<List<AgentStatusDTO>> getAllAgentStatuses(@org.springdoc.core.annotations.ParameterObject Pageable pageable) {
-        LOG.debug("REST request to get a page of AgentStatuses");
-        Page<AgentStatusDTO> page = agentStatusService.findAll(pageable);
+    @PostMapping("/search")
+    public ResponseEntity<List<AgentStatusDTO>> search(
+        @RequestBody SearchAgentStatusVm searchVm,
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable
+    ) {
+        LOG.debug("REST request to search AgentStatuses");
+        Page<AgentStatusDTO> page = agentStatusService.search(searchVm.getAgentName(), searchVm.getAgentStatusCode(), pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

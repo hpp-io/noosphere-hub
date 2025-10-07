@@ -4,8 +4,8 @@ import io.hpp.noosphere.hub.repository.AgentRepository;
 import io.hpp.noosphere.hub.service.AgentService;
 import io.hpp.noosphere.hub.service.dto.AgentDTO;
 import io.hpp.noosphere.hub.web.rest.errors.BadRequestAlertException;
+import io.hpp.noosphere.hub.web.rest.vm.SearchAgentVm;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Instant;
@@ -19,9 +19,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
@@ -37,17 +43,14 @@ public class AgentResource {
     private static final Logger LOG = LoggerFactory.getLogger(AgentResource.class);
 
     private static final String ENTITY_NAME = "nooSphereHubAgent";
+    private final IAuthenticationFacade authenticationFacade;
+    private final AgentService agentService;
+    private final AgentRepository agentRepository;
 
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
-    private final IAuthenticationFacade authenticationFacade;
-    private final AgentService agentService;
-
-    private final AgentRepository agentRepository;
-
-    public AgentResource(AgentService agentService, AgentRepository agentRepository,
-      IAuthenticationFacade authenticationFacade) {
+    public AgentResource(AgentService agentService, AgentRepository agentRepository, IAuthenticationFacade authenticationFacade) {
         this.authenticationFacade = authenticationFacade;
         this.agentService = agentService;
         this.agentRepository = agentRepository;
@@ -57,7 +60,8 @@ public class AgentResource {
      * {@code POST  /agents} : Create a new agent.
      *
      * @param agentDTO the agentDTO to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new agentDTO, or with status {@code 400 (Bad Request)} if the agent has already an ID.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new agentDTO, or with status {@code 400 (Bad Request)} if the agent
+     * has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
@@ -76,11 +80,10 @@ public class AgentResource {
     /**
      * {@code PUT  /agents/:id} : Updates an existing agent.
      *
-     * @param id the id of the agentDTO to save.
+     * @param id       the id of the agentDTO to save.
      * @param agentDTO the agentDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated agentDTO,
-     * or with status {@code 400 (Bad Request)} if the agentDTO is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the agentDTO couldn't be updated.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated agentDTO, or with status {@code 400 (Bad Request)} if the
+     * agentDTO is not valid, or with status {@code 500 (Internal Server Error)} if the agentDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
@@ -106,25 +109,20 @@ public class AgentResource {
             .body(agentDTO);
     }
 
-
     /**
-     * {@code GET  /agents} : get all the agents.
+     * {@code POST  /agents/search} : search agents.
      *
-     * @param pageable the pagination information.
-     * @param filter the filter of the request.
+     * @param searchVm the search criteria of the request.
+     * @param pageable      the pagination information.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of agents in body.
      */
-    @GetMapping("")
-    public ResponseEntity<List<AgentDTO>> getAllAgents(
-        @org.springdoc.core.annotations.ParameterObject Pageable pageable,
-        @RequestParam(name = "filter", required = false) String filter
+    @PostMapping("/search")
+    public ResponseEntity<List<AgentDTO>> search(
+        @RequestBody SearchAgentVm searchVm,
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable
     ) {
-        if ("agentstatus-is-null".equals(filter)) {
-            LOG.debug("REST request to get all Agents where agentStatus is null");
-            return new ResponseEntity<>(agentService.findAllWhereAgentStatusIsNull(), HttpStatus.OK);
-        }
-        LOG.debug("REST request to get a page of Agents");
-        Page<AgentDTO> page = agentService.findAll(pageable);
+        LOG.debug("REST request to search Agents");
+        Page<AgentDTO> page = agentService.search(searchVm.getName(), searchVm.getStatusCode(), searchVm.getCreatedByUserId(), pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
