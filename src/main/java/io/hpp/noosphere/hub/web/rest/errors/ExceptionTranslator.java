@@ -2,6 +2,7 @@ package io.hpp.noosphere.hub.web.rest.errors;
 
 import static org.springframework.core.annotation.AnnotatedElementUtils.findMergedAnnotation;
 
+import io.hpp.noosphere.hub.exception.ErrorConstants;
 import jakarta.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.Arrays;

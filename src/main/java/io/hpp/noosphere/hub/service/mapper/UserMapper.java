@@ -2,7 +2,6 @@ package io.hpp.noosphere.hub.service.mapper;
 
 import io.hpp.noosphere.hub.domain.Authority;
 import io.hpp.noosphere.hub.domain.User;
-import io.hpp.noosphere.hub.service.dto.AdminUserDTO;
 import io.hpp.noosphere.hub.service.dto.UserDTO;
 import java.util.Collections;
 import java.util.HashSet;
@@ -35,6 +34,8 @@ public class UserMapper {
       userDto.setId(user.getId());
       userDto.setName(user.getName());
       userDto.setEmail(user.getEmail());
+      userDto.setImageUrl(user.getImageUrl());
+      userDto.setApiKey(user.getApiKey());
       userDto.setLangKey(user.getLangKey());
       userDto.setActivated(user.isActivated());
       Set<String> authorities = this.getAuthorities(user);
@@ -43,15 +44,7 @@ public class UserMapper {
     }
   }
 
-  public List<AdminUserDTO> usersToAdminUserDTOs(List<User> users) {
-    return users.stream().filter(Objects::nonNull).map(this::userToAdminUserDTO).toList();
-  }
-
-  public AdminUserDTO userToAdminUserDTO(User user) {
-    return new AdminUserDTO(user);
-  }
-
-  public List<User> userDTOsToUsers(List<AdminUserDTO> userDTOs) {
+  public List<User> userDTOsToUsers(List<UserDTO> userDTOs) {
     return userDTOs.stream().filter(Objects::nonNull).map(this::userDTOToUser).toList();
   }
 
@@ -60,22 +53,18 @@ public class UserMapper {
     return user.getAuthorities().stream().map(Authority::getName).collect(Collectors.toSet());
   }
 
-  public User userDTOToUser(AdminUserDTO userDTO) {
+  public User userDTOToUser(UserDTO userDTO) {
     if (userDTO == null) {
       return null;
     } else {
       User user = new User();
       user.setId(userDTO.getId());
-      user.setLogin(userDTO.getLogin());
-      user.setFirstName(userDTO.getFirstName());
-      user.setLastName(userDTO.getLastName());
+      user.setName(userDTO.getName());
       user.setEmail(userDTO.getEmail());
+      user.setLogin(userDTO.getLogin());
       user.setImageUrl(userDTO.getImageUrl());
-      user.setCreatedBy(userDTO.getCreatedBy());
-      user.setCreatedDate(userDTO.getCreatedDate());
-      user.setLastModifiedBy(userDTO.getLastModifiedBy());
-      user.setLastModifiedDate(userDTO.getLastModifiedDate());
-      user.setActivated(userDTO.isActivated());
+      user.setApiKey(userDTO.getApiKey());
+      user.setActivated(userDTO.getActivated());
       user.setLangKey(userDTO.getLangKey());
       Set<Authority> authorities = this.authoritiesFromStrings(userDTO.getAuthorities());
       user.setAuthorities(authorities);

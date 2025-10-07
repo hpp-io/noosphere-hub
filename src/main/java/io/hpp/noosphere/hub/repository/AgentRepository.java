@@ -24,16 +24,21 @@ interface AgentRepositoryCustom {
 
 @Repository
 class AgentRepositoryCustomImpl implements AgentRepositoryCustom {
-  private final JPAQueryFactory queryFactory;
+  private final JPAQueryFactory jpaQueryFactory;
+  private final EntityManager entityManager;
 
-  public AgentRepositoryCustomImpl(EntityManager entityManager) {
-    this.queryFactory = new JPAQueryFactory(entityManager);
+  public AgentRepositoryCustomImpl(
+    JPAQueryFactory jpaQueryFactory,
+    EntityManager entityManager
+  ){
+    this.jpaQueryFactory = jpaQueryFactory;
+    this.entityManager = entityManager;
   }
 
   @Override
   public List<Agent> findByName(String name) {
     QAgent qAgent = QAgent.agent;
-    return queryFactory.selectFrom(qAgent)
+    return jpaQueryFactory.selectFrom(qAgent)
       .where(qAgent.name.eq(name))
       .fetch();
   }
@@ -41,7 +46,7 @@ class AgentRepositoryCustomImpl implements AgentRepositoryCustom {
   @Override
   public List<Agent> findByCreatedByUserId(String userId) {
     QAgent qAgent = QAgent.agent;
-    return queryFactory.selectFrom(qAgent)
+    return jpaQueryFactory.selectFrom(qAgent)
       .where(qAgent.createdByUser.id.eq(userId))
       .fetch();
   }

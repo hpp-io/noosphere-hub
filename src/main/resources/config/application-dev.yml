@@ -116,4 +116,9 @@ jhipster:
 # https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
-# application:
+application:
+  keycloak:
+    auth-url:  http://127.0.0.1:7080
+    realm-id: noosphere
+    admin-client-id: admin-cli
+    admin-client-secret: edd1a7c3-9c06-44b9-927d-c71c9fc1427c

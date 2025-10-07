@@ -1,5 +1,6 @@
 package io.hpp.noosphere.hub.web.rest.errors;
 
+import io.hpp.noosphere.hub.exception.ErrorConstants;
 import java.net.URI;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.ErrorResponseException;

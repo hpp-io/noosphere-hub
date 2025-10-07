@@ -6,6 +6,7 @@ import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.P
 import io.hpp.noosphere.hub.security.*;
 import io.hpp.noosphere.hub.security.SecurityUtils;
 import io.hpp.noosphere.hub.security.oauth2.AudienceValidator;
+import io.hpp.noosphere.hub.service.UserService;
 import io.hpp.noosphere.hub.web.filter.SpaWebFilter;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,17 +45,23 @@ public class SecurityConfiguration {
 
     private final CorsFilter corsFilter;
     private final ApiKeyAuthFilter apiKeyAuthFilter;
+    private final UserService userService;
 
-    public SecurityConfiguration( CorsFilter corsFilter,
-      JHipsterProperties jHipsterProperties,
-      ApiKeyAuthFilter apiKeyAuthFilter) {
+    public SecurityConfiguration(
+      ApiKeyAuthFilter apiKeyAuthFilter,
+      UserService userService,
+      CorsFilter corsFilter,
+      JHipsterProperties jHipsterProperties
+      ) {
         this.corsFilter = corsFilter;
         this.jHipsterProperties = jHipsterProperties;
         this.apiKeyAuthFilter = apiKeyAuthFilter;
+        this.userService = userService;
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, MvcRequestMatcher.Builder mvc) throws Exception {
+        apiKeyAuthFilter.setAuthenticationManager(new ApiKeyAuthManager(userService));
         http
             .csrf(AbstractHttpConfigurer::disable)
           .addFilterBefore(corsFilter, CsrfFilter.class)

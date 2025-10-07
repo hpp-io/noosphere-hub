@@ -1,5 +1,6 @@
 package io.hpp.noosphere.hub.config;
 
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -8,30 +9,34 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * Properties are configured in the {@code application.yml} file.
  * See {@link tech.jhipster.config.JHipsterProperties} for a good example.
  */
+@Data
 @ConfigurationProperties(prefix = "application", ignoreUnknownFields = false)
 public class ApplicationProperties {
 
     private final Liquibase liquibase = new Liquibase();
+    private final Keycloak keycloak = new Keycloak();
 
     // jhipster-needle-application-properties-property
 
-    public Liquibase getLiquibase() {
-        return liquibase;
-    }
 
     // jhipster-needle-application-properties-property-getter
 
+    @Data
     public static class Liquibase {
 
         private Boolean asyncStart = true;
 
-        public Boolean getAsyncStart() {
-            return asyncStart;
-        }
-
-        public void setAsyncStart(Boolean asyncStart) {
-            this.asyncStart = asyncStart;
-        }
     }
     // jhipster-needle-application-properties-property-class
+
+    @Data
+    public static class Keycloak {
+
+        private String authUrl;
+        private String realmId;
+        private String adminClientId;
+        private String adminClientSecret;
+
+    }
+
 }

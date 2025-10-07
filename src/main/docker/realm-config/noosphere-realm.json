@@ -1,5 +1,5 @@
 {
-  "id": "noosphere",
+  "id": "2cecee01-0b4a-4d8f-a422-7d939d47e982",
   "realm": "noosphere",
   "displayName": "Noosphere",
   "displayNameHtml": "<div class=\"kc-logo-text\"><span>Noosphere</span></div>",
@@ -53,7 +53,7 @@
         "description": "Noosphere administrator role",
         "composite": false,
         "clientRole": false,
-        "containerId": "noosphere",
+        "containerId": "2cecee01-0b4a-4d8f-a422-7d939d47e982",
         "attributes": {}
       },
       {
@@ -62,7 +62,7 @@
         "description": "${role_offline-access}",
         "composite": false,
         "clientRole": false,
-        "containerId": "noosphere",
+        "containerId": "2cecee01-0b4a-4d8f-a422-7d939d47e982",
         "attributes": {}
       },
       {
@@ -71,7 +71,7 @@
         "description": "Noosphere user role",
         "composite": false,
         "clientRole": false,
-        "containerId": "noosphere",
+        "containerId": "2cecee01-0b4a-4d8f-a422-7d939d47e982",
         "attributes": {}
       },
       {
@@ -86,7 +86,7 @@
           }
         },
         "clientRole": false,
-        "containerId": "noosphere",
+        "containerId": "2cecee01-0b4a-4d8f-a422-7d939d47e982",
         "attributes": {}
       },
       {
@@ -95,7 +95,7 @@
         "description": "${role_uma_authorization}",
         "composite": false,
         "clientRole": false,
-        "containerId": "noosphere",
+        "containerId": "2cecee01-0b4a-4d8f-a422-7d939d47e982",
         "attributes": {}
       }
     ],
@@ -435,7 +435,7 @@
     "description": "${role_default-roles}",
     "composite": true,
     "clientRole": false,
-    "containerId": "noosphere"
+    "containerId": "2cecee01-0b4a-4d8f-a422-7d939d47e982"
   },
   "requiredCredentials": ["password"],
   "defaultGroups": ["/Users"],

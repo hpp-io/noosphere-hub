@@ -198,7 +198,8 @@ dependencies {
     annotationProcessor "org.hibernate.orm:hibernate-jpamodelgen"
     annotationProcessor "org.glassfish.jaxb:jaxb-runtime"
     developmentOnly "org.springframework.boot:spring-boot-docker-compose"
-
+    implementation "org.keycloak:keycloak-admin-client:26.0.7"
+    implementation "org.zalando:problem-spring-web:0.29.1"
     // jhipster-needle-gradle-dependency - JHipster will add additional dependencies here
 }
 

@@ -20,10 +20,15 @@ interface ContainerRepositoryCustom {
 
 @Repository
 class ContainerRepositoryCustomImpl implements ContainerRepositoryCustom {
-    private final JPAQueryFactory queryFactory;
+    private final JPAQueryFactory jpaQueryFactory;
+    private final EntityManager entityManager;
 
-    public ContainerRepositoryCustomImpl(EntityManager entityManager) {
-        this.queryFactory = new JPAQueryFactory(entityManager);
+    public ContainerRepositoryCustomImpl(
+      JPAQueryFactory jpaQueryFactory,
+      EntityManager entityManager
+    ){
+        this.jpaQueryFactory = jpaQueryFactory;
+        this.entityManager = entityManager;
     }
 
     @Override

@@ -35,11 +35,16 @@ interface UserRepositoryCustom {
 }
 
 @Repository
-class UserRepositoryCustomImpl implements UserRepositoryCustom {
-    private final JPAQueryFactory queryFactory;
+class UserRepositoryCustomImpl  implements UserRepositoryCustom {
+    private final JPAQueryFactory jpaQueryFactory;
+    private final EntityManager entityManager;
 
-    public UserRepositoryCustomImpl(EntityManager entityManager) {
-        this.queryFactory = new JPAQueryFactory(entityManager);
+    public UserRepositoryCustomImpl(
+      JPAQueryFactory jpaQueryFactory,
+      EntityManager entityManager
+    ){
+        this.jpaQueryFactory = jpaQueryFactory;
+        this.entityManager = entityManager;
     }
 
     @Override
@@ -54,7 +59,7 @@ class UserRepositoryCustomImpl implements UserRepositoryCustom {
         if (activated != null) {
             builder.and(qUser.activated.eq(activated));
         }
-        return Optional.ofNullable(queryFactory.selectFrom(qUser)
+        return Optional.ofNullable(jpaQueryFactory.selectFrom(qUser)
           .where(builder)
           .fetchOne());
     }
@@ -71,7 +76,7 @@ class UserRepositoryCustomImpl implements UserRepositoryCustom {
         if (activated != null) {
             builder.and(qUser.activated.eq(activated));
         }
-        return Optional.ofNullable(queryFactory.selectFrom(qUser)
+        return Optional.ofNullable(jpaQueryFactory.selectFrom(qUser)
           .where(builder)
           .fetchOne());
     }

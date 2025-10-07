@@ -2,12 +2,16 @@ package io.hpp.noosphere.hub.service.uil;
 
 import static io.hpp.noosphere.hub.config.Constants.NULL_STRING;
 
+import io.hpp.noosphere.hub.config.Constants;
+import io.hpp.noosphere.hub.exception.ErrorConstants;
 import java.math.BigDecimal;
+import java.net.URI;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -116,9 +120,19 @@ public class CommonUtils {
   }
 
 
+
+  public static boolean containsOnlyAlphabetsRegex(String str) {
+    if (str == null || str.isEmpty()) {
+      return false;
+    }
+    // Matches one or more uppercase or lowercase English letters
+    return str.matches("[a-zA-Z]+");
+  }
   public static String buildFullName(String langKey, String firstName, String lastName){
     StringBuilder sb = new StringBuilder();
-    if (Locale.ENGLISH.getLanguage().equals(langKey)) {
+    if (CommonUtils.containsOnlyAlphabetsRegex(firstName) ||
+      CommonUtils.containsOnlyAlphabetsRegex(lastName) ||
+      Locale.ENGLISH.getLanguage().equals(langKey)) {
       if (CommonUtils.isValid(firstName)) {
         sb.append(firstName);
       }
@@ -128,7 +142,7 @@ public class CommonUtils {
         }
         sb.append(lastName);
       }
-    } else if (Locale.KOREAN.getLanguage().equals(langKey)) {
+    } else if (KOREAN_LAST_NAMES.contains(lastName) || Locale.KOREAN.getLanguage().equals(langKey)){
       if (CommonUtils.isValid(lastName)) {
         sb.append(lastName);
       }
@@ -262,6 +276,21 @@ public class CommonUtils {
     } else {
       return null;
     }
+  }
+
+  public static Map<String, Object> getAlertParameters(URI type, String errorKey, String propertyName, String value) {
+    Map<String, Object> parameters = new HashMap<>();
+    String newErrorKey = "";
+    if (ErrorConstants.CONSTRAINT_VIOLATION_TYPE.equals(type)) {
+      newErrorKey = "error.validation." + errorKey + "." + propertyName;
+    } else if (ErrorConstants.ENTITY_NOT_FOUND_TYPE.equals(type)) {
+      newErrorKey = "error.validation." + errorKey + "." + propertyName;
+    } else {
+      newErrorKey = "error." + errorKey + "." + propertyName;
+    }
+    parameters.put(Constants.PROPERTY_NAME_NEW_ERROR_KEY, newErrorKey);
+//    parameters.put(Constants.PROPERTY_NAME_VALUE, value);
+    return parameters;
   }
 
 }
