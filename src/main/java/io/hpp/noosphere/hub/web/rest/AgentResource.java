@@ -130,8 +130,7 @@ public class AgentResource {
    */
   @PostMapping("/search")
   @Operation(
-    summary = "Search Agent",
-    description = "Search Agent Method"
+    summary = "Search Agent"
   )
   @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true, description = "Search Criteria", content = @Content(schema = @Schema(implementation = SearchAgentVm.class), mediaType = "application/json"))
   @ApiResponses({

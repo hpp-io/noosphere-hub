@@ -1,9 +1,11 @@
 package io.hpp.noosphere.hub.web.rest;
 
+import io.hpp.noosphere.hub.security.ApiKeyAuthentication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -19,7 +21,13 @@ public class AuthenticationFacade implements IAuthenticationFacade {
   @Override
   public String getUserId() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    return authentication.getName();
+    if (authentication instanceof JwtAuthenticationToken authentication1) {
+      return authentication1.getTokenAttributes().get("sub") != null ? authentication1.getTokenAttributes().get("sub").toString() : null;
+    } else if (authentication instanceof ApiKeyAuthentication authentication1) {
+      return authentication1.getUserId();
+    } else {
+      return authentication.getName();
+    }
   }
 
 }

@@ -25,6 +25,8 @@ public final class Constants {
     public static final String KEYCLOAK_PROPERTY_NAME_VERIFIED = "verified";
     public static final String PROPERTY_NAME_USER = "user";
     public static final String PROPERTY_NAME_GROUP = "group";
+    public static final String PROPERTY_NAME_AGENT = "agent";
+    public static final String PROPERTY_NAME_PERMISSION_DENIED = "permissionDenied";
     public static final String PROPERTY_NAME_EMAIL = "email";
     public static final String PROPERTY_NAME_USER_ID = "userId";
     public static final String PROPERTY_NAME_NAME = "name";
