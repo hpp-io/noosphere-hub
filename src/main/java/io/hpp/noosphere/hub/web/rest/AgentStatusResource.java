@@ -1,5 +1,6 @@
 package io.hpp.noosphere.hub.web.rest;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import io.hpp.noosphere.hub.exception.AgentNotFoundException;
 import io.hpp.noosphere.hub.exception.PermissionDeniedException;
 import io.hpp.noosphere.hub.repository.AgentRepository;
@@ -7,6 +8,7 @@ import io.hpp.noosphere.hub.repository.AgentStatusRepository;
 import io.hpp.noosphere.hub.service.AgentStatusService;
 import io.hpp.noosphere.hub.service.dto.AgentDTO;
 import io.hpp.noosphere.hub.service.dto.AgentStatusDTO;
+import io.hpp.noosphere.hub.service.dto.JsonViewType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -62,6 +64,7 @@ public class AgentStatusResource {
     @ApiResponse(responseCode = "200", content = @Content(mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE, array = @ArraySchema(schema = @Schema(implementation = AgentDTO.class))), description = "Successful operation"),
     @ApiResponse(responseCode = "500", content = @Content(mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE), description = "Internal server error")
   })
+  @JsonView(JsonViewType.Shallow.class)
   @PutMapping("/{agentId}/keep-alive")
   public ResponseEntity<AgentStatusDTO> keepAlive(
     @Parameter(description = "Agent ID", required = true)

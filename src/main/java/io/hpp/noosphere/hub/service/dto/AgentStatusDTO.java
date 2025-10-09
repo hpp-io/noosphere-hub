@@ -1,5 +1,7 @@
 package io.hpp.noosphere.hub.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.time.Instant;
@@ -21,16 +23,19 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Schema
 public class AgentStatusDTO implements Serializable {
 
-    @NotNull
+    @JsonView(JsonViewType.Shallow.class)
     private UUID id;
 
-    @NotNull
+    @JsonView(JsonViewType.Full.class)
     private Instant createdAt;
 
+    @JsonView(JsonViewType.Full.class)
     private Instant lastKeepAliveAt;
 
+    @JsonView(JsonViewType.Shallow.class)
     private AgentDTO agent;
 
     @Override

@@ -1,5 +1,7 @@
 package io.hpp.noosphere.hub.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Lob;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
@@ -22,33 +24,42 @@ import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Schema
 public class AgentDTO implements Serializable {
 
-    @NotNull
+    @JsonView(JsonViewType.Shallow.class)
     private UUID id;
 
+    @JsonView(JsonViewType.Shallow.class)
     private String name;
 
     @NotNull
     @Size(max = 1024)
+    @JsonView(JsonViewType.Full.class)
     private String apiUrl;
 
     @NotNull
+    @JsonView(JsonViewType.Full.class)
     private String apiKey;
 
     @NotNull
+    @JsonView(JsonViewType.Full.class)
     private StatusCode statusCode;
 
     @Lob
+    @JsonView(JsonViewType.Full.class)
     private String description;
 
-    @NotNull
+    @JsonView(JsonViewType.Full.class)
     private Instant createdAt;
 
+    @JsonView(JsonViewType.Full.class)
     private Instant updatedAt;
 
+    @JsonView(JsonViewType.Full.class)
     private UserDTO createdByUser;
 
+    @JsonView(JsonViewType.Full.class)
     private UserDTO updatedByUser;
 
     @Override
