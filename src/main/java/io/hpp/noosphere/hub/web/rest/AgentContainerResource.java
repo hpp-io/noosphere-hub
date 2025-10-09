@@ -1,6 +1,7 @@
 package io.hpp.noosphere.hub.web.rest;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import io.hpp.noosphere.hub.config.OpenApiConfiguration;
 import io.hpp.noosphere.hub.exception.PermissionDeniedException;
 import io.hpp.noosphere.hub.repository.AgentContainerRepository;
 import io.hpp.noosphere.hub.service.AgentContainerService;
@@ -9,6 +10,8 @@ import io.hpp.noosphere.hub.service.dto.AgentContainerDTO;
 import io.hpp.noosphere.hub.service.dto.JsonViewType;
 import io.hpp.noosphere.hub.web.rest.vm.SearchAgentContainerVm;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.extensions.Extension;
+import io.swagger.v3.oas.annotations.extensions.ExtensionProperty;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -46,7 +49,11 @@ import tech.jhipster.web.util.ResponseUtil;
  */
 @RestController
 @RequestMapping("/api/agents")
-@Tag(name = "Register Container", description = "Register Container Controller")
+@Tag(
+    name = "Register Container",
+    description = "Register Container Controller",
+    extensions = { @Extension(properties = { @ExtensionProperty(name = OpenApiConfiguration.TAG_ORDER, value = "3") }) }
+)
 public class AgentContainerResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(AgentContainerResource.class);

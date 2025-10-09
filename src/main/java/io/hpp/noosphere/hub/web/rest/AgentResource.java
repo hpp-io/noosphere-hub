@@ -1,6 +1,7 @@
 package io.hpp.noosphere.hub.web.rest;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import io.hpp.noosphere.hub.config.OpenApiConfiguration;
 import io.hpp.noosphere.hub.exception.PermissionDeniedException;
 import io.hpp.noosphere.hub.repository.AgentRepository;
 import io.hpp.noosphere.hub.service.AgentService;
@@ -10,6 +11,8 @@ import io.hpp.noosphere.hub.service.dto.JsonViewType;
 import io.hpp.noosphere.hub.web.rest.errors.BadRequestAlertException;
 import io.hpp.noosphere.hub.web.rest.vm.SearchAgentVm;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.extensions.Extension;
+import io.swagger.v3.oas.annotations.extensions.ExtensionProperty;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -50,7 +53,11 @@ import tech.jhipster.web.util.ResponseUtil;
  */
 @RestController
 @RequestMapping("/api/agents")
-@Tag(name = "Agent", description = "Agent Controller")
+@Tag(
+    name = "Agent",
+    description = "Agent Controller",
+    extensions = { @Extension(properties = { @ExtensionProperty(name = OpenApiConfiguration.TAG_ORDER, value = "1") }) }
+)
 public class AgentResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(AgentResource.class);

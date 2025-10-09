@@ -1,6 +1,7 @@
 package io.hpp.noosphere.hub.web.rest;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import io.hpp.noosphere.hub.config.OpenApiConfiguration;
 import io.hpp.noosphere.hub.exception.PermissionDeniedException;
 import io.hpp.noosphere.hub.repository.ContainerRepository;
 import io.hpp.noosphere.hub.service.ContainerService;
@@ -12,6 +13,8 @@ import io.hpp.noosphere.hub.web.rest.errors.BadRequestAlertException;
 import io.hpp.noosphere.hub.web.rest.vm.SearchAgentVm;
 import io.hpp.noosphere.hub.web.rest.vm.SearchContainerVm;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.extensions.Extension;
+import io.swagger.v3.oas.annotations.extensions.ExtensionProperty;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -52,7 +55,11 @@ import tech.jhipster.web.util.ResponseUtil;
  */
 @RestController
 @RequestMapping("/api/containers")
-@Tag(name = "Container", description = "Container Controller")
+@Tag(
+    name = "Container",
+    description = "Container Controller",
+    extensions = { @Extension(properties = { @ExtensionProperty(name = OpenApiConfiguration.TAG_ORDER, value = "2") }) }
+)
 public class ContainerResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(ContainerResource.class);
