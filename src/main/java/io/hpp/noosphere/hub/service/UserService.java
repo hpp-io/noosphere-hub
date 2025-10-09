@@ -8,11 +8,9 @@ import io.hpp.noosphere.hub.config.ApplicationProperties;
 import io.hpp.noosphere.hub.config.Constants;
 import io.hpp.noosphere.hub.domain.Authority;
 import io.hpp.noosphere.hub.domain.User;
-import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
 import io.hpp.noosphere.hub.repository.AuthorityRepository;
 import io.hpp.noosphere.hub.repository.UserRepository;
 import io.hpp.noosphere.hub.security.SecurityUtils;
-import io.hpp.noosphere.hub.service.dto.AgentStatusDTO;
 import io.hpp.noosphere.hub.service.dto.UserDTO;
 import io.hpp.noosphere.hub.service.mapper.UserMapper;
 import io.hpp.noosphere.hub.service.uil.CommonUtils;
@@ -353,5 +351,11 @@ public class UserService {
     public Page<UserDTO> search(String name, Boolean activated, Pageable pageable) {
         LOG.debug("Request to search Users");
         return userRepository.search(name, activated, pageable).map(userMapper::userToUserDTO);
+    }
+
+    @Transactional(readOnly = true)
+    public User findById(String userId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        return optionalUser.orElse(null);
     }
 }

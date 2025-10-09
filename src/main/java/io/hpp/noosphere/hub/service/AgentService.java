@@ -1,18 +1,17 @@
 package io.hpp.noosphere.hub.service;
 
 import io.hpp.noosphere.hub.domain.Agent;
+import io.hpp.noosphere.hub.domain.User;
 import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
+import io.hpp.noosphere.hub.exception.PermissionDeniedException;
 import io.hpp.noosphere.hub.repository.AgentRepository;
+import io.hpp.noosphere.hub.repository.UserRepository;
 import io.hpp.noosphere.hub.service.dto.AgentDTO;
 import io.hpp.noosphere.hub.service.dto.UserDTO;
 import io.hpp.noosphere.hub.service.mapper.AgentMapper;
 import java.time.Instant;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -30,12 +29,23 @@ public class AgentService {
     private static final Logger LOG = LoggerFactory.getLogger(AgentService.class);
 
     private final AgentRepository agentRepository;
-
     private final AgentMapper agentMapper;
 
     public AgentService(AgentRepository agentRepository, AgentMapper agentMapper) {
         this.agentRepository = agentRepository;
         this.agentMapper = agentMapper;
+    }
+
+    public Agent validateOwner(UUID id, String userId) throws PermissionDeniedException {
+        Agent agent = null;
+        Optional<Agent> optionalAgent = agentRepository.findById(id);
+        if (optionalAgent.isPresent()) {
+            agent = optionalAgent.get();
+            if (agent.getCreatedByUser() == null || !userId.equals(agent.getCreatedByUser().getId())) {
+                throw new PermissionDeniedException(id.toString());
+            }
+        }
+        return agent;
     }
 
     /**
@@ -44,54 +54,32 @@ public class AgentService {
      * @param agentDTO the entity to save.
      * @return the persisted entity.
      */
-    public AgentDTO save(String userId, AgentDTO agentDTO, Instant timestamp) {
+    public AgentDTO create(String userId, AgentDTO agentDTO, Instant timestamp) throws PermissionDeniedException {
         LOG.debug("Request to save Agent : {}", agentDTO);
         UserDTO userDTO = new UserDTO();
         userDTO.setId(userId);
-        if (agentDTO.getId() == null) {
-            agentDTO.setCreatedByUser(userDTO);
-            agentDTO.setCreatedAt(timestamp);
-            agentDTO.setStatusCode(StatusCode.ACTIVE);
-        } else {
-            agentDTO.setUpdatedByUser(userDTO);
-            agentDTO.setUpdatedAt(timestamp);
-        }
+        agentDTO.setCreatedByUser(userDTO);
+        agentDTO.setCreatedAt(timestamp);
+        agentDTO.setStatusCode(StatusCode.ACTIVE);
         Agent agent = agentMapper.toEntity(agentDTO);
         agent = agentRepository.save(agent);
         return agentMapper.toDto(agent);
     }
 
-    /**
-     * Update a agent.
-     *
-     * @param agentDTO the entity to save.
-     * @return the persisted entity.
-     */
-    public AgentDTO update(AgentDTO agentDTO) {
-        LOG.debug("Request to update Agent : {}", agentDTO);
-        Agent agent = agentMapper.toEntity(agentDTO);
-        agent = agentRepository.save(agent);
-        return agentMapper.toDto(agent);
-    }
-
-    /**
-     * Partially update a agent.
-     *
-     * @param agentDTO the entity to update partially.
-     * @return the persisted entity.
-     */
-    public Optional<AgentDTO> partialUpdate(AgentDTO agentDTO) {
+    public AgentDTO partialUpdate(UserService userService, String userId, AgentDTO agentDTO, Instant timestamp)
+        throws PermissionDeniedException {
         LOG.debug("Request to partially update Agent : {}", agentDTO);
-
-        return agentRepository
-            .findById(agentDTO.getId())
-            .map(existingAgent -> {
-                agentMapper.partialUpdate(existingAgent, agentDTO);
-
-                return existingAgent;
-            })
-            .map(agentRepository::save)
-            .map(agentMapper::toDto);
+        Agent agent = this.validateOwner(agentDTO.getId(), userId);
+        if (agent != null) {
+            agentMapper.partialUpdate(agent, agentDTO);
+            agent.setUpdatedAt(timestamp);
+            User user = userService.findById(userId);
+            agent.setUpdatedByUser(user);
+            agent = agentRepository.save(agent);
+            return agentMapper.toDto(agent);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -115,6 +103,8 @@ public class AgentService {
     @Transactional(readOnly = true)
     public Optional<AgentDTO> findOne(UUID id) {
         LOG.debug("Request to get Agent : {}", id);
+        //    Agent agent = this.validateOwner(id, userId);
+        //    return Optional.ofNullable(agent != null ? agentMapper.toDto(agent) : null);
         return agentRepository.findById(id).map(agentMapper::toDto);
     }
 
@@ -123,8 +113,11 @@ public class AgentService {
      *
      * @param id the id of the entity.
      */
-    public void delete(UUID id) {
+    public void delete(String userId, UUID id) throws PermissionDeniedException {
         LOG.debug("Request to delete Agent : {}", id);
-        agentRepository.deleteById(id);
+        Agent agent = this.validateOwner(id, userId);
+        if (agent != null) {
+            agentRepository.delete(agent);
+        }
     }
 }
