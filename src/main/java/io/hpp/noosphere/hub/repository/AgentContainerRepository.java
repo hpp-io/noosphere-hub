@@ -3,11 +3,13 @@ package io.hpp.noosphere.hub.repository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import io.hpp.noosphere.hub.domain.Agent;
 import io.hpp.noosphere.hub.domain.AgentContainer;
 import io.hpp.noosphere.hub.domain.QAgentContainer;
 import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
 import io.hpp.noosphere.hub.service.uil.CommonUtils;
 import jakarta.persistence.EntityManager;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,11 +24,10 @@ import org.springframework.stereotype.Repository;
 public interface AgentContainerRepository extends JpaRepository<AgentContainer, UUID>, AgentContainerRepositoryCustom {}
 
 interface AgentContainerRepositoryCustom {
-    Page<AgentContainer> search(String agentName, String containerName, StatusCode statusCode, Pageable pageable);
+    Page<AgentContainer> search(UUID agentId, String containerName, StatusCode statusCode, Pageable pageable);
 
-    Page<AgentContainer> findActiveByAgentName(String agentName, Pageable pageable);
-
-    Page<AgentContainer> findActiveByContainerName(String containerName, Pageable pageable);
+    Page<AgentContainer> findActiveByContainerName(UUID agentId, String containerName, Pageable pageable);
+    Optional<AgentContainer> findByAgentIdAndContainerId(UUID agentId, UUID containerId);
 }
 
 @Repository
@@ -41,14 +42,14 @@ class AgentContainerRepositoryCustomImpl implements AgentContainerRepositoryCust
     }
 
     @Override
-    public Page<AgentContainer> search(String agentName, String containerName, StatusCode statusCode, Pageable pageable) {
+    public Page<AgentContainer> search(UUID agentId, String containerName, StatusCode statusCode, Pageable pageable) {
         QAgentContainer qAgentContainer = QAgentContainer.agentContainer;
         BooleanBuilder builder = new BooleanBuilder();
+        if (agentId != null) {
+            builder.and(qAgentContainer.agent.id.eq(agentId));
+        }
         if (statusCode != null) {
             builder.and(qAgentContainer.statusCode.eq(statusCode));
-        }
-        if (CommonUtils.isValid(agentName)) {
-            builder.and(qAgentContainer.agent.name.containsIgnoreCase(agentName));
         }
         if (CommonUtils.isValid(containerName)) {
             builder.and(qAgentContainer.container.name.containsIgnoreCase(containerName));
@@ -62,12 +63,17 @@ class AgentContainerRepositoryCustomImpl implements AgentContainerRepositoryCust
     }
 
     @Override
-    public Page<AgentContainer> findActiveByAgentName(String agentName, Pageable pageable) {
-        return this.search(agentName, null, StatusCode.ACTIVE, pageable);
+    public Page<AgentContainer> findActiveByContainerName(UUID agentId, String containerName, Pageable pageable) {
+        return this.search(agentId, containerName, StatusCode.ACTIVE, pageable);
     }
 
     @Override
-    public Page<AgentContainer> findActiveByContainerName(String containerName, Pageable pageable) {
-        return this.search(null, containerName, StatusCode.ACTIVE, pageable);
+    public Optional<AgentContainer> findByAgentIdAndContainerId(UUID agentId, UUID containerId) {
+        QAgentContainer qAgentContainer = QAgentContainer.agentContainer;
+        BooleanBuilder builder = new BooleanBuilder();
+        builder.and(qAgentContainer.agent.id.eq(agentId));
+        builder.and(qAgentContainer.container.id.eq(containerId));
+        JPQLQuery<AgentContainer> query = jpaQueryFactory.selectFrom(qAgentContainer).where(builder);
+        return Optional.ofNullable(query.fetchOne());
     }
 }

@@ -1,17 +1,23 @@
 package io.hpp.noosphere.hub.web.rest;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import io.hpp.noosphere.hub.exception.PermissionDeniedException;
 import io.hpp.noosphere.hub.repository.AgentContainerRepository;
 import io.hpp.noosphere.hub.service.AgentContainerService;
+import io.hpp.noosphere.hub.service.AgentService;
 import io.hpp.noosphere.hub.service.dto.AgentContainerDTO;
-import io.hpp.noosphere.hub.web.rest.errors.BadRequestAlertException;
+import io.hpp.noosphere.hub.service.dto.JsonViewType;
 import io.hpp.noosphere.hub.web.rest.vm.SearchAgentContainerVm;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Instant;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import org.slf4j.Logger;
@@ -20,10 +26,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -39,127 +45,79 @@ import tech.jhipster.web.util.ResponseUtil;
  * REST controller for managing {@link io.hpp.noosphere.hub.domain.AgentContainer}.
  */
 @RestController
-@RequestMapping("/api/agent-containers")
+@RequestMapping("/api/agents")
+@Tag(name = "Register Container", description = "Register Container Controller")
 public class AgentContainerResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(AgentContainerResource.class);
 
     private static final String ENTITY_NAME = "nooSphereHubAgentContainer";
     private final AgentContainerService agentContainerService;
-    private final AgentContainerRepository agentContainerRepository;
+    private final AgentService agentService;
+    private final IAuthenticationFacade authenticationFacade;
 
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
-    public AgentContainerResource(AgentContainerService agentContainerService, AgentContainerRepository agentContainerRepository) {
+    public AgentContainerResource(
+        AgentContainerService agentContainerService,
+        AgentService agentService,
+        IAuthenticationFacade authenticationFacade
+    ) {
         this.agentContainerService = agentContainerService;
-        this.agentContainerRepository = agentContainerRepository;
+        this.authenticationFacade = authenticationFacade;
+        this.agentService = agentService;
     }
 
-    /**
-     * {@code POST  /agent-containers} : Create a new agentContainer.
-     *
-     * @param agentContainerDTO the agentContainerDTO to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new agentContainerDTO, or with status {@code 400 (Bad Request)} if
-     * the agentContainer has already an ID.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
-    @PostMapping("")
-    public ResponseEntity<AgentContainerDTO> createAgentContainer(@Valid @RequestBody AgentContainerDTO agentContainerDTO)
-        throws URISyntaxException {
-        LOG.debug("REST request to save AgentContainer : {}", agentContainerDTO);
-        if (agentContainerDTO.getId() != null) {
-            throw new BadRequestAlertException("A new agentContainer cannot already have an ID", ENTITY_NAME, "idexists");
+    @Operation(summary = "Register Container")
+    @ApiResponses(
+        {
+            @ApiResponse(
+                responseCode = "200",
+                content = @Content(
+                    schema = @Schema(implementation = AgentContainerDTO.class),
+                    mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE
+                ),
+                description = "Successful operation"
+            ),
+            @ApiResponse(
+                responseCode = "500",
+                content = @Content(mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE),
+                description = "Internal server error"
+            ),
         }
+    )
+    @JsonView(JsonViewType.Shallow.class)
+    @PutMapping("/{agentId}/containers/{containerId}")
+    public ResponseEntity<AgentContainerDTO> createAgentContainer(
+        @PathVariable(value = "agentId", required = true) final UUID agentId,
+        @PathVariable(value = "containerId", required = true) final UUID containerId
+    ) throws URISyntaxException, PermissionDeniedException {
+        LOG.debug("REST request to save Agent {}, Container {}", agentId, containerId);
         Instant now = Instant.now();
-        agentContainerDTO = agentContainerService.save(agentContainerDTO, now);
+        AgentContainerDTO agentContainerDTO = agentContainerService.create(
+            agentService,
+            authenticationFacade.getUserId(),
+            agentId,
+            containerId,
+            now
+        );
         return ResponseEntity.created(new URI("/api/agent-containers/" + agentContainerDTO.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, agentContainerDTO.getId().toString()))
             .body(agentContainerDTO);
     }
 
-    /**
-     * {@code PUT  /agent-containers/:id} : Updates an existing agentContainer.
-     *
-     * @param id                the id of the agentContainerDTO to save.
-     * @param agentContainerDTO the agentContainerDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated agentContainerDTO, or with status {@code 400 (Bad Request)} if
-     * the agentContainerDTO is not valid, or with status {@code 500 (Internal Server Error)} if the agentContainerDTO couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
-    @PutMapping("/{id}")
-    public ResponseEntity<AgentContainerDTO> updateAgentContainer(
-        @PathVariable(value = "id", required = false) final UUID id,
-        @Valid @RequestBody AgentContainerDTO agentContainerDTO
-    ) throws URISyntaxException {
-        LOG.debug("REST request to update AgentContainer : {}, {}", id, agentContainerDTO);
-        if (agentContainerDTO.getId() == null) {
-            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
-        }
-        if (!Objects.equals(id, agentContainerDTO.getId())) {
-            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
-        }
-
-        if (!agentContainerRepository.existsById(id)) {
-            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
-        }
-
-        agentContainerDTO = agentContainerService.update(agentContainerDTO);
-        return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, agentContainerDTO.getId().toString()))
-            .body(agentContainerDTO);
-    }
-
-    /**
-     * {@code PATCH  /agent-containers/:id} : Partial updates given fields of an existing agentContainer, field will ignore if it is null
-     *
-     * @param id                the id of the agentContainerDTO to save.
-     * @param agentContainerDTO the agentContainerDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated agentContainerDTO, or with status {@code 400 (Bad Request)} if
-     * the agentContainerDTO is not valid, or with status {@code 404 (Not Found)} if the agentContainerDTO is not found, or with status
-     * {@code 500 (Internal Server Error)} if the agentContainerDTO couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
-    @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<AgentContainerDTO> partialUpdateAgentContainer(
-        @PathVariable(value = "id", required = false) final UUID id,
-        @NotNull @RequestBody AgentContainerDTO agentContainerDTO
-    ) throws URISyntaxException {
-        LOG.debug("REST request to partial update AgentContainer partially : {}, {}", id, agentContainerDTO);
-        if (agentContainerDTO.getId() == null) {
-            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
-        }
-        if (!Objects.equals(id, agentContainerDTO.getId())) {
-            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
-        }
-
-        if (!agentContainerRepository.existsById(id)) {
-            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
-        }
-
-        Optional<AgentContainerDTO> result = agentContainerService.partialUpdate(agentContainerDTO);
-
-        return ResponseUtil.wrapOrNotFound(
-            result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, agentContainerDTO.getId().toString())
-        );
-    }
-
-    /**
-     * {@code POST  /agent-containers/search} : search agentContainers.
-     *
-     * @param searchVm the search criteria of the request.
-     * @param pageable the pagination information.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of agentContainers in body.
-     */
-    @PostMapping("/search")
+    @Operation(summary = "Search Registered Containers")
+    @PostMapping("/{agentId}/containers/search")
+    @JsonView(JsonViewType.Shallow.class)
     public ResponseEntity<List<AgentContainerDTO>> search(
+        @PathVariable(value = "agentId", required = true) final UUID agentId,
         @RequestBody SearchAgentContainerVm searchVm,
         @org.springdoc.core.annotations.ParameterObject Pageable pageable
     ) {
         LOG.debug("REST request to get a page of AgentContainers");
         Page<AgentContainerDTO> page = agentContainerService.search(
-            searchVm.getAgentName(),
+            agentId,
             searchVm.getContainerName(),
             searchVm.getStatusCode(),
             pageable
@@ -168,31 +126,28 @@ public class AgentContainerResource {
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
-    /**
-     * {@code GET  /agent-containers/:id} : get the "id" agentContainer.
-     *
-     * @param id the id of the agentContainerDTO to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the agentContainerDTO, or with status {@code 404 (Not Found)}.
-     */
-    @GetMapping("/{id}")
-    public ResponseEntity<AgentContainerDTO> getAgentContainer(@PathVariable("id") UUID id) {
-        LOG.debug("REST request to get AgentContainer : {}", id);
-        Optional<AgentContainerDTO> agentContainerDTO = agentContainerService.findOne(id);
+    @Operation(summary = "Get Registered Container")
+    @GetMapping("/{agentId}/containers/{containerId}")
+    @JsonView(JsonViewType.Shallow.class)
+    public ResponseEntity<AgentContainerDTO> getAgentContainer(
+        @PathVariable(value = "agentId", required = true) final UUID agentId,
+        @PathVariable(value = "containerId", required = true) final UUID containerId
+    ) {
+        LOG.debug("REST request to get Agent {}, Container {}", agentId, containerId);
+        Optional<AgentContainerDTO> agentContainerDTO = agentContainerService.findOne(agentId, containerId);
         return ResponseUtil.wrapOrNotFound(agentContainerDTO);
     }
 
-    /**
-     * {@code DELETE  /agent-containers/:id} : delete the "id" agentContainer.
-     *
-     * @param id the id of the agentContainerDTO to delete.
-     * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
-     */
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAgentContainer(@PathVariable("id") UUID id) {
-        LOG.debug("REST request to delete AgentContainer : {}", id);
-        agentContainerService.delete(id);
+    @Operation(summary = "Delete Registered Container")
+    @DeleteMapping("/{agentId}/containers/{containerId}")
+    public ResponseEntity<Void> deleteAgentContainer(
+        @PathVariable(value = "agentId", required = true) final UUID agentId,
+        @PathVariable(value = "containerId", required = true) final UUID containerId
+    ) throws PermissionDeniedException {
+        LOG.debug("REST request to delete AgentContainer : {}", containerId);
+        agentContainerService.delete(agentService, authenticationFacade.getUserId(), agentId, containerId);
         return ResponseEntity.noContent()
-            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, containerId.toString()))
             .build();
     }
 }

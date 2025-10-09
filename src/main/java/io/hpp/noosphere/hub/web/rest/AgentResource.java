@@ -143,7 +143,7 @@ public class AgentResource {
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
         required = true,
         description = "Search Criteria",
-        content = @Content(schema = @Schema(implementation = SearchAgentVm.class), mediaType = "application/json")
+        content = @Content(schema = @Schema(implementation = SearchAgentVm.class), mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE)
     )
     @ApiResponses(
         {

@@ -9,10 +9,9 @@ import lombok.Data;
 @Schema
 public class SearchAgentContainerVm {
 
-    @Schema(description = "Agent Name", requiredMode = RequiredMode.NOT_REQUIRED)
-    private String agentName;
     @Schema(description = "Container Name", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     private String containerName;
+
     @Schema(description = "Agent Container Status Code", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     private StatusCode statusCode;
 }

@@ -1,6 +1,8 @@
 package io.hpp.noosphere.hub.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.time.Instant;
@@ -22,21 +24,26 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Schema
 public class AgentContainerDTO implements Serializable {
 
-    @NotNull
+    @JsonView(JsonViewType.Shallow.class)
     private UUID id;
 
     @NotNull
+    @JsonView(JsonViewType.Full.class)
     private StatusCode statusCode;
 
-    @NotNull
+    @JsonView(JsonViewType.Full.class)
     private Instant createdAt;
 
+    @JsonView(JsonViewType.Full.class)
     private Instant updatedAt;
 
+    @JsonView(JsonViewType.Shallow.class)
     private AgentDTO agent;
 
+    @JsonView(JsonViewType.Shallow.class)
     private ContainerDTO container;
 
     @Override
@@ -49,8 +56,7 @@ public class AgentContainerDTO implements Serializable {
             return false;
         }
 
-      return new EqualsBuilder().append(id, that.id)
-          .append(agent, that.agent).append(container, that.container).isEquals();
+        return new EqualsBuilder().append(id, that.id).append(agent, that.agent).append(container, that.container).isEquals();
     }
 
     @Override
@@ -61,12 +67,12 @@ public class AgentContainerDTO implements Serializable {
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-          .append("id", id)
-          .append("statusCode", statusCode)
-          .append("createdAt", createdAt)
-          .append("updatedAt", updatedAt)
-          .append("agent", agent !=null ? agent.getId() : null)
-          .append("container", container !=null ? container.getId() : null)
-          .toString();
+            .append("id", id)
+            .append("statusCode", statusCode)
+            .append("createdAt", createdAt)
+            .append("updatedAt", updatedAt)
+            .append("agent", agent != null ? agent.getId() : null)
+            .append("container", container != null ? container.getId() : null)
+            .toString();
     }
 }
