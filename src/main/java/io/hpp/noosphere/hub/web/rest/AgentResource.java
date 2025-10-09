@@ -85,7 +85,8 @@ public class AgentResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
-    public ResponseEntity<AgentDTO> createAgent(@RequestBody AgentDTO agentDTO) throws URISyntaxException, PermissionDeniedException {
+    @JsonView(JsonViewType.Update.class)
+    public ResponseEntity<AgentDTO> createAgent(@RequestBody AgentDTO agentDTO) throws URISyntaxException {
         LOG.debug("REST request to save Agent : {}", agentDTO);
         if (agentDTO.getId() != null) {
             throw new BadRequestAlertException("A new agent cannot already have an ID", ENTITY_NAME, "idexists");
@@ -107,10 +108,11 @@ public class AgentResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
+    @JsonView(JsonViewType.Update.class)
     public ResponseEntity<AgentDTO> updateAgent(
-        @PathVariable(value = "id", required = false) final UUID id,
+        @PathVariable(value = "id", required = true) final UUID id,
         @Valid @RequestBody AgentDTO agentDTO
-    ) throws URISyntaxException, PermissionDeniedException {
+    ) throws PermissionDeniedException {
         LOG.debug("REST request to update Agent : {}, {}", id, agentDTO);
         if (agentDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -178,6 +180,7 @@ public class AgentResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the agentDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
+    @JsonView(JsonViewType.Update.class)
     public ResponseEntity<AgentDTO> getAgent(@PathVariable("id") UUID id) {
         LOG.debug("REST request to get Agent : {}", id);
         Optional<AgentDTO> agentDTO = agentService.findOne(id);

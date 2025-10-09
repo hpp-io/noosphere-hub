@@ -35,11 +35,11 @@ public class AgentDTO implements Serializable {
 
     @NotNull
     @Size(max = 1024)
-    @JsonView(JsonViewType.Full.class)
+    @JsonView(JsonViewType.Update.class)
     private String apiUrl;
 
     @NotNull
-    @JsonView(JsonViewType.Full.class)
+    @JsonView(JsonViewType.Update.class)
     private String apiKey;
 
     @NotNull
@@ -47,7 +47,7 @@ public class AgentDTO implements Serializable {
     private StatusCode statusCode;
 
     @Lob
-    @JsonView(JsonViewType.Full.class)
+    @JsonView(JsonViewType.Update.class)
     private String description;
 
     @JsonView(JsonViewType.Full.class)

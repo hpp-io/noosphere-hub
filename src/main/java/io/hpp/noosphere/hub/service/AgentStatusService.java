@@ -96,7 +96,7 @@ public class AgentStatusService {
             .map(agentStatusMapper::toDto);
     }
 
-    public AgentStatusDTO updateKeepAlive(String userId, UUID agentId, Instant timestamp)
+    public void updateKeepAlive(String userId, UUID agentId, Instant timestamp)
         throws AgentNotFoundException, PermissionDeniedException {
         Agent agent = agentService.validateOwner(agentId, userId);
         AgentStatus agentStatus = null;
@@ -120,7 +120,6 @@ public class AgentStatusService {
         } else {
             throw new AgentNotFoundException(agentId.toString());
         }
-        return agentStatusMapper.toDto(agentStatus);
     }
 
     /**

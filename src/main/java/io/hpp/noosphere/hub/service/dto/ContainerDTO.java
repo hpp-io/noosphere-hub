@@ -1,6 +1,8 @@
 package io.hpp.noosphere.hub.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Lob;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
@@ -24,35 +26,45 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Schema
 public class ContainerDTO implements Serializable {
 
-    @NotNull
+    @JsonView(JsonViewType.Shallow.class)
     private UUID id;
 
+    @JsonView(JsonViewType.Shallow.class)
     private String name;
 
     @NotNull
+    @JsonView(JsonViewType.Update.class)
     private String walletAddress;
 
     @NotNull
+    @JsonView(JsonViewType.Update.class)
     private BigDecimal price;
 
     @NotNull
+    @JsonView(JsonViewType.Full.class)
     private StatusCode statusCode;
 
     @Lob
+    @JsonView(JsonViewType.Update.class)
     private String description;
 
     @Lob
+    @JsonView(JsonViewType.Update.class)
     private String parameters;
 
-    @NotNull
+    @JsonView(JsonViewType.Full.class)
     private Instant createdAt;
 
+    @JsonView(JsonViewType.Full.class)
     private Instant updatedAt;
 
+    @JsonView(JsonViewType.Full.class)
     private UserDTO createdByUser;
 
+    @JsonView(JsonViewType.Full.class)
     private UserDTO updatedByUser;
 
     @Override

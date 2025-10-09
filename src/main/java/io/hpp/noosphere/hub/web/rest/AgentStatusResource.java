@@ -61,19 +61,19 @@ public class AgentStatusResource {
     summary = "Keep Alive Agent"
   )
   @ApiResponses({
-    @ApiResponse(responseCode = "200", content = @Content(mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE, array = @ArraySchema(schema = @Schema(implementation = AgentDTO.class))), description = "Successful operation"),
+    @ApiResponse(responseCode = "200", content = @Content(mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE), description = "Successful operation"),
     @ApiResponse(responseCode = "500", content = @Content(mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE), description = "Internal server error")
   })
   @JsonView(JsonViewType.Shallow.class)
   @PutMapping("/{agentId}/keep-alive")
-  public ResponseEntity<AgentStatusDTO> keepAlive(
+  public ResponseEntity<Void> keepAlive(
     @Parameter(description = "Agent ID", required = true)
     @PathVariable(value = "agentId", required = true) final UUID agentId
   ) throws AgentNotFoundException, PermissionDeniedException {
     LOG.debug("REST request to keep alive agent : {}", agentId);
 
     Instant now = Instant.now();
-    AgentStatusDTO agentStatusDTO = agentStatusService.updateKeepAlive(authenticationFacade.getUserId(), agentId, now);
-    return ResponseEntity.ok().body(agentStatusDTO);
+    agentStatusService.updateKeepAlive(authenticationFacade.getUserId(), agentId, now);
+    return ResponseEntity.ok().build();
   }
 }

@@ -38,9 +38,9 @@ public class AgentService {
 
     public Agent validateOwner(UUID id, String userId) throws PermissionDeniedException {
         Agent agent = null;
-        Optional<Agent> optionalAgent = agentRepository.findById(id);
-        if (optionalAgent.isPresent()) {
-            agent = optionalAgent.get();
+        Optional<Agent> optionalData = agentRepository.findById(id);
+        if (optionalData.isPresent()) {
+            agent = optionalData.get();
             if (agent.getCreatedByUser() == null || !userId.equals(agent.getCreatedByUser().getId())) {
                 throw new PermissionDeniedException(id.toString());
             }
@@ -54,7 +54,7 @@ public class AgentService {
      * @param agentDTO the entity to save.
      * @return the persisted entity.
      */
-    public AgentDTO create(String userId, AgentDTO agentDTO, Instant timestamp) throws PermissionDeniedException {
+    public AgentDTO create(String userId, AgentDTO agentDTO, Instant timestamp) {
         LOG.debug("Request to save Agent : {}", agentDTO);
         UserDTO userDTO = new UserDTO();
         userDTO.setId(userId);
