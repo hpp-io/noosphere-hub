@@ -9,6 +9,7 @@ import io.hpp.noosphere.hub.service.AgentStatusService;
 import io.hpp.noosphere.hub.service.dto.AgentDTO;
 import io.hpp.noosphere.hub.service.dto.AgentStatusDTO;
 import io.hpp.noosphere.hub.service.dto.JsonViewType;
+import io.hpp.noosphere.hub.web.rest.vm.KeepAliveResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -24,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -67,14 +69,16 @@ public class AgentStatusResource {
         }
     )
     @JsonView(JsonViewType.Shallow.class)
+    @CrossOrigin(origins = "*")
     @PutMapping("/{agentId}/keep-alive")
-    public ResponseEntity<Void> keepAlive(
+    public ResponseEntity<KeepAliveResponse> keepAlive(
         @Parameter(description = "Agent ID", required = true) @PathVariable(value = "agentId", required = true) final UUID agentId
     ) throws AgentNotFoundException, PermissionDeniedException {
         LOG.debug("REST request to keep alive agent : {}", agentId);
 
         Instant now = Instant.now();
+        KeepAliveResponse keepAliveResponse = new KeepAliveResponse();
         agentStatusService.updateKeepAlive(authenticationFacade.getUserId(), agentId, now);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(keepAliveResponse);
     }
 }
