@@ -50,6 +50,8 @@ public final class Constants {
     public static final String KEYCLOAK_ROLE_ADMIN = "ROLE_ADMIN";
     public static final String KEYCLOAK_GROUP_USER = "Users";
     public static final String KEYCLOAK_ROLE_USER = "ROLE_USER";
+    public static final String COLUMN_NAME_ID = "id";
+    public static final String COLUMN_NAME_LAST_KEEP_ALIVE_AT = "lastKeepAliveAt";
 
 
     private Constants() {}
