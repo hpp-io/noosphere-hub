@@ -1,12 +1,14 @@
 package io.hpp.noosphere.hub.service;
 
 import io.hpp.noosphere.hub.domain.Agent;
+import io.hpp.noosphere.hub.domain.AgentStatus;
 import io.hpp.noosphere.hub.domain.User;
 import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
 import io.hpp.noosphere.hub.exception.PermissionDeniedException;
 import io.hpp.noosphere.hub.repository.AgentRepository;
 import io.hpp.noosphere.hub.repository.UserRepository;
 import io.hpp.noosphere.hub.service.dto.AgentDTO;
+import io.hpp.noosphere.hub.service.dto.AgentStatusDTO;
 import io.hpp.noosphere.hub.service.dto.UserDTO;
 import io.hpp.noosphere.hub.service.mapper.AgentMapper;
 import java.time.Instant;
@@ -119,5 +121,18 @@ public class AgentService {
         if (agent != null) {
             agentRepository.delete(agent);
         }
+    }
+
+    public AgentDTO updateStatus(UUID id, StatusCode statusCode, Instant timestamp) {
+        LOG.debug("Request to update Agent status : {}", id);
+        Optional<Agent> agentOptional = agentRepository.findById(id);
+        if (agentOptional.isPresent()) {
+            Agent agent = agentOptional.get();
+            agent.setStatusCode(statusCode);
+            agent.setUpdatedAt(timestamp);
+            agent = agentRepository.save(agent);
+            return agentMapper.toDto(agent);
+        }
+        return null;
     }
 }

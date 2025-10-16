@@ -15,6 +15,7 @@ public class ApplicationProperties {
 
     private final Liquibase liquibase = new Liquibase();
     private final Keycloak keycloak = new Keycloak();
+    private final ScheduleTask scheduleTask = new ScheduleTask();
 
     // jhipster-needle-application-properties-property
 
@@ -37,6 +38,23 @@ public class ApplicationProperties {
         private String adminClientId;
         private String adminClientSecret;
 
+    }
+
+    @Data
+    public static class CronConfig {
+
+        private Boolean enableCron;
+        private String cron;
+    }
+
+    @Data
+    public static class AgentStatusConfig extends CronConfig {
+
+        private Long unhealthyTimeout;
+    }
+    @Data
+    public static class ScheduleTask {
+        private AgentStatusConfig agentStatus = new AgentStatusConfig();
     }
 
 }
