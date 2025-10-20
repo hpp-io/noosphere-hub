@@ -3,12 +3,16 @@ package io.hpp.noosphere.hub.config;
 import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.PREFERRED_USERNAME;
 
-import io.hpp.noosphere.hub.security.*;
+import io.hpp.noosphere.hub.security.ApiKeyAuthFilter;
+import io.hpp.noosphere.hub.security.ApiKeyAuthManager;
+import io.hpp.noosphere.hub.security.AuthoritiesConstants;
 import io.hpp.noosphere.hub.security.SecurityUtils;
+import io.hpp.noosphere.hub.security.WalletApiKeyAuthFilter;
+import io.hpp.noosphere.hub.security.WalletApiKeyAuthManager;
 import io.hpp.noosphere.hub.security.oauth2.AudienceValidator;
 import io.hpp.noosphere.hub.service.UserService;
 import io.hpp.noosphere.hub.web.filter.SpaWebFilter;
-import java.util.*;
+import java.util.Collection;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +26,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2TokenValidator;
-import org.springframework.security.oauth2.jwt.*;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtDecoders;
+import org.springframework.security.oauth2.jwt.JwtValidators;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -38,101 +46,105 @@ import tech.jhipster.config.JHipsterProperties;
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfiguration {
 
-    private final JHipsterProperties jHipsterProperties;
+  private final JHipsterProperties jHipsterProperties;
+  private final CorsFilter corsFilter;
+  private final ApiKeyAuthFilter apiKeyAuthFilter;
+  private final WalletApiKeyAuthFilter walletApiKeyAuthFilter;
+  private final UserService userService;
+  @Value("${spring.security.oauth2.client.provider.oidc.issuer-uri}")
+  private String issuerUri;
 
-    @Value("${spring.security.oauth2.client.provider.oidc.issuer-uri}")
-    private String issuerUri;
+  public SecurityConfiguration(
+    ApiKeyAuthFilter apiKeyAuthFilter,
+    WalletApiKeyAuthFilter walletApiKeyAuthFilter,
+    UserService userService,
+    CorsFilter corsFilter,
+    JHipsterProperties jHipsterProperties
+  ) {
+    this.corsFilter = corsFilter;
+    this.jHipsterProperties = jHipsterProperties;
+    this.apiKeyAuthFilter = apiKeyAuthFilter;
+    this.walletApiKeyAuthFilter = walletApiKeyAuthFilter;
+    this.userService = userService;
+  }
 
-    private final CorsFilter corsFilter;
-    private final ApiKeyAuthFilter apiKeyAuthFilter;
-    private final UserService userService;
-
-    public SecurityConfiguration(
-      ApiKeyAuthFilter apiKeyAuthFilter,
-      UserService userService,
-      CorsFilter corsFilter,
-      JHipsterProperties jHipsterProperties
-      ) {
-        this.corsFilter = corsFilter;
-        this.jHipsterProperties = jHipsterProperties;
-        this.apiKeyAuthFilter = apiKeyAuthFilter;
-        this.userService = userService;
-    }
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, MvcRequestMatcher.Builder mvc) throws Exception {
-        apiKeyAuthFilter.setAuthenticationManager(new ApiKeyAuthManager(userService));
-        http
-            .csrf(AbstractHttpConfigurer::disable)
-          .addFilterBefore(corsFilter, CsrfFilter.class)
-            .addFilterAfter(new SpaWebFilter(), BasicAuthenticationFilter.class)
-            .headers(headers ->
-                headers
-                    .contentSecurityPolicy(csp -> csp.policyDirectives(jHipsterProperties.getSecurity().getContentSecurityPolicy()))
-                    .frameOptions(FrameOptionsConfig::sameOrigin)
-                    .referrerPolicy(referrer -> referrer.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
-                    .permissionsPolicyHeader(permissions ->
-                        permissions.policy(
-                            "camera=(), fullscreen=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), sync-xhr=()"
-                        )
-                    )
+  @Bean
+  public SecurityFilterChain filterChain(HttpSecurity http, MvcRequestMatcher.Builder mvc) throws Exception {
+    apiKeyAuthFilter.setAuthenticationManager(new ApiKeyAuthManager(userService));
+    walletApiKeyAuthFilter.setAuthenticationManager(new WalletApiKeyAuthManager(userService));
+    http
+      .csrf(AbstractHttpConfigurer::disable)
+      .addFilterBefore(corsFilter, CsrfFilter.class)
+      .addFilterAfter(new SpaWebFilter(), BasicAuthenticationFilter.class)
+      .headers(headers ->
+        headers
+          .contentSecurityPolicy(csp -> csp.policyDirectives(jHipsterProperties.getSecurity().getContentSecurityPolicy()))
+          .frameOptions(FrameOptionsConfig::sameOrigin)
+          .referrerPolicy(referrer -> referrer.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
+          .permissionsPolicyHeader(permissions ->
+            permissions.policy(
+              "camera=(), fullscreen=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), sync-xhr=()"
             )
-          .addFilterBefore(apiKeyAuthFilter, UsernamePasswordAuthenticationFilter.class)
-            .authorizeHttpRequests(authz ->
-                // prettier-ignore
-                authz
-                    .requestMatchers(mvc.pattern("/index.html"), mvc.pattern("/*.js"), mvc.pattern("/*.txt"), mvc.pattern("/*.json"), mvc.pattern("/*.map"), mvc.pattern("/*.css")).permitAll()
-                    .requestMatchers(mvc.pattern("/*.ico"), mvc.pattern("/*.png"), mvc.pattern("/*.svg"), mvc.pattern("/*.webapp")).permitAll()
-                    .requestMatchers(mvc.pattern("/app/**")).permitAll()
-                    .requestMatchers(mvc.pattern("/i18n/**")).permitAll()
-                    .requestMatchers(mvc.pattern("/content/**")).permitAll()
-                    .requestMatchers(mvc.pattern("/swagger-ui/**")).permitAll()
-                    .requestMatchers(mvc.pattern("/api/authenticate")).permitAll()
-                    .requestMatchers(mvc.pattern("/api/auth-info")).permitAll()
-                    .requestMatchers(mvc.pattern("/api/admin/**")).hasAuthority(AuthoritiesConstants.ADMIN)
-                    .requestMatchers(mvc.pattern("/api/**")).authenticated()
-                    .requestMatchers(mvc.pattern("/v3/api-docs/**")).hasAuthority(AuthoritiesConstants.ADMIN)
-                    .requestMatchers(mvc.pattern("/management/health")).permitAll()
-                    .requestMatchers(mvc.pattern("/management/health/**")).permitAll()
-                    .requestMatchers(mvc.pattern("/management/info")).permitAll()
-                    .requestMatchers(mvc.pattern("/management/prometheus")).permitAll()
-                    .requestMatchers(mvc.pattern("/management/**")).hasAuthority(AuthoritiesConstants.ADMIN)
-            )
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(authenticationConverter())))
-            .oauth2Client(withDefaults());
-        return http.build();
-    }
+          )
+      )
+      .addFilterBefore(apiKeyAuthFilter, UsernamePasswordAuthenticationFilter.class)
+      .addFilterBefore(walletApiKeyAuthFilter, UsernamePasswordAuthenticationFilter.class)
+      .authorizeHttpRequests(authz ->
+        // prettier-ignore
+        authz
+          .requestMatchers(mvc.pattern("/index.html"), mvc.pattern("/*.js"), mvc.pattern("/*.txt"), mvc.pattern("/*.json"), mvc.pattern("/*.map"),
+            mvc.pattern("/*.css")).permitAll()
+          .requestMatchers(mvc.pattern("/*.ico"), mvc.pattern("/*.png"), mvc.pattern("/*.svg"), mvc.pattern("/*.webapp")).permitAll()
+          .requestMatchers(mvc.pattern("/app/**")).permitAll()
+          .requestMatchers(mvc.pattern("/i18n/**")).permitAll()
+          .requestMatchers(mvc.pattern("/content/**")).permitAll()
+          .requestMatchers(mvc.pattern("/swagger-ui/**")).permitAll()
+          .requestMatchers(mvc.pattern("/api/authenticate")).permitAll()
+          .requestMatchers(mvc.pattern("/api/auth-info")).permitAll()
+          .requestMatchers(mvc.pattern("/api/admin/**")).hasAuthority(AuthoritiesConstants.ADMIN)
+          .requestMatchers(mvc.pattern("/api/**")).authenticated()
+          .requestMatchers(mvc.pattern("/v3/api-docs/**")).hasAuthority(AuthoritiesConstants.ADMIN)
+          .requestMatchers(mvc.pattern("/management/health")).permitAll()
+          .requestMatchers(mvc.pattern("/management/health/**")).permitAll()
+          .requestMatchers(mvc.pattern("/management/info")).permitAll()
+          .requestMatchers(mvc.pattern("/management/prometheus")).permitAll()
+          .requestMatchers(mvc.pattern("/management/**")).hasAuthority(AuthoritiesConstants.ADMIN)
+      )
+      .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+      .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(authenticationConverter())))
+      .oauth2Client(withDefaults());
+    return http.build();
+  }
 
-    @Bean
-    MvcRequestMatcher.Builder mvc(HandlerMappingIntrospector introspector) {
-        return new MvcRequestMatcher.Builder(introspector);
-    }
+  @Bean
+  MvcRequestMatcher.Builder mvc(HandlerMappingIntrospector introspector) {
+    return new MvcRequestMatcher.Builder(introspector);
+  }
 
-    Converter<Jwt, AbstractAuthenticationToken> authenticationConverter() {
-        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(
-            new Converter<Jwt, Collection<GrantedAuthority>>() {
-                @Override
-                public Collection<GrantedAuthority> convert(Jwt jwt) {
-                    return SecurityUtils.extractAuthorityFromClaims(jwt.getClaims());
-                }
-            }
-        );
-        jwtAuthenticationConverter.setPrincipalClaimName(PREFERRED_USERNAME);
-        return jwtAuthenticationConverter;
-    }
+  Converter<Jwt, AbstractAuthenticationToken> authenticationConverter() {
+    JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+    jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(
+      new Converter<Jwt, Collection<GrantedAuthority>>() {
+        @Override
+        public Collection<GrantedAuthority> convert(Jwt jwt) {
+          return SecurityUtils.extractAuthorityFromClaims(jwt.getClaims());
+        }
+      }
+    );
+    jwtAuthenticationConverter.setPrincipalClaimName(PREFERRED_USERNAME);
+    return jwtAuthenticationConverter;
+  }
 
-    @Bean
-    JwtDecoder jwtDecoder() {
-        NimbusJwtDecoder jwtDecoder = JwtDecoders.fromOidcIssuerLocation(issuerUri);
+  @Bean
+  JwtDecoder jwtDecoder() {
+    NimbusJwtDecoder jwtDecoder = JwtDecoders.fromOidcIssuerLocation(issuerUri);
 
-        OAuth2TokenValidator<Jwt> audienceValidator = new AudienceValidator(jHipsterProperties.getSecurity().getOauth2().getAudience());
-        OAuth2TokenValidator<Jwt> withIssuer = JwtValidators.createDefaultWithIssuer(issuerUri);
-        OAuth2TokenValidator<Jwt> withAudience = new DelegatingOAuth2TokenValidator<>(withIssuer, audienceValidator);
+    OAuth2TokenValidator<Jwt> audienceValidator = new AudienceValidator(jHipsterProperties.getSecurity().getOauth2().getAudience());
+    OAuth2TokenValidator<Jwt> withIssuer = JwtValidators.createDefaultWithIssuer(issuerUri);
+    OAuth2TokenValidator<Jwt> withAudience = new DelegatingOAuth2TokenValidator<>(withIssuer, audienceValidator);
 
-        jwtDecoder.setJwtValidator(withAudience);
+    jwtDecoder.setJwtValidator(withAudience);
 
-        return jwtDecoder;
-    }
+    return jwtDecoder;
+  }
 }

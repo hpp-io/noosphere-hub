@@ -41,6 +41,8 @@ public class UserDTO implements Serializable {
   private String imageUrl;
   @JsonView(JsonViewType.Full.class)
   private String apiKey;
+  @JsonView(JsonViewType.Full.class)
+  private String walletAddress;
   @JsonView(JsonViewType.Shallow.class)
   private String langKey;
   @JsonView(JsonViewType.Full.class)
@@ -57,6 +59,7 @@ public class UserDTO implements Serializable {
     this.email = user.getEmail();
     this.imageUrl = user.getImageUrl();
     this.apiKey = user.getApiKey();
+    this.walletAddress = user.getWalletAddress();
     this.langKey = user.getLangKey();
     this.activated = user.isActivated();
     this.authorities = user.getAuthorities().stream().map(Authority::getName).collect(Collectors.toSet());

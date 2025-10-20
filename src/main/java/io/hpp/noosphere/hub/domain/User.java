@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -76,6 +77,10 @@ public class User extends AbstractAuditingEntity<String> implements Serializable
     @Column(name = "api_key", length = 100)
     private String apiKey;
 
+    @Size(max = 100)
+    @Column(name = "wallet_addr", length = 100)
+    private String walletAddress;
+
     @JsonIgnore
     @ManyToMany
     @JoinTable(
@@ -105,19 +110,25 @@ public class User extends AbstractAuditingEntity<String> implements Serializable
         return new HashCodeBuilder(17, 37).append(id).append(email).toHashCode();
     }
 
-    // prettier-ignore
     @Override
     public String toString() {
-        return "User{" +
-            "email='" + email + '\'' +
-            ", name='" + name + '\'' +
-            ", apiKey='" + apiKey + '\'' +
-            ", firstName='" + firstName + '\'' +
-            ", lastName='" + lastName + '\'' +
-            ", login='" + login + '\'' +
-            ", imageUrl='" + imageUrl + '\'' +
-            ", activated='" + activated + '\'' +
-            ", langKey='" + langKey + '\'' +
-            "}";
+        return new ToStringBuilder(this)
+          .append("id", id)
+          .append("name", name)
+          .append("email", email)
+
+          .append("apiKey", apiKey)
+          .append("walletAddress", walletAddress)
+
+          .append("activated", activated)
+          .append("langKey", langKey)
+          .append("imageUrl", imageUrl)
+          .append("authorities", authorities)
+
+          .append("login", login)
+          .append("firstName", firstName)
+          .append("lastName", lastName)
+
+          .toString();
     }
 }

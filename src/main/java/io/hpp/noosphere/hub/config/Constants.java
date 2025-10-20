@@ -14,6 +14,7 @@ public final class Constants {
     public static final String NULL_STRING = "null";
 
     public static final String HTTP_HEADER_API_KEY = "X-API-KEY";
+    public static final String HTTP_HEADER_WALLET_API_KEY = "X-W-API-KEY";
     public static final String ATTRIBUTE_API_KEY = "apiKey";
     public static final String ATTRIBUTE_LANG_KEY = "langKey";
     public static final String ATTRIBUTE_IMAGE_URL = "imageUrl";
