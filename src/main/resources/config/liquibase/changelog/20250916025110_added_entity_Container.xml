@@ -39,10 +39,10 @@
                 <constraints nullable="true" />
             </column>
             <column name="created_by_user_id" type="varchar(100)">
-                <constraints nullable="true" unique="true" uniqueConstraintName="ux_container__created_by_user_id" />
+                <constraints nullable="true"  />
             </column>
             <column name="updated_by_user_id" type="varchar(100)">
-                <constraints nullable="true" unique="true" uniqueConstraintName="ux_container__updated_by_user_id" />
+                <constraints nullable="true"  />
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
