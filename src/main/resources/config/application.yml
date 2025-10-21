@@ -160,6 +160,9 @@ spring:
       naming:
         physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
         implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+  liquibase:
+    default-schema: nshub
+    liquibase-schema: nshub
 
   messages:
     basename: i18n/messages

@@ -358,4 +358,14 @@ public class UserService {
         Optional<User> optionalUser = userRepository.findById(userId);
         return optionalUser.orElse(null);
     }
+
+    @Transactional(readOnly = true)
+    public Optional<User> findOptionalByWalletAddress(String walletAddress, String email, Boolean activated) {
+        return userRepository.findOneByWalletAddress(walletAddress, email, activated);
+    }
+
+    public UserDTO findOneByWalletAddress(String walletAddress, String email, Boolean activated) {
+        Optional<User> optionalUser = this.findOptionalByWalletAddress(walletAddress, email, activated);
+        return optionalUser.map(userMapper::userToUserDTO).orElse(null);
+    }
 }

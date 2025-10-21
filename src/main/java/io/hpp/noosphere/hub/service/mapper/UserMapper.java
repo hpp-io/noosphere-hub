@@ -36,6 +36,7 @@ public class UserMapper {
       userDto.setEmail(user.getEmail());
       userDto.setImageUrl(user.getImageUrl());
       userDto.setApiKey(user.getApiKey());
+      userDto.setWalletAddress(user.getWalletAddress());
       userDto.setLangKey(user.getLangKey());
       userDto.setActivated(user.isActivated());
       Set<String> authorities = this.getAuthorities(user);
@@ -64,6 +65,7 @@ public class UserMapper {
       user.setLogin(userDTO.getLogin());
       user.setImageUrl(userDTO.getImageUrl());
       user.setApiKey(userDTO.getApiKey());
+      user.setWalletAddress(userDTO.getWalletAddress());
       if (Boolean.TRUE.equals(userDTO.getActivated())) {
         user.setActivated(true);
       } else {
