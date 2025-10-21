@@ -3,7 +3,6 @@ package io.hpp.noosphere.hub.web.rest;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.hpp.noosphere.hub.config.OpenApiConfiguration;
 import io.hpp.noosphere.hub.exception.PermissionDeniedException;
-import io.hpp.noosphere.hub.repository.AgentContainerRepository;
 import io.hpp.noosphere.hub.service.AgentContainerService;
 import io.hpp.noosphere.hub.service.AgentService;
 import io.hpp.noosphere.hub.service.dto.AgentContainerDTO;
