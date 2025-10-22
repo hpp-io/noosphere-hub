@@ -173,7 +173,7 @@ public class CommonUtils {
         sb.append(firstName);
       }
     }
-    return sb.toString();
+    return sb.isEmpty() ? null : sb.toString();
   }
 
 

@@ -18,10 +18,10 @@
                 <constraints nullable="true" />
             </column>
             <column name="api_url" type="varchar(1024)">
-                <constraints nullable="false" />
+                <constraints nullable="true" />
             </column>
             <column name="api_key" type="varchar(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true" uniqueConstraintName="ux_agent__api_key" />
             </column>
             <column name="status_code" type="varchar(20)">
                 <constraints nullable="false" />
@@ -36,10 +36,10 @@
                 <constraints nullable="true" />
             </column>
             <column name="created_by_user_id" type="varchar(100)">
-                <constraints nullable="true" unique="true" uniqueConstraintName="ux_agent__created_by_user_id" />
+                <constraints nullable="true" />
             </column>
             <column name="updated_by_user_id" type="varchar(100)">
-                <constraints nullable="true" unique="true" uniqueConstraintName="ux_agent__updated_by_user_id" />
+                <constraints nullable="true"  />
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>

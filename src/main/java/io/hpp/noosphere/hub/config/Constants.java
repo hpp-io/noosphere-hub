@@ -15,15 +15,10 @@ public final class Constants {
 
     public static final String HTTP_HEADER_API_KEY = "X-API-KEY";
     public static final String HTTP_HEADER_WALLET_API_KEY = "X-W-API-KEY";
-    public static final String ATTRIBUTE_API_KEY = "apiKey";
-    public static final String ATTRIBUTE_LANG_KEY = "langKey";
-    public static final String ATTRIBUTE_IMAGE_URL = "imageUrl";
-
-    public static final String DEFAULT_KEYCLOAK_REALM_ID = "noosphere";
-    public static final String KEYCLOAK_CLIENT_ID_WEB_APP = "web_app";
-    public static final String KEYCLOAK_GROUP_ADMINS = "Admins";
-    public static final String KEYCLOAK_GROUP_USERS = "Users";
-    public static final String KEYCLOAK_PROPERTY_NAME_VERIFIED = "verified";
+    public static final String PROPERTY_NAME_API_KEY = "apiKey";
+    public static final String PROPERTY_NAME_LANG_KEY = "langKey";
+    public static final String PROPERTY_NAME_IMAGE_URL = "imageUrl";
+    public static final String PROPERTY_NAME_VERIFIED = "verified";
     public static final String PROPERTY_NAME_USER = "user";
     public static final String PROPERTY_NAME_GROUP = "group";
     public static final String PROPERTY_NAME_AGENT = "agent";
@@ -31,6 +26,7 @@ public final class Constants {
     public static final String PROPERTY_NAME_EMAIL = "email";
     public static final String PROPERTY_NAME_USER_ID = "userId";
     public static final String PROPERTY_NAME_NAME = "name";
+    public static final String PROPERTY_NAME_WALLET_ADDRESS = "walletAddress";
     public static final String PROPERTY_NAME_MOBILE_PHONE_NUMBER = "mobilePhoneNumber";
     public static final String PROPERTY_NAME_COMPANY = "company";
     public static final String PROPERTY_NAME_BUSINESS_REGISTRATION_NUMBER = "bizrNo";
@@ -47,10 +43,6 @@ public final class Constants {
     public static final String ERROR_KEY_INVALID = "invalid";
     public static final String ERROR_KEY_NOT_FOUND = "notFound";
     public static final String ERROR_KEY_ALREADY_EXISTS = "alreadyExists";
-    public static final String KEYCLOAK_GROUP_ADMIN = "Admins";
-    public static final String KEYCLOAK_ROLE_ADMIN = "ROLE_ADMIN";
-    public static final String KEYCLOAK_GROUP_USER = "Users";
-    public static final String KEYCLOAK_ROLE_USER = "ROLE_USER";
     public static final String COLUMN_NAME_ID = "id";
     public static final String COLUMN_NAME_LAST_KEEP_ALIVE_AT = "lastKeepAliveAt";
 

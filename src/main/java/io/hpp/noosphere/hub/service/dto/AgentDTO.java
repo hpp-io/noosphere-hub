@@ -33,7 +33,6 @@ public class AgentDTO implements Serializable {
     @JsonView(JsonViewType.Shallow.class)
     private String name;
 
-    @NotNull
     @Size(max = 1024)
     @JsonView(JsonViewType.Update.class)
     private String apiUrl;

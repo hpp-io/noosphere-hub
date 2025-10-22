@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -101,6 +102,7 @@ public class SecurityConfiguration {
           .requestMatchers(mvc.pattern("/swagger-ui/**")).permitAll()
           .requestMatchers(mvc.pattern("/api/authenticate")).permitAll()
           .requestMatchers(mvc.pattern("/api/auth-info")).permitAll()
+          .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/agents/register")).permitAll()
           .requestMatchers(mvc.pattern("/api/admin/**")).hasAuthority(AuthoritiesConstants.ADMIN)
           .requestMatchers(mvc.pattern("/api/**")).authenticated()
           .requestMatchers(mvc.pattern("/v3/api-docs/**")).hasAuthority(AuthoritiesConstants.ADMIN)

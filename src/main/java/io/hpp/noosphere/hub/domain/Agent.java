@@ -42,7 +42,6 @@ public class Agent implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @NotNull
     @Size(max = 1024)
     @Column(name = "api_url", length = 1024, nullable = false)
     private String apiUrl;

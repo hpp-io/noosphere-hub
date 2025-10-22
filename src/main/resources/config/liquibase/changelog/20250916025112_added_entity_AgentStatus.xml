@@ -21,7 +21,7 @@
                 <constraints nullable="true" />
             </column>
             <column name="agent_id" type="${uuidType}">
-                <constraints nullable="true" unique="true" uniqueConstraintName="ux_agent_status__agent_id" />
+                <constraints nullable="false" />
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
