@@ -33,6 +33,8 @@ interface AgentRepositoryCustom {
   Page<Agent> findActiveByCreatedByUserId(String userId, Pageable pageable);
 
   Optional<Agent> findByIdAndCreatedByUserId(UUID id, String createdByUserId);
+
+  Optional<Agent> findOneByApiKey(String apiKey);
 }
 
 @Repository
@@ -83,6 +85,15 @@ class AgentRepositoryCustomImpl implements AgentRepositoryCustom {
     BooleanBuilder builder = new BooleanBuilder();
     builder.and(qAgent.id.eq(id));
     builder.and(qAgent.createdByUser.id.eq(createdByUserId));
+    JPQLQuery<Agent> query = jpaQueryFactory.selectFrom(qAgent).where(builder);
+    return Optional.ofNullable(query.fetchOne());
+  }
+
+  @Override
+  public Optional<Agent> findOneByApiKey(String apiKey){
+    QAgent qAgent = QAgent.agent;
+    BooleanBuilder builder = new BooleanBuilder();
+    builder.and(qAgent.apiKey.eq(apiKey));
     JPQLQuery<Agent> query = jpaQueryFactory.selectFrom(qAgent).where(builder);
     return Optional.ofNullable(query.fetchOne());
   }

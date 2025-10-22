@@ -4,6 +4,7 @@ import static io.hpp.noosphere.hub.config.Constants.NULL_STRING;
 
 import io.hpp.noosphere.hub.config.Constants;
 import io.hpp.noosphere.hub.exception.ErrorConstants;
+import io.hpp.noosphere.hub.exception.PropertyValueAlertException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.time.Instant;
@@ -20,6 +21,8 @@ import java.util.UUID;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.ConcurrencyFailureException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 public class CommonUtils {
 
@@ -315,6 +318,20 @@ public class CommonUtils {
       email = email.trim();
     }
     return Pair.of(walletAddress, email);
+  }
+
+
+  public static String buildMessageKey(Throwable e) {
+    String messageKey = null;
+    if (e instanceof MethodArgumentNotValidException) {
+      messageKey = ErrorConstants.ERR_VALIDATION;
+    } else if (e instanceof ConcurrencyFailureException || e.getCause() instanceof ConcurrencyFailureException) {
+      messageKey = ErrorConstants.ERR_CONCURRENCY_FAILURE;
+    } else if (e instanceof PropertyValueAlertException) {
+      messageKey =
+        ErrorConstants.ERR_VALIDATION + "." + ((PropertyValueAlertException) e).getErrorKey() + "." + ((PropertyValueAlertException) e).getPropertyName();
+    }
+    return messageKey;
   }
 
 }
