@@ -2,7 +2,7 @@
 name: noospherehub
 services:
   noosphere-consul:
-    image: jungsoo827/consul:1.21.0
+    image: ghcr.io/hpp-io/consul:1.21.0
     # If you want to expose these ports outside your dev PC,
     # remove the "127.0.0.1:" prefix
     ports:
