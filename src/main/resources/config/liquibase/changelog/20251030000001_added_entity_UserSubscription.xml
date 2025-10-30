@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <!--
+        Added the entity Container.
+    -->
+    <changeSet id="20251030000001-1" author="jungsoo">
+        <createTable tableName="user_subscr">
+            <column name="id" type="${uuidType}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="amount" type="decimal(21,2)">
+                <constraints nullable="true" />
+            </column>
+            <column name="period_type" type="varchar(20)">
+                <constraints nullable="false"  />
+            </column>
+            <column name="period_value" type="integer">
+                <constraints nullable="false"  />
+            </column>
+            <column name="owner_id" type="varchar(100)">
+                <constraints nullable="false"  />
+            </column>
+            <column name="container_id" type="varchar(100)">
+                <constraints nullable="false"  />
+            </column>
+            <column name="status_code" type="varchar(20)">
+                <constraints nullable="false" />
+            </column>
+            <column name="created_at" type="${datetimeType}">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated_at" type="${datetimeType}">
+                <constraints nullable="true" />
+            </column>
+
+            <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
+        </createTable>
+        <dropDefaultValue tableName="user_subscr" columnName="created_at" columnDataType="${datetimeType}"/>
+        <dropDefaultValue tableName="user_subscr" columnName="updated_at" columnDataType="${datetimeType}"/>
+    </changeSet>
+
+    <changeSet id="20251030000001-2" author="jungsoo">
+
+        <addForeignKeyConstraint baseColumnNames="owner_id"
+          baseTableName="user_subscr"
+          constraintName="fk_user_subscr__owner_id"
+          referencedColumnNames="id"
+          referencedTableName="jhi_user"
+        />
+        <addForeignKeyConstraint baseColumnNames="container_id"
+          baseTableName="user_subscr"
+          constraintName="fk_user_subscr__container_id"
+          referencedColumnNames="id"
+          referencedTableName="container"
+        />
+
+    </changeSet>
+</databaseChangeLog>

@@ -4,10 +4,13 @@ import com.fasterxml.jackson.annotation.JsonView;
 import io.hpp.noosphere.hub.config.OpenApiConfiguration;
 import io.hpp.noosphere.hub.exception.PermissionDeniedException;
 import io.hpp.noosphere.hub.repository.AgentRepository;
+import io.hpp.noosphere.hub.service.AgentContainerService;
 import io.hpp.noosphere.hub.service.AgentService;
 import io.hpp.noosphere.hub.service.UserService;
+import io.hpp.noosphere.hub.service.UserSubscriptionService;
 import io.hpp.noosphere.hub.service.dto.AgentDTO;
 import io.hpp.noosphere.hub.service.dto.JsonViewType;
+import io.hpp.noosphere.hub.service.dto.UserSubscriptionDTO;
 import io.hpp.noosphere.hub.web.rest.errors.BadRequestAlertException;
 import io.hpp.noosphere.hub.web.rest.vm.RegisterAgentVm;
 import io.hpp.noosphere.hub.web.rest.vm.SearchAgentVm;
@@ -68,6 +71,8 @@ public class AgentResource {
   private final AgentService agentService;
   private final AgentRepository agentRepository;
   private final UserService userService;
+  private final UserSubscriptionService userSubscriptionService;
+  private final AgentContainerService agentContainerService;
 
   @Value("${jhipster.clientApp.name}")
   private String applicationName;
@@ -76,11 +81,15 @@ public class AgentResource {
     AgentService agentService,
     AgentRepository agentRepository,
     UserService userService,
+    UserSubscriptionService userSubscriptionService,
+    AgentContainerService agentContainerService,
     IAuthenticationFacade authenticationFacade
   ) {
     this.authenticationFacade = authenticationFacade;
     this.agentService = agentService;
     this.agentRepository = agentRepository;
+    this.userSubscriptionService = userSubscriptionService;
+    this.agentContainerService = agentContainerService;
     this.userService = userService;
   }
 
@@ -219,5 +228,31 @@ public class AgentResource {
     return ResponseEntity.created(new URI("/api/agents/" + agentDTO.getId()))
       .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, agentDTO.getId().toString()))
       .body(agentDTO);
+  }
+
+  @Operation(summary = "Get Subscriptions")
+  @ApiResponses(
+    {
+      @ApiResponse(
+        responseCode = "200",
+        content = @Content(
+          mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE,
+          array = @ArraySchema(schema = @Schema(implementation = UserSubscriptionDTO.class))
+        ),
+        description = "Successful operation"
+      ),
+      @ApiResponse(
+        responseCode = "500",
+        content = @Content(mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE),
+        description = "Internal server error"
+      ),
+    }
+  )
+  @GetMapping("/{id}/subscriptions")
+  @JsonView(JsonViewType.Update.class)
+  public ResponseEntity<List<UserSubscriptionDTO>> getSubscriptions(@PathVariable("id") UUID id) {
+    LOG.debug("REST request to get subscriptions for Agent: {}", id);
+    List<UserSubscriptionDTO> list = userSubscriptionService.findAllByAgentId(agentContainerService, id);
+    return ResponseEntity.ok().body(list);
   }
 }

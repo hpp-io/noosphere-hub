@@ -46,7 +46,7 @@ public class Validator implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "price", precision = 21, scale = 2, nullable = false)
+    @Column(name = "price", precision = 21, scale = 2)
     private BigDecimal price;
 
     @NotNull
