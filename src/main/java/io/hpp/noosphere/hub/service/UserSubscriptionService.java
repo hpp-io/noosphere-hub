@@ -81,7 +81,7 @@ public class UserSubscriptionService {
     if (userSubscription != null) {
       userSubscriptionMapper.partialUpdate(userSubscription, userSubscriptionDTO);
       userSubscription.setUpdatedAt(timestamp);
-      User user = userService.findById(userId);
+      User user = userService.findEntityById(userId);
       userSubscription = userSubscriptionRepository.save(userSubscription);
       return userSubscriptionMapper.toDto(userSubscription);
     } else {

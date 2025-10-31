@@ -3,16 +3,21 @@ package io.hpp.noosphere.hub.service;
 import static io.hpp.noosphere.hub.config.Constants.PROPERTY_NAME_API_KEY;
 import static io.hpp.noosphere.hub.config.Constants.PROPERTY_NAME_IMAGE_URL;
 import static io.hpp.noosphere.hub.config.Constants.PROPERTY_NAME_LANG_KEY;
+import static io.hpp.noosphere.hub.config.Constants.PROPERTY_NAME_USER;
 import static io.hpp.noosphere.hub.config.Constants.PROPERTY_NAME_WALLET_ADDRESS;
 
 import io.hpp.noosphere.hub.config.ApplicationProperties;
 import io.hpp.noosphere.hub.config.Constants;
 import io.hpp.noosphere.hub.domain.Authority;
 import io.hpp.noosphere.hub.domain.User;
+import io.hpp.noosphere.hub.exception.InvalidDataException;
 import io.hpp.noosphere.hub.repository.AuthorityRepository;
 import io.hpp.noosphere.hub.repository.UserRepository;
 import io.hpp.noosphere.hub.security.SecurityUtils;
+import io.hpp.noosphere.hub.service.blockchain.WalletService;
+import io.hpp.noosphere.hub.service.blockchain.Web3WalletFactoryService;
 import io.hpp.noosphere.hub.service.dto.UserDTO;
+import io.hpp.noosphere.hub.service.mapper.AgentMapper;
 import io.hpp.noosphere.hub.service.mapper.UserMapper;
 import io.hpp.noosphere.hub.service.uil.CommonUtils;
 import jakarta.persistence.EntityManager;
@@ -54,7 +59,10 @@ public class UserService {
   private final UserMapper userMapper;
 
   private final KeycloakService keycloakService;
+  private final Web3WalletFactoryService web3WalletFactoryService;
   private final ApplicationProperties applicationProperties;
+  private final WalletService walletService;
+  private final AgentMapper agentMapper;
 
   public UserService(
     UserRepository userRepository,
@@ -62,16 +70,21 @@ public class UserService {
     CacheManager cacheManager,
     UserMapper userMapper,
     KeycloakService keycloakService,
+    Web3WalletFactoryService web3WalletFactoryService,
+    WalletService walletService,
     EntityManager entityManager,
-    ApplicationProperties applicationProperties
-  ) {
+    ApplicationProperties applicationProperties,
+    AgentMapper agentMapper) {
     this.userRepository = userRepository;
     this.authorityRepository = authorityRepository;
     this.cacheManager = cacheManager;
     this.userMapper = userMapper;
     this.keycloakService = keycloakService;
+    this.web3WalletFactoryService = web3WalletFactoryService;
+    this.walletService = walletService;
     this.entityManager = entityManager;
     this.applicationProperties = applicationProperties;
+    this.agentMapper = agentMapper;
   }
 
   private static User getUser(Map<String, Object> details) {
@@ -169,10 +182,24 @@ public class UserService {
         }
         user.setLangKey(langKey);
         user.setImageUrl(imageUrl);
+        keycloakService.updateKeycloakUser(user.getId(), user.getEmail(), firstName, lastName, email, apiKey, langKey, imageUrl, null);
         userRepository.save(user);
         this.clearUserCaches(user);
         LOG.debug("Changed Information for User: {}", user);
       });
+  }
+
+  public void updateWalletAddress(String userId, String walletAddress, Instant timestamp) {
+    if (CommonUtils.isValid(walletAddress)) {
+      this.findOptionalEntityById(userId)
+        .ifPresent(user -> {
+          user.setWalletAddress(walletAddress);
+          user.setLastModifiedDate(timestamp);
+          keycloakService.updateKeycloakUser(user.getId(), user.getEmail(), null, null, null, null, null, null, walletAddress);
+          userRepository.save(user);
+          this.clearUserCaches(user);
+        });
+    }
   }
 
   @Transactional(readOnly = true)
@@ -303,9 +330,18 @@ public class UserService {
   }
 
   @Transactional(readOnly = true)
-  public User findById(String userId) {
-    Optional<User> optionalUser = userRepository.findById(userId);
+  public Optional<User> findOptionalEntityById(String userId) {
+    return userRepository.findById(userId);
+  }
+
+  @Transactional(readOnly = true)
+  public User findEntityById(String userId) {
+    Optional<User> optionalUser = this.findOptionalEntityById(userId);
     return optionalUser.orElse(null);
+  }
+
+  public UserDTO findById(String userId) {
+    return agentMapper.toDtoUserId(this.findEntityById(userId));
   }
 
   @Transactional(readOnly = true)
@@ -351,5 +387,26 @@ public class UserService {
   public UserDTO findOneByEmailOrWalletAddressOrApiKey(String email, String walletAddress, String apiKey, Boolean activated) {
     return userRepository.findOneByEmailOrWalletAddressOrApiKey(email, walletAddress, apiKey, activated).map(userMapper::userToUserDTO).orElse(null);
   }
+
+
+  public String updateWithNewWallet(String userId, String ownerAddress, Instant timestamp) {
+    String walletAddress = walletService.createAndUpdateWallet(ownerAddress);
+
+    if (CommonUtils.isValid(walletAddress)) {
+      this.updateWalletAddress(userId, walletAddress, timestamp);
+    } else {
+      throw new IllegalStateException("Failed to extract wallet address from receipt for user ID: " + userId);
+    }
+    return walletAddress;
+  }
+
+  public String createAndUpdateWallet(String userId, String ownerAddress, Instant timestamp) {
+    UserDTO userDTO = this.findById(userId);
+    if (CommonUtils.isValid(userDTO.getWalletAddress())) {
+      throw new InvalidDataException(PROPERTY_NAME_USER, "wallet exists");
+    }
+    return this.updateWithNewWallet(userId, ownerAddress, timestamp);
+  }
+
 
 }

@@ -80,7 +80,7 @@ public class ContainerService {
     if (container != null) {
       containerMapper.partialUpdate(container, containerDTO);
       container.setUpdatedAt(timestamp);
-      User user = userService.findById(userId);
+      User user = userService.findEntityById(userId);
       container.setUpdatedByUser(user);
       container = containerRepository.save(container);
       return containerMapper.toDto(container);

@@ -8,6 +8,7 @@ import static io.hpp.noosphere.hub.config.KeycloakConstants.KEYCLOAK_GROUP_ADMIN
 import static io.hpp.noosphere.hub.config.KeycloakConstants.KEYCLOAK_GROUP_USER;
 import static io.hpp.noosphere.hub.config.KeycloakConstants.KEYCLOAK_ROLE_ADMIN;
 import static io.hpp.noosphere.hub.config.KeycloakConstants.KEYCLOAK_ROLE_USER;
+import static io.hpp.noosphere.hub.domain.User_.email;
 
 import io.hpp.noosphere.hub.config.ApplicationProperties;
 import io.hpp.noosphere.hub.exception.GroupNotFoundException;
@@ -167,5 +168,36 @@ public class KeycloakService {
       userRepresentation = this.findKeycloakUserByEmail(userDTO.getEmail());
     }
     return userRepresentation;
+  }
+
+  public void updateKeycloakUser(String userId, String email,
+    String newFirstName, String newLastName, String newEmail, String newApiKey, String newLangKey, String newImageUrl, String newWalletAddress) {
+    UserRepresentation userRepresentation = this.findKeycloakUserByEmail(email);
+    if (CommonUtils.isValid(newFirstName)) {
+      userRepresentation.setFirstName(newFirstName);
+    }
+    if (CommonUtils.isValid(newLastName)) {
+      userRepresentation.setLastName(newLastName);
+    }
+    if (CommonUtils.isValid(newEmail)) {
+      userRepresentation.setEmail(newEmail);
+    }
+    if (CommonUtils.isValid(newApiKey)) {
+      setAttributeValue(userRepresentation, PROPERTY_NAME_API_KEY, newApiKey);
+    }
+    if (CommonUtils.isValid(newLangKey)) {
+      setAttributeValue(userRepresentation, PROPERTY_NAME_LANG_KEY, newLangKey);
+    }
+    if (CommonUtils.isValid(newImageUrl)) {
+      setAttributeValue(userRepresentation, PROPERTY_NAME_IMAGE_URL, newImageUrl);
+    }
+    if (CommonUtils.isValid(newWalletAddress)) {
+      setAttributeValue(userRepresentation, PROPERTY_NAME_WALLET_ADDRESS, newWalletAddress);
+    }
+
+    keycloakAdminClient
+      .realm(applicationProperties.getKeycloak().getRealmId())
+      .users()
+      .get(userId).update(userRepresentation);
   }
 }
