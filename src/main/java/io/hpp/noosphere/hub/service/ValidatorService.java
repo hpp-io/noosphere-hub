@@ -115,7 +115,7 @@ public class ValidatorService {
     if (validator != null) {
       validatorMapper.partialUpdate(validator, validatorDTO);
       validator.setUpdatedAt(timestamp);
-      User user = userService.findById(userId);
+      User user = userService.findEntityById(userId);
       validator.setUpdatedByUser(user);
       validator = validatorRepository.save(validator);
       return validatorMapper.toDto(validator);

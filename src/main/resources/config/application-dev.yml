@@ -127,3 +127,12 @@ application:
       unhealthy-timeout: 10 # timeout value in minutes
       enable-cron: true
       cron: 0 5/10 * * * ?
+  blockchain:
+    rpc-url: http://127.0.0.1:8545
+    router-address: '0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e'
+    owner-private-key: '${OWNER_PRIVATE_KEY}'
+    connection-timeout: 30000  # in milliseconds
+    read-timeout: 30000 # in milliseconds
+    write-timeout: 30000 # in milliseconds
+    gas-price-ratio: 1.2
+    gas-limit-ratio: 1.2

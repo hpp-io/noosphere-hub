@@ -24,9 +24,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Service Implementation for managing {@link io.hpp.noosphere.hub.domain.Agent}.
- */
 @Service
 @Transactional
 public class AgentService {
@@ -115,7 +112,7 @@ public class AgentService {
     if (agent != null) {
       agentMapper.partialUpdate(agent, agentDTO);
       agent.setUpdatedAt(timestamp);
-      User user = userService.findById(userId);
+      User user = userService.findEntityById(userId);
       agent.setUpdatedByUser(user);
       agent = agentRepository.save(agent);
       return agentMapper.toDto(agent);

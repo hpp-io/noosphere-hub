@@ -47,6 +47,9 @@ public final class Constants {
     public static final String COLUMN_NAME_ID = "id";
     public static final String COLUMN_NAME_LAST_KEEP_ALIVE_AT = "lastKeepAliveAt";
 
+    public static final String EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000";
+    public static final String EVENT_NAME_WALLET_CREATED = "WalletCreated";
+
 
     private Constants() {}
 }

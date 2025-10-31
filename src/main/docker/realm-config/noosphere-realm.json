@@ -913,6 +913,40 @@
           }
         },
         {
+          "id": "b410d522-459b-429f-8370-7a28526f9e42",
+          "name": "apiKey",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "introspection.token.claim": "false",
+            "userinfo.token.claim": "true",
+            "user.attribute": "apiKey",
+            "id.token.claim": "false",
+            "lightweight.claim": "false",
+            "access.token.claim": "false",
+            "claim.name": "apiKey",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "id": "ea3644a8-286f-40cf-9aca-2b451a12a0a6",
+          "name": "walletAddress",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "introspection.token.claim": "false",
+            "userinfo.token.claim": "true",
+            "user.attribute": "walletAddress",
+            "id.token.claim": "false",
+            "lightweight.claim": "false",
+            "access.token.claim": "false",
+            "claim.name": "walletAddress",
+            "jsonType.label": "String"
+          }
+        },
+        {
           "id": "69729907-8d1c-4961-81c0-91766f548cc9",
           "name": "roles",
           "protocol": "openid-connect",
