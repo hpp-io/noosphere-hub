@@ -9,9 +9,13 @@ services:
       - ./realm-config:/opt/keycloak/data/import
       - ./realm-config/keycloak-health-check.sh:/opt/keycloak/health-check.sh
     environment:
+      - KC_DB_URL_HOST=noosphere-mysql
+      - KC_DB_URL_PORT=3306
+      - KC_DB_USERNAME=${DATABASE_USERNAME}
+      - KC_DB_PASSWORD=${DATABASE_PASSWORD}
       - KC_DB=mysql
       - KEYCLOAK_ADMIN=admin
-      - KEYCLOAK_ADMIN_PASSWORD=nshub2025!1
+      - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
       - KC_FEATURES=scripts
       - KC_HTTP_PORT=9080
       - KC_HTTPS_PORT=9443

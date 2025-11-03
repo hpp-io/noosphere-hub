@@ -57,8 +57,8 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3356/nshub?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
-    username: nsuser
-    password: nshub2025!1
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
     hikari:
       poolName: Hikari
       auto-commit: false
@@ -129,7 +129,7 @@ application:
       cron: 0 5/10 * * * ?
   blockchain:
     rpc-url: http://127.0.0.1:8545
-    router-address: '0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e'
+    router-address: '0x5FbDB2315678afecb367f032d93F642f64180aa3'
     owner-private-key: '${OWNER_PRIVATE_KEY}'
     connection-timeout: 30000  # in milliseconds
     read-timeout: 30000 # in milliseconds
