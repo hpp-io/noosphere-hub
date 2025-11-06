@@ -3,7 +3,9 @@ package io.hpp.noosphere.hub.web.rest;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.hpp.noosphere.hub.exception.AgentNotFoundException;
 import io.hpp.noosphere.hub.exception.PermissionDeniedException;
+import io.hpp.noosphere.hub.service.AgentContainerService;
 import io.hpp.noosphere.hub.service.AgentStatusService;
+import io.hpp.noosphere.hub.service.UserSubscriptionService;
 import io.hpp.noosphere.hub.service.dto.JsonViewType;
 import io.hpp.noosphere.hub.web.rest.vm.KeepAliveResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,13 +38,21 @@ public class AgentStatusResource {
 
     private static final String ENTITY_NAME = "agentStatus";
     private final AgentStatusService agentStatusService;
+    private final AgentContainerService agentContainerService;
+    private final UserSubscriptionService userSubscriptionService;
     private final IAuthenticationFacade authenticationFacade;
 
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
-    public AgentStatusResource(AgentStatusService agentStatusService, IAuthenticationFacade authenticationFacade) {
+    public AgentStatusResource(
+      AgentStatusService agentStatusService,
+      AgentContainerService agentContainerService,
+      UserSubscriptionService userSubscriptionService,
+      IAuthenticationFacade authenticationFacade) {
         this.agentStatusService = agentStatusService;
+        this.agentContainerService = agentContainerService;
+        this.userSubscriptionService = userSubscriptionService;
         this.authenticationFacade = authenticationFacade;
     }
 
@@ -73,6 +83,8 @@ public class AgentStatusResource {
         Instant now = Instant.now();
         KeepAliveResponse keepAliveResponse = new KeepAliveResponse();
         agentStatusService.updateKeepAlive(authenticationFacade.getUserId(), agentId, now);
+        Long count = userSubscriptionService.countAllByAgentId(agentContainerService, agentId);
+        keepAliveResponse.setCount(count);
         return ResponseEntity.ok().body(keepAliveResponse);
     }
 }

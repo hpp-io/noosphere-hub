@@ -29,6 +29,8 @@ interface UserSubscriptionRepositoryCustom {
 
     Page<UserSubscription> search(String userId, List<UUID> containerIdList, StatusCode statusCode, String containerName, Pageable pageable);
 
+    Long countAllUserSubscriptionIdListByContainerIdList(List<UUID> containerIdList,  StatusCode statusCode);
+
     Optional<UserSubscription> findActiveByByUserIdAndContainerId(String userId, UUID containerId);
 
 
@@ -67,6 +69,23 @@ class UserSubscriptionRepositoryCustomImpl implements UserSubscriptionRepository
         } else {
             return Page.empty();
         }
+    }
+
+    @Override
+    public Long countAllUserSubscriptionIdListByContainerIdList(List<UUID> containerIdList,  StatusCode statusCode){
+        QUserSubscription qUserSubscription = QUserSubscription.userSubscription;
+        BooleanBuilder builder = new BooleanBuilder();
+        if (containerIdList != null && !containerIdList.isEmpty() ) {
+            builder.and(qUserSubscription.container.id.in(containerIdList));
+        }
+        if (statusCode != null) {
+            builder.and(qUserSubscription.statusCode.eq(statusCode));
+        }
+        return jpaQueryFactory.select(qUserSubscription.id.countDistinct())
+          .from(qUserSubscription)
+          .where(builder)
+          .fetchOne();
+
     }
 
     @Override

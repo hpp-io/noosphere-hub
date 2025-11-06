@@ -7,6 +7,6 @@ import lombok.Data;
 @Schema
 public class KeepAliveResponse {
 
-    @Schema(description = "Status Code", requiredMode = Schema.RequiredMode.REQUIRED)
-    private Integer statusCode;
+    @Schema(description = "Count", requiredMode = Schema.RequiredMode.REQUIRED)
+    private Long count;
 }

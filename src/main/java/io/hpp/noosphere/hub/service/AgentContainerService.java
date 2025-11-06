@@ -9,6 +9,7 @@ import io.hpp.noosphere.hub.service.dto.AgentDTO;
 import io.hpp.noosphere.hub.service.dto.ContainerDTO;
 import io.hpp.noosphere.hub.service.mapper.AgentContainerMapper;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.slf4j.Logger;
@@ -66,6 +67,10 @@ public class AgentContainerService {
         return agentContainerRepository.search(agentId, containerName, statusCode, pageable).map(agentContainerMapper::toDto);
     }
 
+    @Transactional(readOnly = true)
+    public List<UUID> findAllContainerIdListByAgentId(UUID agentId, StatusCode statusCode) {
+        return agentContainerRepository.findAllContainerIdListByAgentId(agentId, statusCode);
+    }
     /**
      * Get one agentContainer by id.
      *

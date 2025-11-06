@@ -15,6 +15,7 @@ import io.hpp.noosphere.hub.web.rest.errors.BadRequestAlertException;
 import io.hpp.noosphere.hub.web.rest.vm.RegisterAgentVm;
 import io.hpp.noosphere.hub.web.rest.vm.SearchAgentVm;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.extensions.Extension;
 import io.swagger.v3.oas.annotations.extensions.ExtensionProperty;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -46,6 +47,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
@@ -250,9 +252,12 @@ public class AgentResource {
   )
   @GetMapping("/{id}/subscriptions")
   @JsonView(JsonViewType.Update.class)
-  public ResponseEntity<List<UserSubscriptionDTO>> getSubscriptions(@PathVariable("id") UUID id) {
+  public ResponseEntity<List<UserSubscriptionDTO>> getSubscriptions(
+    @PathVariable("id") UUID id,
+    @Parameter(description = "Return Size", required = true) @RequestParam(value = "size", required = true) final Integer size
+  ) {
     LOG.debug("REST request to get subscriptions for Agent: {}", id);
-    List<UserSubscriptionDTO> list = userSubscriptionService.findAllByAgentId(agentContainerService, id);
+    List<UserSubscriptionDTO> list = userSubscriptionService.findAllByAgentId(agentContainerService, id, size);
     return ResponseEntity.ok().body(list);
   }
 }

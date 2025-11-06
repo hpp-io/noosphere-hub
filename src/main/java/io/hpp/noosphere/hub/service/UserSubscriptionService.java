@@ -1,11 +1,12 @@
 package io.hpp.noosphere.hub.service;
 
+import static io.hpp.noosphere.hub.config.Constants.COLUMN_NAME_ID;
+
 import io.hpp.noosphere.hub.domain.User;
 import io.hpp.noosphere.hub.domain.UserSubscription;
 import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
 import io.hpp.noosphere.hub.exception.PermissionDeniedException;
 import io.hpp.noosphere.hub.repository.UserSubscriptionRepository;
-import io.hpp.noosphere.hub.service.dto.AgentContainerDTO;
 import io.hpp.noosphere.hub.service.dto.UserDTO;
 import io.hpp.noosphere.hub.service.dto.UserSubscriptionDTO;
 import io.hpp.noosphere.hub.service.mapper.UserSubscriptionMapper;
@@ -19,6 +20,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -142,28 +145,25 @@ public class UserSubscriptionService {
   }
 
 
-  public List<UserSubscriptionDTO> findAllByAgentId(AgentContainerService agentContainerService, UUID agentId) {
+  @Transactional(readOnly = true)
+  public List<UserSubscriptionDTO> findAllByAgentId(AgentContainerService agentContainerService, UUID agentId, Integer recordSize) {
     List<UserSubscriptionDTO> list = new ArrayList<>();
-    boolean allProcessed = false;
-    Pageable pageableSubscription = PageRequest.of(0, 50);
-    while (!allProcessed) {
-      Pageable pageable = PageRequest.of(0, 10);
-      Page<AgentContainerDTO> page = agentContainerService.search(agentId, null, StatusCode.ACTIVE, pageable);
-      if (page.isEmpty()) {
-        allProcessed = true;
-      } else {
-        List<UUID> containerIdList = new ArrayList<>();
-        for (AgentContainerDTO dto : page) {
-          if (dto != null && dto.getContainer() != null && dto.getContainer().getId() != null) {
-            containerIdList.add(dto.getContainer().getId());
-          }
-        }
-        if (!containerIdList.isEmpty()) {
-          this.search(null, containerIdList, StatusCode.ACTIVE, null, pageableSubscription).forEach(list::add);
-        }
-      }
+    List<UUID> containerIdList = agentContainerService.findAllContainerIdListByAgentId(agentId, StatusCode.ACTIVE);
+    if (!containerIdList.isEmpty()) {
+      Pageable pageableSubscription = PageRequest.of(0, recordSize != null ? recordSize : 10, Sort.by(Direction.ASC, COLUMN_NAME_ID));
+      this.search(null, containerIdList, StatusCode.ACTIVE, null, pageableSubscription).forEach(list::add);
     }
     return list;
+  }
+
+  @Transactional(readOnly = true)
+  public Long countAllByAgentId(AgentContainerService agentContainerService, UUID agentId) {
+    Long count = 0L;
+    List<UUID> containerIdList = agentContainerService.findAllContainerIdListByAgentId(agentId, StatusCode.ACTIVE);
+    if (!containerIdList.isEmpty()) {
+      count = userSubscriptionRepository.countAllUserSubscriptionIdListByContainerIdList(containerIdList, StatusCode.ACTIVE);
+    }
+    return count;
   }
 
 }
