@@ -33,13 +33,9 @@ public class AgentDTO implements Serializable {
     @JsonView(JsonViewType.Shallow.class)
     private String name;
 
-    @Size(max = 1024)
-    @JsonView(JsonViewType.Update.class)
-    private String apiUrl;
-
     @NotNull
     @JsonView(JsonViewType.Update.class)
-    private String apiKey;
+    private String walletAddress;
 
     @NotNull
     @JsonView(JsonViewType.Full.class)
@@ -85,8 +81,7 @@ public class AgentDTO implements Serializable {
         return new ToStringBuilder(this)
           .append("id", id)
           .append("name", name)
-          .append("apiUrl", apiUrl)
-          .append("apiKey", apiKey)
+          .append("walletAddress", walletAddress)
           .append("statusCode", statusCode)
           .append("description", description)
           .append("createdAt", createdAt)

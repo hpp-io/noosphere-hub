@@ -46,12 +46,12 @@ public class Validator implements Serializable {
     @Column(name = "name")
     private String name;
 
+    @NotNull
+    @Column(name = "wallet_address", nullable = false)
+    private String walletAddress;
+
     @Column(name = "price", precision = 21, scale = 2)
     private BigDecimal price;
-
-    @NotNull
-    @Column(name = "api_key", nullable = false)
-    private String apiKey;
 
     @NotNull
     @Column(name = "status_code", length = 20, nullable = false)
@@ -61,6 +61,10 @@ public class Validator implements Serializable {
     @Lob
     @Column(name = "description")
     private String description;
+
+    @Lob
+    @Column(name = "parameters", nullable = false)
+    private String parameters;
 
     @NotNull
     @Column(name = "created_at", nullable = false)
@@ -104,10 +108,11 @@ public class Validator implements Serializable {
         return "Validator{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
-            ", apiKey='" + getApiKey() + "'" +
+            ", walletAddress='" + getWalletAddress() + "'" +
             ", price=" + getPrice() +
             ", statusCode='" + getStatusCode() + "'" +
             ", description='" + getDescription() + "'" +
+            ", parameters='" + getParameters() + "'" +
             ", createdAt='" + getCreatedAt() + "'" +
             ", updatedAt='" + getUpdatedAt() + "'" +
             "}";

@@ -42,13 +42,9 @@ public class Agent implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @Size(max = 1024)
-    @Column(name = "api_url", length = 1024, nullable = false)
-    private String apiUrl;
-
     @NotNull
-    @Column(name = "api_key", nullable = false)
-    private String apiKey;
+    @Column(name = "wallet_address", nullable = false)
+    private String walletAddress;
 
     @NotNull
     @Column(name = "status_code", length = 20, nullable = false)
@@ -107,8 +103,7 @@ public class Agent implements Serializable {
         return "Agent{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
-            ", apiUrl='" + getApiUrl() + "'" +
-            ", apiKey='" + getApiKey() + "'" +
+            ", walletAddress='" + getWalletAddress() + "'" +
             ", statusCode='" + getStatusCode() + "'" +
             ", description='" + getDescription() + "'" +
             ", createdAt='" + getCreatedAt() + "'" +

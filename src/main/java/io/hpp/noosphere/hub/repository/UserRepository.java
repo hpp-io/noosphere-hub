@@ -36,7 +36,7 @@ interface UserRepositoryCustom {
     Optional<User> findOneByApiKey(String apiKey, Boolean activated);
     Optional<User> findOneByWalletAddress(String walletAddress, String email, Boolean activated);
 
-    Optional<User> findOneByEmailOrWalletAddressOrApiKey(String email, String walletAddress, String apiKey, Boolean activated);
+    Optional<User> findOneByEmailAndWalletAddressOrApiKey(String email, String walletAddress, String apiKey, Boolean activated);
 
     User findOneActiveById(String id);
 
@@ -101,14 +101,16 @@ class UserRepositoryCustomImpl implements UserRepositoryCustom {
     }
 
     @Override
-    public Optional<User> findOneByEmailOrWalletAddressOrApiKey(String email, String walletAddress, String apiKey, Boolean activated){
+    public Optional<User> findOneByEmailAndWalletAddressOrApiKey(String email, String walletAddress, String apiKey, Boolean activated){
         QUser qUser = QUser.user;
         BooleanBuilder builder = new BooleanBuilder();
+        builder.and(qUser.email.eq(email));
+
         BooleanBuilder orPredicate = new BooleanBuilder();
-        orPredicate.or(qUser.email.eq(email));
         orPredicate.or(qUser.walletAddress.eq(walletAddress));
         orPredicate.or(qUser.apiKey.eq(apiKey));
         builder.and(orPredicate);
+
         if (activated != null) {
             builder.and(qUser.activated.eq(activated));
         }

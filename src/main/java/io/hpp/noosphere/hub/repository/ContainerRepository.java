@@ -18,7 +18,7 @@ import org.springframework.stereotype.Repository;
 public interface ContainerRepository extends JpaRepository<Container, UUID>, ContainerRepositoryCustom {}
 
 interface ContainerRepositoryCustom {
-    Page<Container> search(String name, StatusCode statusCode, String createdByUserId, Pageable pageable);
+    Page<Container> search(String name, StatusCode statusCode, String createdByUserId, String walletAddress, Pageable pageable);
     Page<Container> findActiveByName(String name, Pageable pageable);
     Page<Container> findActiveByCreatedByUserId(String userId, Pageable pageable);
 }
@@ -35,7 +35,7 @@ class ContainerRepositoryCustomImpl implements ContainerRepositoryCustom {
     }
 
     @Override
-    public Page<Container> search(String name, StatusCode statusCode, String createdByUserId, Pageable pageable) {
+    public Page<Container> search(String name, StatusCode statusCode, String createdByUserId, String walletAddress, Pageable pageable) {
         QContainer qContainer = QContainer.container;
         BooleanBuilder builder = new BooleanBuilder();
         if (statusCode != null) {
@@ -47,6 +47,9 @@ class ContainerRepositoryCustomImpl implements ContainerRepositoryCustom {
         if (CommonUtils.isValid(createdByUserId)) {
             builder.and(qContainer.createdByUser.id.eq(createdByUserId));
         }
+        if (CommonUtils.isValid(walletAddress)) {
+            builder.and(qContainer.walletAddress.eq(walletAddress));
+        }
         if (builder.hasValue()) {
             JPQLQuery<Container> query = jpaQueryFactory.selectFrom(qContainer).where(builder);
             return QuerydslUtil.fetchPage(query, pageable);
@@ -57,11 +60,11 @@ class ContainerRepositoryCustomImpl implements ContainerRepositoryCustom {
 
     @Override
     public Page<Container> findActiveByName(String name, Pageable pageable) {
-        return this.search(name, StatusCode.ACTIVE, null, pageable);
+        return this.search(name, StatusCode.ACTIVE, null, null, pageable);
     }
 
     @Override
     public Page<Container> findActiveByCreatedByUserId(String userId, Pageable pageable) {
-        return this.search(null, StatusCode.ACTIVE, userId, pageable);
+        return this.search(null, StatusCode.ACTIVE, userId, null, pageable);
     }
 }

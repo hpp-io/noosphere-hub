@@ -452,9 +452,9 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserDTO findOneByEmailOrWalletAddressOrApiKey(String email, String walletAddress, String apiKey, Boolean activated) {
+    public UserDTO findOneByEmailAndWalletAddressOrApiKey(String email, String walletAddress, String apiKey, Boolean activated) {
         return userRepository
-            .findOneByEmailOrWalletAddressOrApiKey(email, walletAddress, apiKey, activated)
+            .findOneByEmailAndWalletAddressOrApiKey(email, walletAddress, apiKey, activated)
             .map(userMapper::userToUserDTO)
             .orElse(null);
     }

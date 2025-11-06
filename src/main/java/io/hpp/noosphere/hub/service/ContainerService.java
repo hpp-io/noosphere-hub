@@ -1,5 +1,7 @@
 package io.hpp.noosphere.hub.service;
 
+import static io.hpp.noosphere.hub.config.Constants.DEFAULT_LANGUAGE;
+
 import io.hpp.noosphere.hub.domain.Container;
 import io.hpp.noosphere.hub.domain.User;
 import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
@@ -27,13 +29,17 @@ public class ContainerService {
 
   private static final Logger LOG = LoggerFactory.getLogger(ContainerService.class);
 
+  private final UserService userService;
   private final ContainerRepository containerRepository;
 
   private final ContainerMapper containerMapper;
 
-  public ContainerService(ContainerRepository containerRepository, ContainerMapper containerMapper) {
+  public ContainerService(ContainerRepository containerRepository, ContainerMapper containerMapper,
+    UserService userService
+  ) {
     this.containerRepository = containerRepository;
     this.containerMapper = containerMapper;
+    this.userService = userService;
   }
 
 
@@ -67,6 +73,30 @@ public class ContainerService {
     return containerMapper.toDto(container);
   }
 
+
+  public ContainerDTO register(String name, String apiKey, String walletAddress, String email, Instant timestamp) {
+    LOG.debug("Request to register Container");
+    UserDTO userDTO = userService.findOneByEmailAndWalletAddressOrApiKey(email, walletAddress, apiKey, null);
+    if (userDTO == null) {
+      userDTO = new UserDTO();
+      userDTO.setEmail(email);
+      userDTO.setWalletAddress(walletAddress);
+      userDTO.setApiKey(apiKey);
+      userDTO.setLangKey(DEFAULT_LANGUAGE);
+      userDTO = userService.createKeycloakUser(userDTO);
+    }
+    User createdByUser = new User();
+    createdByUser.setId(userDTO.getId());
+    Container container = new Container();
+    container.setCreatedByUser(createdByUser);
+    container.setName(name);
+    container.setCreatedAt(timestamp);
+    container.setStatusCode(StatusCode.ACTIVE);
+    container.setWalletAddress(walletAddress);
+    container = containerRepository.save(container);
+    return containerMapper.toDto(container);
+  }
+
   /**
    * Partially update a container.
    *
@@ -96,9 +126,9 @@ public class ContainerService {
    * @return the list of entities.
    */
   @Transactional(readOnly = true)
-  public Page<ContainerDTO> search(String name, StatusCode statusCode, String createdByUserId, Pageable pageable) {
+  public Page<ContainerDTO> search(String name, StatusCode statusCode, String createdByUserId, String walletAddress, Pageable pageable) {
     LOG.debug("Request to search Containers");
-    return containerRepository.search(name, statusCode, createdByUserId, pageable).map(containerMapper::toDto);
+    return containerRepository.search(name, statusCode, createdByUserId, walletAddress, pageable).map(containerMapper::toDto);
   }
 
   /**
@@ -124,5 +154,18 @@ public class ContainerService {
     if (container != null) {
       containerRepository.delete(container);
     }
+  }
+
+  public ContainerDTO updateStatus(UUID id, StatusCode statusCode, Instant timestamp) {
+    LOG.debug("Request to update Container status : {}", id);
+    Optional<Container> containerOptional = containerRepository.findById(id);
+    if (containerOptional.isPresent()) {
+      Container container = containerOptional.get();
+      container.setStatusCode(statusCode);
+      container.setUpdatedAt(timestamp);
+      container = containerRepository.save(container);
+      return containerMapper.toDto(container);
+    }
+    return null;
   }
 }

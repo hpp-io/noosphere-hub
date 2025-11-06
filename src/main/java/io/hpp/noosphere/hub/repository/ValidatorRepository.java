@@ -26,7 +26,7 @@ public interface ValidatorRepository extends JpaRepository<Validator, UUID>, Val
 
 interface ValidatorRepositoryCustom {
 
-    Page<Validator> search(String name, StatusCode statusCode, String createdByUserId, Pageable pageable);
+    Page<Validator> search(String name, StatusCode statusCode, String createdByUserId, String walletAddress, Pageable pageable);
 
     Page<Validator> findActiveByName(String name, Pageable pageable);
 
@@ -34,7 +34,6 @@ interface ValidatorRepositoryCustom {
 
     Optional<Validator> findByIdAndCreatedByUserId(UUID id, String createdByUserId);
 
-    Optional<Validator> findOneByApiKey(String apiKey);
 }
 
 @Repository
@@ -49,7 +48,7 @@ class ValidatorRepositoryCustomImpl implements ValidatorRepositoryCustom {
     }
 
     @Override
-    public Page<Validator> search(String name, StatusCode statusCode, String createdByUserId, Pageable pageable) {
+    public Page<Validator> search(String name, StatusCode statusCode, String createdByUserId, String walletAddress, Pageable pageable) {
         QValidator qValidator = QValidator.validator;
         BooleanBuilder builder = new BooleanBuilder();
         if (statusCode != null) {
@@ -61,6 +60,9 @@ class ValidatorRepositoryCustomImpl implements ValidatorRepositoryCustom {
         if (CommonUtils.isValid(createdByUserId)) {
             builder.and(qValidator.createdByUser.id.eq(createdByUserId));
         }
+        if (CommonUtils.isValid(walletAddress)) {
+            builder.and(qValidator.walletAddress.eq(walletAddress));
+        }
         if (builder.hasValue()) {
             JPQLQuery<Validator> query = jpaQueryFactory.selectFrom(qValidator).where(builder);
             return QuerydslUtil.fetchPage(query, pageable);
@@ -71,12 +73,12 @@ class ValidatorRepositoryCustomImpl implements ValidatorRepositoryCustom {
 
     @Override
     public Page<Validator> findActiveByName(String name, Pageable pageable) {
-        return this.search(name, StatusCode.ACTIVE, null, pageable);
+        return this.search(name, StatusCode.ACTIVE, null, null, pageable);
     }
 
     @Override
     public Page<Validator> findActiveByCreatedByUserId(String userId, Pageable pageable) {
-        return this.search(null, StatusCode.ACTIVE, userId, pageable);
+        return this.search(null, StatusCode.ACTIVE, userId, null, pageable);
     }
 
     @Override
@@ -89,12 +91,4 @@ class ValidatorRepositoryCustomImpl implements ValidatorRepositoryCustom {
         return Optional.ofNullable(query.fetchOne());
     }
 
-    @Override
-    public Optional<Validator> findOneByApiKey(String apiKey){
-        QValidator qValidator = QValidator.validator;
-        BooleanBuilder builder = new BooleanBuilder();
-        builder.and(qValidator.apiKey.eq(apiKey));
-        JPQLQuery<Validator> query = jpaQueryFactory.selectFrom(qValidator).where(builder);
-        return Optional.ofNullable(query.fetchOne());
-    }
 }

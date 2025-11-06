@@ -4,11 +4,10 @@ import com.fasterxml.jackson.annotation.JsonView;
 import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Lob;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.Objects;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,78 +28,78 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @Schema
 public class ContainerDTO implements Serializable {
 
-    @JsonView(JsonViewType.Shallow.class)
-    private UUID id;
+  @JsonView(JsonViewType.Shallow.class)
+  private UUID id;
 
-    @JsonView(JsonViewType.Shallow.class)
-    private String name;
+  @JsonView(JsonViewType.Shallow.class)
+  private String name;
 
-    @NotNull
-    @JsonView(JsonViewType.Update.class)
-    private String walletAddress;
+  @NotNull
+  @JsonView(JsonViewType.Update.class)
+  private String walletAddress;
 
-    @NotNull
-    @JsonView(JsonViewType.Update.class)
-    private BigDecimal price;
+  @NotNull
+  @JsonView(JsonViewType.Update.class)
+  private BigDecimal price;
 
-    @NotNull
-    @JsonView(JsonViewType.Full.class)
-    private StatusCode statusCode;
+  @NotNull
+  @JsonView(JsonViewType.Full.class)
+  private StatusCode statusCode;
 
-    @Lob
-    @JsonView(JsonViewType.Update.class)
-    private String description;
+  @Lob
+  @JsonView(JsonViewType.Update.class)
+  private String description;
 
-    @Lob
-    @JsonView(JsonViewType.Update.class)
-    private String parameters;
+  @Lob
+  @JsonView(JsonViewType.Update.class)
+  private String parameters;
 
-    @JsonView(JsonViewType.Full.class)
-    private Instant createdAt;
+  @JsonView(JsonViewType.Full.class)
+  private Instant createdAt;
 
-    @JsonView(JsonViewType.Full.class)
-    private Instant updatedAt;
+  @JsonView(JsonViewType.Full.class)
+  private Instant updatedAt;
 
-    @JsonView(JsonViewType.Full.class)
-    private UserDTO createdByUser;
+  @JsonView(JsonViewType.Full.class)
+  private UserDTO createdByUser;
 
-    @JsonView(JsonViewType.Full.class)
-    private UserDTO updatedByUser;
+  @JsonView(JsonViewType.Full.class)
+  private UserDTO updatedByUser;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-
-        if (!(o instanceof ContainerDTO that)) {
-            return false;
-        }
-
-      return new EqualsBuilder().append(id, that.id).append(name, that.name).append(walletAddress, that.walletAddress)
-          .isEquals();
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
     }
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(id).append(name).append(walletAddress)
-          .toHashCode();
+    if (!(o instanceof ContainerDTO that)) {
+      return false;
     }
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-          .append("id", id)
-          .append("name", name)
-          .append("walletAddress", walletAddress)
-          .append("price", price)
-          .append("statusCode", statusCode)
-          .append("description", description)
-          .append("parameters", parameters)
-          .append("createdAt", createdAt)
-          .append("updatedAt", updatedAt)
-          .append("createdByUser", createdByUser !=null ? createdByUser.getId() : null)
-          .append("updatedByUser", updatedByUser !=null ? updatedByUser.getId() : null)
-          .toString();
-    }
+    return new EqualsBuilder().append(id, that.id).append(name, that.name).append(walletAddress, that.walletAddress)
+      .isEquals();
+  }
+
+  @Override
+  public int hashCode() {
+    return new HashCodeBuilder(17, 37).append(id).append(name).append(walletAddress)
+      .toHashCode();
+  }
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this)
+      .append("id", id)
+      .append("name", name)
+      .append("walletAddress", walletAddress)
+      .append("price", price)
+      .append("statusCode", statusCode)
+      .append("description", description)
+      .append("parameters", parameters)
+      .append("createdAt", createdAt)
+      .append("updatedAt", updatedAt)
+      .append("createdByUser", createdByUser != null ? createdByUser.getId() : null)
+      .append("updatedByUser", updatedByUser != null ? updatedByUser.getId() : null)
+      .toString();
+  }
 }

@@ -26,7 +26,7 @@ public interface AgentRepository extends JpaRepository<Agent, UUID>, AgentReposi
 
 interface AgentRepositoryCustom {
 
-  Page<Agent> search(String name, StatusCode statusCode, String createdByUserId, Pageable pageable);
+  Page<Agent> search(String name, StatusCode statusCode, String createdByUserId, String walletAddress, Pageable pageable);
 
   Page<Agent> findActiveByName(String name, Pageable pageable);
 
@@ -34,7 +34,6 @@ interface AgentRepositoryCustom {
 
   Optional<Agent> findByIdAndCreatedByUserId(UUID id, String createdByUserId);
 
-  Optional<Agent> findOneByApiKey(String apiKey);
 }
 
 @Repository
@@ -49,7 +48,7 @@ class AgentRepositoryCustomImpl implements AgentRepositoryCustom {
   }
 
   @Override
-  public Page<Agent> search(String name, StatusCode statusCode, String createdByUserId, Pageable pageable) {
+  public Page<Agent> search(String name, StatusCode statusCode, String createdByUserId, String walletAddress, Pageable pageable) {
     QAgent qAgent = QAgent.agent;
     BooleanBuilder builder = new BooleanBuilder();
     if (statusCode != null) {
@@ -61,6 +60,9 @@ class AgentRepositoryCustomImpl implements AgentRepositoryCustom {
     if (CommonUtils.isValid(createdByUserId)) {
       builder.and(qAgent.createdByUser.id.eq(createdByUserId));
     }
+    if (CommonUtils.isValid(walletAddress)) {
+      builder.and(qAgent.walletAddress.eq(walletAddress));
+    }
     if (builder.hasValue()) {
       JPQLQuery<Agent> query = jpaQueryFactory.selectFrom(qAgent).where(builder);
       return QuerydslUtil.fetchPage(query, pageable);
@@ -71,12 +73,12 @@ class AgentRepositoryCustomImpl implements AgentRepositoryCustom {
 
   @Override
   public Page<Agent> findActiveByName(String name, Pageable pageable) {
-    return this.search(name, StatusCode.ACTIVE, null, pageable);
+    return this.search(name, StatusCode.ACTIVE, null, null, pageable);
   }
 
   @Override
   public Page<Agent> findActiveByCreatedByUserId(String userId, Pageable pageable) {
-    return this.search(null, StatusCode.ACTIVE, userId, pageable);
+    return this.search(null, StatusCode.ACTIVE, userId, null, pageable);
   }
 
   @Override
@@ -89,12 +91,5 @@ class AgentRepositoryCustomImpl implements AgentRepositoryCustom {
     return Optional.ofNullable(query.fetchOne());
   }
 
-  @Override
-  public Optional<Agent> findOneByApiKey(String apiKey){
-    QAgent qAgent = QAgent.agent;
-    BooleanBuilder builder = new BooleanBuilder();
-    builder.and(qAgent.apiKey.eq(apiKey));
-    JPQLQuery<Agent> query = jpaQueryFactory.selectFrom(qAgent).where(builder);
-    return Optional.ofNullable(query.fetchOne());
-  }
+
 }

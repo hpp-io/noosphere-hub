@@ -181,13 +181,18 @@ public class AgentResource {
       ),
     }
   )
-  @JsonView(JsonViewType.Shallow.class)
+  @JsonView(JsonViewType.Update.class)
   public ResponseEntity<List<AgentDTO>> search(
     @RequestBody SearchAgentVm searchVm,
     @org.springdoc.core.annotations.ParameterObject Pageable pageable
   ) {
     LOG.debug("REST request to search Agents");
-    Page<AgentDTO> page = agentService.search(searchVm.getName(), searchVm.getStatusCode(), searchVm.getCreatedByUserId(), pageable);
+    Page<AgentDTO> page = agentService.search(
+      searchVm.getName(),
+      searchVm.getStatusCode(),
+      searchVm.getCreatedByUserId(),
+      searchVm.getWalletAddress(),
+      pageable);
     HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
     return ResponseEntity.ok().headers(headers).body(page.getContent());
   }

@@ -25,71 +25,76 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @Schema
 public class ValidatorDTO implements Serializable {
 
-    @JsonView(JsonViewType.Shallow.class)
-    private UUID id;
+  @JsonView(JsonViewType.Shallow.class)
+  private UUID id;
 
-    @JsonView(JsonViewType.Shallow.class)
-    private String name;
+  @JsonView(JsonViewType.Shallow.class)
+  private String name;
 
-    @NotNull
-    @JsonView(JsonViewType.Update.class)
-    private String apiKey;
+  @NotNull
+  @JsonView(JsonViewType.Update.class)
+  private String walletAddress;
 
-    @JsonView(JsonViewType.Update.class)
-    private BigDecimal price;
+  @JsonView(JsonViewType.Update.class)
+  private BigDecimal price;
 
-    @NotNull
-    @JsonView(JsonViewType.Full.class)
-    private StatusCode statusCode;
+  @NotNull
+  @JsonView(JsonViewType.Full.class)
+  private StatusCode statusCode;
 
-    @Lob
-    @JsonView(JsonViewType.Update.class)
-    private String description;
+  @Lob
+  @JsonView(JsonViewType.Update.class)
+  private String description;
 
-    @JsonView(JsonViewType.Full.class)
-    private Instant createdAt;
+  @Lob
+  @JsonView(JsonViewType.Update.class)
+  private String parameters;
 
-    @JsonView(JsonViewType.Full.class)
-    private Instant updatedAt;
+  @JsonView(JsonViewType.Full.class)
+  private Instant createdAt;
 
-    @JsonView(JsonViewType.Full.class)
-    private UserDTO createdByUser;
+  @JsonView(JsonViewType.Full.class)
+  private Instant updatedAt;
 
-    @JsonView(JsonViewType.Full.class)
-    private UserDTO updatedByUser;
+  @JsonView(JsonViewType.Full.class)
+  private UserDTO createdByUser;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
+  @JsonView(JsonViewType.Full.class)
+  private UserDTO updatedByUser;
 
-        if (!(o instanceof ValidatorDTO that)) {
-            return false;
-        }
-
-      return new EqualsBuilder().append(id, that.id).append(name, that.name).isEquals();
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
     }
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(id).append(name)
-          .toHashCode();
+    if (!(o instanceof ValidatorDTO that)) {
+      return false;
     }
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-          .append("id", id)
-          .append("name", name)
-          .append("apiKey", apiKey)
-          .append("price", price)
-          .append("statusCode", statusCode)
-          .append("description", description)
-          .append("createdAt", createdAt)
-          .append("updatedAt", updatedAt)
-          .append("createdByUser", createdByUser !=null ? createdByUser.getId() : null)
-          .append("updatedByUser", updatedByUser !=null ? updatedByUser.getId() : null)
-          .toString();
-    }
+    return new EqualsBuilder().append(id, that.id).append(name, that.name).isEquals();
+  }
+
+  @Override
+  public int hashCode() {
+    return new HashCodeBuilder(17, 37).append(id).append(name)
+      .toHashCode();
+  }
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this)
+      .append("id", id)
+      .append("name", name)
+      .append("walletAddress", walletAddress)
+      .append("price", price)
+      .append("statusCode", statusCode)
+      .append("description", description)
+      .append("parameters", parameters)
+      .append("createdAt", createdAt)
+      .append("updatedAt", updatedAt)
+      .append("createdByUser", createdByUser != null ? createdByUser.getId() : null)
+      .append("updatedByUser", updatedByUser != null ? updatedByUser.getId() : null)
+      .toString();
+  }
 }

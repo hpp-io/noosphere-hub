@@ -1,19 +1,15 @@
 package io.hpp.noosphere.hub.service;
 
 import static io.hpp.noosphere.hub.config.Constants.DEFAULT_LANGUAGE;
-import static io.hpp.noosphere.hub.config.Constants.PROPERTY_NAME_API_KEY;
 
-import io.hpp.noosphere.hub.domain.Validator;
 import io.hpp.noosphere.hub.domain.User;
+import io.hpp.noosphere.hub.domain.Validator;
 import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
-import io.hpp.noosphere.hub.exception.ValidatorNotFoundException;
-import io.hpp.noosphere.hub.exception.AlreadyExistsException;
 import io.hpp.noosphere.hub.exception.PermissionDeniedException;
 import io.hpp.noosphere.hub.repository.ValidatorRepository;
-import io.hpp.noosphere.hub.service.dto.ValidatorDTO;
 import io.hpp.noosphere.hub.service.dto.UserDTO;
+import io.hpp.noosphere.hub.service.dto.ValidatorDTO;
 import io.hpp.noosphere.hub.service.mapper.ValidatorMapper;
-import io.hpp.noosphere.hub.service.uil.CommonUtils;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
@@ -65,11 +61,6 @@ public class ValidatorService {
    */
   public ValidatorDTO create(String userId, ValidatorDTO validatorDTO, Instant timestamp) {
     LOG.debug("Request to save Validator : {}", validatorDTO);
-    if (CommonUtils.isValid(validatorDTO.getApiKey())){
-      if (this.findOneByApiKey(validatorDTO.getApiKey()).isPresent()) {
-        throw new AlreadyExistsException(PROPERTY_NAME_API_KEY, validatorDTO.getApiKey());
-      }
-    }
     UserDTO userDTO = new UserDTO();
     userDTO.setId(userId);
     validatorDTO.setCreatedByUser(userDTO);
@@ -82,12 +73,7 @@ public class ValidatorService {
 
   public ValidatorDTO register(String name, String apiKey, String walletAddress, String email, Instant timestamp) {
     LOG.debug("Request to register Validator");
-    if (CommonUtils.isValid(apiKey)){
-      if (this.findOneByApiKey(apiKey).isPresent()) {
-        throw new AlreadyExistsException(PROPERTY_NAME_API_KEY, apiKey);
-      }
-    }
-    UserDTO userDTO = userService.findOneByEmailOrWalletAddressOrApiKey(email, walletAddress, apiKey, null);
+    UserDTO userDTO = userService.findOneByEmailAndWalletAddressOrApiKey(email, walletAddress, apiKey, null);
     if (userDTO == null) {
       userDTO = new UserDTO();
       userDTO.setEmail(email);
@@ -103,7 +89,7 @@ public class ValidatorService {
     validator.setName(name);
     validator.setCreatedAt(timestamp);
     validator.setStatusCode(StatusCode.ACTIVE);
-    validator.setApiKey(apiKey);
+    validator.setWalletAddress(walletAddress);
     validator = validatorRepository.save(validator);
     return validatorMapper.toDto(validator);
   }
@@ -131,9 +117,9 @@ public class ValidatorService {
    * @return the list of entities.
    */
   @Transactional(readOnly = true)
-  public Page<ValidatorDTO> search(String name, StatusCode statusCode, String createdByUserId, Pageable pageable) {
+  public Page<ValidatorDTO> search(String name, StatusCode statusCode, String createdByUserId, String walletAddress, Pageable pageable) {
     LOG.debug("Request to search all Validators");
-    return validatorRepository.search(name, statusCode, createdByUserId, pageable).map(validatorMapper::toDto);
+    return validatorRepository.search(name, statusCode, createdByUserId, walletAddress, pageable).map(validatorMapper::toDto);
   }
 
   /**
@@ -176,8 +162,4 @@ public class ValidatorService {
     return null;
   }
 
-  @Transactional(readOnly = true)
-  public Optional<ValidatorDTO> findOneByApiKey(String apiKey) {
-    return validatorRepository.findOneByApiKey(apiKey).map(validatorMapper::toDto);
-  }
 }

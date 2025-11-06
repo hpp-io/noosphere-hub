@@ -25,6 +25,7 @@
     <include file="config/liquibase/changelog/20251020000001_updated_entity_User.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20251029000001_added_entity_Validator.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20251030000001_added_entity_UserSubscription.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20251106000001_updated_entity_ValidatorAndAgent.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
 </databaseChangeLog>
