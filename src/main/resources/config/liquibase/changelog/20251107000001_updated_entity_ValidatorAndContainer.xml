@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+  <changeSet id="20251107000001-1" author="jungsoo">
+    <dropColumn tableName="container" columnName="price"/>
+    <dropColumn tableName="container" columnName="parameters"/>
+    <dropColumn tableName="container" columnName="description"/>
+    <dropColumn tableName="container" columnName="name"/>
+    <addColumn tableName="container">
+      <column name="name" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="image_name" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="port" type="integer">
+        <constraints nullable="false"/>
+      </column>
+      <column name="command" type="varchar(1024)">
+        <constraints nullable="true"/>
+      </column>
+      <column name="env" type="${clobType}">
+        <constraints nullable="true"/>
+      </column>
+      <column name="volumes" type="${clobType}">
+        <constraints nullable="true"/>
+      </column>
+      <column name="payments" type="${clobType}">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet id="20251107000001-2" author="jungsoo">
+    <dropColumn tableName="validator" columnName="price"/>
+    <dropColumn tableName="validator" columnName="parameters"/>
+    <dropColumn tableName="validator" columnName="description"/>
+    <dropColumn tableName="validator" columnName="name"/>
+    <addColumn tableName="validator">
+      <column name="name" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="verifier_address" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="image_name" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="port" type="integer">
+        <constraints nullable="false"/>
+      </column>
+      <column name="command" type="varchar(1024)">
+        <constraints nullable="true"/>
+      </column>
+      <column name="env" type="${clobType}">
+        <constraints nullable="true"/>
+      </column>
+      <column name="volumes" type="${clobType}">
+        <constraints nullable="true"/>
+      </column>
+      <column name="payments" type="${clobType}">
+        <constraints nullable="false"/>
+      </column>
+    </addColumn>
+
+  </changeSet>
+</databaseChangeLog>

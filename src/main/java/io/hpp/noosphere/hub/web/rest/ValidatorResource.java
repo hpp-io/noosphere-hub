@@ -85,28 +85,6 @@ public class ValidatorResource {
   }
 
   /**
-   * {@code POST  /validators} : Create a new validator.
-   *
-   * @param validatorDTO the validatorDTO to create.
-   * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new validatorDTO, or with status {@code 400 (Bad Request)} if the
-   * validator has already an ID.
-   * @throws URISyntaxException if the Location URI syntax is incorrect.
-   */
-  @PostMapping("")
-  @JsonView(JsonViewType.Update.class)
-  public ResponseEntity<ValidatorDTO> createValidator(@RequestBody ValidatorDTO validatorDTO) throws URISyntaxException {
-    LOG.debug("REST request to save Validator : {}", validatorDTO);
-    if (validatorDTO.getId() != null) {
-      throw new BadRequestAlertException("A new validator cannot already have an ID", ENTITY_NAME, "idexists");
-    }
-    Instant now = Instant.now();
-    validatorDTO = validatorService.create(authenticationFacade.getUserId(), validatorDTO, now);
-    return ResponseEntity.created(new URI("/api/validators/" + validatorDTO.getId()))
-      .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, validatorDTO.getId().toString()))
-      .body(validatorDTO);
-  }
-
-  /**
    * {@code PUT  /validators/:id} : Updates an existing validator.
    *
    * @param id           the id of the validatorDTO to save.
@@ -177,10 +155,12 @@ public class ValidatorResource {
   ) {
     LOG.debug("REST request to search Validators");
     Page<ValidatorDTO> page = validatorService.search(
+      searchVm.getSearchText(),
       searchVm.getName(),
       searchVm.getStatusCode(),
       searchVm.getCreatedByUserId(),
       searchVm.getWalletAddress(),
+      searchVm.getVerifierAddress(),
       pageable);
     HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
     return ResponseEntity.ok().headers(headers).body(page.getContent());
@@ -221,7 +201,7 @@ public class ValidatorResource {
     LOG.debug("REST request to register Validator : {}", validatorVm);
     Instant now = Instant.now();
     ValidatorDTO validatorDTO = validatorService.register(validatorVm.getName(), validatorVm.getApiKey(), validatorVm.getWalletAddress(),
-      validatorVm.getEmail(), now);
+      validatorVm.getVerifierAddress(), validatorVm.getEmail(), now);
     return ResponseEntity.created(new URI("/api/validators/" + validatorDTO.getId()))
       .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, validatorDTO.getId().toString()))
       .body(validatorDTO);

@@ -11,6 +11,8 @@ public class SearchAgentVm {
 
     @Schema(description = "Agent Name", requiredMode = RequiredMode.NOT_REQUIRED)
     private String name;
+    @Schema(description = "Search Text", requiredMode = RequiredMode.NOT_REQUIRED)
+    private String searchText;
     @Schema(description = "Wallet Address", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     private String walletAddress;
     @Schema(description = "Agent Status Code", requiredMode = Schema.RequiredMode.NOT_REQUIRED)

@@ -114,9 +114,9 @@ public class AgentService {
    * @return the list of entities.
    */
   @Transactional(readOnly = true)
-  public Page<AgentDTO> search(String name, StatusCode statusCode, String createdByUserId, String walletAddress, Pageable pageable) {
+  public Page<AgentDTO> search(String searchText, String name, StatusCode statusCode, String createdByUserId, String walletAddress, Pageable pageable) {
     LOG.debug("Request to search all Agents");
-    return agentRepository.search(name, statusCode, createdByUserId, walletAddress, pageable).map(agentMapper::toDto);
+    return agentRepository.search(searchText, name, statusCode, createdByUserId, walletAddress, pageable).map(agentMapper::toDto);
   }
 
   /**

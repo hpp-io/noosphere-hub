@@ -95,27 +95,6 @@ public class AgentResource {
     this.userService = userService;
   }
 
-  /**
-   * {@code POST  /agents} : Create a new agent.
-   *
-   * @param agentDTO the agentDTO to create.
-   * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new agentDTO, or with status {@code 400 (Bad Request)} if the agent
-   * has already an ID.
-   * @throws URISyntaxException if the Location URI syntax is incorrect.
-   */
-  @PostMapping("")
-  @JsonView(JsonViewType.Update.class)
-  public ResponseEntity<AgentDTO> createAgent(@RequestBody AgentDTO agentDTO) throws URISyntaxException {
-    LOG.debug("REST request to save Agent : {}", agentDTO);
-    if (agentDTO.getId() != null) {
-      throw new BadRequestAlertException("A new agent cannot already have an ID", ENTITY_NAME, "idexists");
-    }
-    Instant now = Instant.now();
-    agentDTO = agentService.create(authenticationFacade.getUserId(), agentDTO, now);
-    return ResponseEntity.created(new URI("/api/agents/" + agentDTO.getId()))
-      .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, agentDTO.getId().toString()))
-      .body(agentDTO);
-  }
 
   /**
    * {@code PUT  /agents/:id} : Updates an existing agent.
@@ -188,6 +167,7 @@ public class AgentResource {
   ) {
     LOG.debug("REST request to search Agents");
     Page<AgentDTO> page = agentService.search(
+      searchVm.getSearchText(),
       searchVm.getName(),
       searchVm.getStatusCode(),
       searchVm.getCreatedByUserId(),
