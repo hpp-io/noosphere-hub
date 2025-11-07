@@ -9,6 +9,7 @@ import io.hpp.noosphere.hub.service.UserService;
 import io.hpp.noosphere.hub.service.dto.ContainerDTO;
 import io.hpp.noosphere.hub.service.dto.JsonViewType;
 import io.hpp.noosphere.hub.web.rest.errors.BadRequestAlertException;
+import io.hpp.noosphere.hub.web.rest.vm.RegisterContainerVm;
 import io.hpp.noosphere.hub.web.rest.vm.SearchContainerVm;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.extensions.Extension;
@@ -85,28 +86,6 @@ public class ContainerResource {
   }
 
   /**
-   * {@code POST  /containers} : Create a new container.
-   *
-   * @param containerDTO the containerDTO to create.
-   * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new containerDTO, or with status {@code 400 (Bad Request)} if the
-   * container has already an ID.
-   * @throws URISyntaxException if the Location URI syntax is incorrect.
-   */
-  @PostMapping("")
-  @JsonView(JsonViewType.Update.class)
-  public ResponseEntity<ContainerDTO> createContainer(@RequestBody ContainerDTO containerDTO) throws URISyntaxException {
-    LOG.debug("REST request to save Container : {}", containerDTO);
-    if (containerDTO.getId() != null) {
-      throw new BadRequestAlertException("A new container cannot already have an ID", ENTITY_NAME, "idexists");
-    }
-    Instant now = Instant.now();
-    containerDTO = containerService.create(authenticationFacade.getUserId(), containerDTO, now);
-    return ResponseEntity.created(new URI("/api/containers/" + containerDTO.getId()))
-      .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, containerDTO.getId().toString()))
-      .body(containerDTO);
-  }
-
-  /**
    * {@code PUT  /containers/:id} : Updates an existing container.
    *
    * @param id           the id of the containerDTO to save.
@@ -177,6 +156,7 @@ public class ContainerResource {
   ) {
     LOG.debug("REST request to search Containers");
     Page<ContainerDTO> page = containerService.search(
+      searchVm.getSearchText(),
       searchVm.getName(),
       searchVm.getStatusCode(),
       searchVm.getCreatedByUserId(),
@@ -214,5 +194,17 @@ public class ContainerResource {
     return ResponseEntity.noContent()
       .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
       .build();
+  }
+
+  @JsonView(JsonViewType.Shallow.class)
+  @PostMapping("/register")
+  public ResponseEntity<ContainerDTO> registerContainer(@Valid @RequestBody RegisterContainerVm containerVm) throws URISyntaxException {
+    LOG.debug("REST request to register Container : {}", containerVm);
+    Instant now = Instant.now();
+    ContainerDTO containerDTO = containerService.register(containerVm.getName(), containerVm.getApiKey(), containerVm.getWalletAddress(),
+      containerVm.getEmail(), now);
+    return ResponseEntity.created(new URI("/api/containers/" + containerDTO.getId()))
+      .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, containerDTO.getId().toString()))
+      .body(containerDTO);
   }
 }

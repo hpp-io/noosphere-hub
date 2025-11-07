@@ -126,9 +126,9 @@ public class ContainerService {
    * @return the list of entities.
    */
   @Transactional(readOnly = true)
-  public Page<ContainerDTO> search(String name, StatusCode statusCode, String createdByUserId, String walletAddress, Pageable pageable) {
+  public Page<ContainerDTO> search(String searchText, String name, StatusCode statusCode, String createdByUserId, String walletAddress, Pageable pageable) {
     LOG.debug("Request to search Containers");
-    return containerRepository.search(name, statusCode, createdByUserId, walletAddress, pageable).map(containerMapper::toDto);
+    return containerRepository.search(searchText, name, statusCode, createdByUserId, walletAddress, pageable).map(containerMapper::toDto);
   }
 
   /**

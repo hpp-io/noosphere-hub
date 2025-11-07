@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Lob;
 import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -31,6 +30,7 @@ public class ContainerDTO implements Serializable {
   @JsonView(JsonViewType.Shallow.class)
   private UUID id;
 
+  @NotNull
   @JsonView(JsonViewType.Shallow.class)
   private String name;
 
@@ -40,19 +40,30 @@ public class ContainerDTO implements Serializable {
 
   @NotNull
   @JsonView(JsonViewType.Update.class)
-  private BigDecimal price;
+  private String imageName;
+
+  @NotNull
+  @JsonView(JsonViewType.Update.class)
+  private Integer port;
+
+  @JsonView(JsonViewType.Update.class)
+  private String command;
+
+  @Lob
+  @JsonView(JsonViewType.Update.class)
+  private String environmentVariables;
+
+  @Lob
+  @JsonView(JsonViewType.Update.class)
+  private String volumes;
+
+  @Lob
+  @JsonView(JsonViewType.Update.class)
+  private String payments;
 
   @NotNull
   @JsonView(JsonViewType.Full.class)
   private StatusCode statusCode;
-
-  @Lob
-  @JsonView(JsonViewType.Update.class)
-  private String description;
-
-  @Lob
-  @JsonView(JsonViewType.Update.class)
-  private String parameters;
 
   @JsonView(JsonViewType.Full.class)
   private Instant createdAt;
@@ -76,14 +87,15 @@ public class ContainerDTO implements Serializable {
       return false;
     }
 
-    return new EqualsBuilder().append(id, that.id).append(name, that.name).append(walletAddress, that.walletAddress)
-      .isEquals();
+    return new EqualsBuilder().append(id, that.id).append(name, that.name).append(imageName, that.imageName)
+      .append(port, that.port).append(statusCode, that.statusCode)
+      .append(createdAt, that.createdAt).append(updatedAt, that.updatedAt).isEquals();
   }
 
   @Override
   public int hashCode() {
-    return new HashCodeBuilder(17, 37).append(id).append(name).append(walletAddress)
-      .toHashCode();
+    return new HashCodeBuilder(17, 37).append(id).append(name).append(imageName).append(port)
+      .append(statusCode).append(createdAt).append(updatedAt).toHashCode();
   }
 
   @Override
@@ -92,14 +104,17 @@ public class ContainerDTO implements Serializable {
       .append("id", id)
       .append("name", name)
       .append("walletAddress", walletAddress)
-      .append("price", price)
+      .append("imageName", imageName)
+      .append("port", port)
+      .append("command", command)
+      .append("environmentVariables", environmentVariables)
+      .append("volumes", volumes)
+      .append("payments", payments)
       .append("statusCode", statusCode)
-      .append("description", description)
-      .append("parameters", parameters)
       .append("createdAt", createdAt)
       .append("updatedAt", updatedAt)
-      .append("createdByUser", createdByUser != null ? createdByUser.getId() : null)
-      .append("updatedByUser", updatedByUser != null ? updatedByUser.getId() : null)
+      .append("createdByUser", createdByUser)
+      .append("updatedByUser", updatedByUser)
       .toString();
   }
 }

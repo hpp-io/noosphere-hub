@@ -7,9 +7,9 @@ import lombok.Data;
 
 @Data
 @Schema
-public class RegisterValidatorVm {
+public class RegisterContainerVm {
 
-    @Schema(description = "Validator Name", requiredMode = RequiredMode.REQUIRED)
+    @Schema(description = "Container Name", requiredMode = RequiredMode.REQUIRED)
     private String name;
 
     @Schema(description = "API Key", requiredMode = RequiredMode.REQUIRED)
@@ -19,10 +19,6 @@ public class RegisterValidatorVm {
     @Schema(description = "Wallet Address", requiredMode = RequiredMode.REQUIRED)
     @NotNull
     private String walletAddress;
-
-    @Schema(description = "Verifier Address", requiredMode = RequiredMode.REQUIRED)
-    @NotNull
-    private String verifierAddress;
 
     @Schema(description = "Email", requiredMode = RequiredMode.REQUIRED)
     @NotNull

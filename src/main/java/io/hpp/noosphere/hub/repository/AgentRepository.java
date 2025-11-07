@@ -26,7 +26,7 @@ public interface AgentRepository extends JpaRepository<Agent, UUID>, AgentReposi
 
 interface AgentRepositoryCustom {
 
-  Page<Agent> search(String name, StatusCode statusCode, String createdByUserId, String walletAddress, Pageable pageable);
+  Page<Agent> search(String searchText, String name, StatusCode statusCode, String createdByUserId, String walletAddress, Pageable pageable);
 
   Page<Agent> findActiveByName(String name, Pageable pageable);
 
@@ -48,7 +48,7 @@ class AgentRepositoryCustomImpl implements AgentRepositoryCustom {
   }
 
   @Override
-  public Page<Agent> search(String name, StatusCode statusCode, String createdByUserId, String walletAddress, Pageable pageable) {
+  public Page<Agent> search(String searchText, String name, StatusCode statusCode, String createdByUserId, String walletAddress, Pageable pageable) {
     QAgent qAgent = QAgent.agent;
     BooleanBuilder builder = new BooleanBuilder();
     if (statusCode != null) {
@@ -63,6 +63,12 @@ class AgentRepositoryCustomImpl implements AgentRepositoryCustom {
     if (CommonUtils.isValid(walletAddress)) {
       builder.and(qAgent.walletAddress.eq(walletAddress));
     }
+    if (CommonUtils.isValid(searchText)) {
+      BooleanBuilder searchBuilder = new BooleanBuilder();
+      searchBuilder.or(qAgent.name.containsIgnoreCase(searchText));
+      searchBuilder.or(qAgent.description.containsIgnoreCase(searchText));
+      builder.and(searchBuilder);
+    }
     if (builder.hasValue()) {
       JPQLQuery<Agent> query = jpaQueryFactory.selectFrom(qAgent).where(builder);
       return QuerydslUtil.fetchPage(query, pageable);
@@ -73,12 +79,12 @@ class AgentRepositoryCustomImpl implements AgentRepositoryCustom {
 
   @Override
   public Page<Agent> findActiveByName(String name, Pageable pageable) {
-    return this.search(name, StatusCode.ACTIVE, null, null, pageable);
+    return this.search(null, name, StatusCode.ACTIVE, null, null, pageable);
   }
 
   @Override
   public Page<Agent> findActiveByCreatedByUserId(String userId, Pageable pageable) {
-    return this.search(null, StatusCode.ACTIVE, userId, null, pageable);
+    return this.search(null, null, StatusCode.ACTIVE, userId, null, pageable);
   }
 
   @Override

@@ -71,7 +71,7 @@ public class ValidatorService {
     return validatorMapper.toDto(validator);
   }
 
-  public ValidatorDTO register(String name, String apiKey, String walletAddress, String email, Instant timestamp) {
+  public ValidatorDTO register(String name, String apiKey, String walletAddress, String verifierAddress, String email, Instant timestamp) {
     LOG.debug("Request to register Validator");
     UserDTO userDTO = userService.findOneByEmailAndWalletAddressOrApiKey(email, walletAddress, apiKey, null);
     if (userDTO == null) {
@@ -90,6 +90,7 @@ public class ValidatorService {
     validator.setCreatedAt(timestamp);
     validator.setStatusCode(StatusCode.ACTIVE);
     validator.setWalletAddress(walletAddress);
+    validator.setVerifierAddress(verifierAddress);
     validator = validatorRepository.save(validator);
     return validatorMapper.toDto(validator);
   }
@@ -117,9 +118,9 @@ public class ValidatorService {
    * @return the list of entities.
    */
   @Transactional(readOnly = true)
-  public Page<ValidatorDTO> search(String name, StatusCode statusCode, String createdByUserId, String walletAddress, Pageable pageable) {
+  public Page<ValidatorDTO> search(String searchText, String name, StatusCode statusCode, String createdByUserId, String walletAddress, String verifierAddress, Pageable pageable) {
     LOG.debug("Request to search all Validators");
-    return validatorRepository.search(name, statusCode, createdByUserId, walletAddress, pageable).map(validatorMapper::toDto);
+    return validatorRepository.search(searchText, name, statusCode, createdByUserId, walletAddress, verifierAddress, pageable).map(validatorMapper::toDto);
   }
 
   /**
