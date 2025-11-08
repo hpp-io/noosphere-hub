@@ -9,7 +9,6 @@ import io.hpp.noosphere.hub.service.ValidatorService;
 import io.hpp.noosphere.hub.service.dto.JsonViewType;
 import io.hpp.noosphere.hub.service.dto.ValidatorDTO;
 import io.hpp.noosphere.hub.web.rest.errors.BadRequestAlertException;
-import io.hpp.noosphere.hub.web.rest.vm.RegisterValidatorVm;
 import io.hpp.noosphere.hub.web.rest.vm.SearchValidatorVm;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.extensions.Extension;
@@ -82,6 +81,20 @@ public class ValidatorResource {
     this.validatorService = validatorService;
     this.validatorRepository = validatorRepository;
     this.userService = userService;
+  }
+
+  @PostMapping("")
+  @JsonView(JsonViewType.Update.class)
+  public ResponseEntity<ValidatorDTO> createValidator(@RequestBody ValidatorDTO validatorDTO) throws URISyntaxException {
+    LOG.debug("REST request to save Validator : {}", validatorDTO);
+    if (validatorDTO.getId() != null) {
+      throw new BadRequestAlertException("A new validator cannot already have an ID", ENTITY_NAME, "idexists");
+    }
+    Instant now = Instant.now();
+    validatorDTO = validatorService.create(authenticationFacade.getUserId(), validatorDTO, now);
+    return ResponseEntity.created(new URI("/api/validators/" + validatorDTO.getId()))
+      .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, validatorDTO.getId().toString()))
+      .body(validatorDTO);
   }
 
   /**
@@ -195,15 +208,5 @@ public class ValidatorResource {
       .build();
   }
 
-  @JsonView(JsonViewType.Shallow.class)
-  @PostMapping("/register")
-  public ResponseEntity<ValidatorDTO> registerValidator(@Valid @RequestBody RegisterValidatorVm validatorVm) throws URISyntaxException {
-    LOG.debug("REST request to register Validator : {}", validatorVm);
-    Instant now = Instant.now();
-    ValidatorDTO validatorDTO = validatorService.register(validatorVm.getName(), validatorVm.getApiKey(), validatorVm.getWalletAddress(),
-      validatorVm.getVerifierAddress(), validatorVm.getEmail(), now);
-    return ResponseEntity.created(new URI("/api/validators/" + validatorDTO.getId()))
-      .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, validatorDTO.getId().toString()))
-      .body(validatorDTO);
-  }
+
 }
