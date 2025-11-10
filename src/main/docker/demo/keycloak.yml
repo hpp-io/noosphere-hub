@@ -6,8 +6,8 @@ services:
     image: ghcr.io/hpp-io/noosphere-auth:demo-amd64
     command: 'start-dev --import-realm'
     volumes:
-      - ./realm-config:/opt/keycloak/data/import
-      - ./realm-config/keycloak-health-check.sh:/opt/keycloak/health-check.sh
+      - ../realm-config:/opt/keycloak/data/import
+      - ../realm-config/keycloak-health-check.sh:/opt/keycloak/health-check.sh
     environment:
       - KC_DB_URL_HOST=noosphere-mysql
       - KC_DB_URL_PORT=3306

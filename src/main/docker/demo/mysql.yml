@@ -4,8 +4,8 @@ services:
   noosphere-mysql:
     image: mysql:9.2.0
     volumes:
-      - ./config/mysql:/etc/mysql/conf.d
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ../config/mysql:/etc/mysql/conf.d
+      - ../db/init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=no
       - MYSQL_USER=${DATABASE_USERNAME}
