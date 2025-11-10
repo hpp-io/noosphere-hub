@@ -17,12 +17,28 @@ public class ApplicationProperties {
     private final Keycloak keycloak = new Keycloak();
     private final ScheduleTask scheduleTask = new ScheduleTask();
     private final Blockchain blockchain = new Blockchain();
+    private final Keystore keystore = new Keystore();
 
     // jhipster-needle-application-properties-property
 
 
     // jhipster-needle-application-properties-property-getter
 
+    @Data
+    public static class Keystore {
+
+        private String path;
+        private String storePassword;
+        private final KeystoreKeys keys = new KeystoreKeys();
+
+    }
+
+    @Data
+    public static class KeystoreKeys {
+
+        private String eth;
+
+    }
     @Data
     public static class Liquibase {
 
@@ -36,7 +52,6 @@ public class ApplicationProperties {
 
         private String rpcUrl;
         private String routerAddress;
-        private String ownerPrivateKey;
         private Long connectionTimeout;
         private Long readTimeout;
         private Long writeTimeout;

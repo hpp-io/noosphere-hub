@@ -49,6 +49,8 @@ public final class Constants {
 
     public static final String EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000";
     public static final String EVENT_NAME_WALLET_CREATED = "WalletCreated";
+    public static final String KEYSTORE_TYPE = "PKCS12";
+    public static final String KEYSTORE_ETH_KEY_ALIAS = "hpp-eth-key";
 
 
     private Constants() {}
