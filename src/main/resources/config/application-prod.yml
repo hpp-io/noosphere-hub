@@ -130,3 +130,16 @@ application:
       unhealthy-timeout: 10 # timeout value in minutes
       enable-cron: true
       cron: 0 5/10 * * * ?
+  keystore:
+    path: ./hpp-keystore.p12
+    store-password: '${HPP_KEYSTORE_PASSWORD}'
+    keys:
+      eth: '${HPP_ETH_KEY_ALIAS}'
+  blockchain:
+    rpc-url: http://127.0.0.1:8545
+    router-address: '0x5FbDB2315678afecb367f032d93F642f64180aa3'
+    connection-timeout: 30000  # in milliseconds
+    read-timeout: 30000 # in milliseconds
+    write-timeout: 30000 # in milliseconds
+    gas-price-ratio: 1.2
+    gas-limit-ratio: 1.2

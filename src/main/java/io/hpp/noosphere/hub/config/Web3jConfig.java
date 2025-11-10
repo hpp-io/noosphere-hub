@@ -1,5 +1,8 @@
 package io.hpp.noosphere.hub.config;
 
+import static io.hpp.noosphere.hub.config.Constants.KEYSTORE_ETH_KEY_ALIAS;
+
+import io.hpp.noosphere.hub.service.KeystoreService;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.concurrent.TimeUnit;
@@ -15,9 +18,14 @@ import org.web3j.tx.gas.DefaultGasProvider;
 public class Web3jConfig {
 
     private final ApplicationProperties applicationProperties;
+    private final KeystoreService keystoreService;
 
-    public Web3jConfig(ApplicationProperties applicationProperties) {
+    public Web3jConfig(
+      ApplicationProperties applicationProperties,
+      KeystoreService keystoreService
+    ) {
         this.applicationProperties = applicationProperties;
+        this.keystoreService = keystoreService;
     }
 
     @Bean
@@ -43,7 +51,11 @@ public class Web3jConfig {
 
     @Bean
     public Credentials credentials() {
-        return Credentials.create(applicationProperties.getBlockchain().getOwnerPrivateKey());
+        String privateKey = keystoreService.getSecretKey(KEYSTORE_ETH_KEY_ALIAS);
+        if (privateKey != null) {
+            return Credentials.create(privateKey);
+        }
+        return null;
     }
 
     @Bean
