@@ -1,3 +1,4 @@
 CREATE DATABASE nshub;
+CREATE DATABASE keycloak;
 GRANT ALL PRIVILEGES ON keycloak.* TO 'nsuser';
 GRANT ALL PRIVILEGES ON nshub.* TO 'nsuser';
