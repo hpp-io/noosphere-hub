@@ -1,7 +1,7 @@
 # This configuration is intended for development purpose, it's **your** responsibility to harden it for production
 name: noospherehub
 services:
-  app:
+  noosphere-hub:
     image: ghcr.io/hpp-io/noosphere-hub:demo
     container_name: noosphere-hub
     environment:
@@ -26,11 +26,11 @@ services:
       interval: 5s
       timeout: 5s
       retries: 40
-    depends_on:
-      mysql:
-        condition: service_healthy
-      keycloak:
-        condition: service_healthy
+  #    depends_on:
+  #      mysql:
+  #        condition: service_healthy
+  #      keycloak:
+  #        condition: service_healthy
   noosphere-mysql:
     extends:
       file: ./mysql.yml
