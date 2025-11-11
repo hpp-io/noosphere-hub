@@ -78,6 +78,32 @@ eclipse {
     }
 }
 
+sourceSets {
+    main {
+        java {
+            srcDirs += [
+                "build/generated/sources/annotationProcessor/java/main"
+            ]
+        }
+    }
+}
+
+// Configure the Java compiler to be explicit about annotation processing
+tasks.withType(JavaCompile).configureEach {
+    // Use the modern 'Generated' annotation for Jakarta EE
+    options.getCompilerArgs().add("-Aquerydsl.generatedAnnotationClass=jakarta.annotation.processing.Generated")
+}
+
+// Explicitly set the directory for generated sources for the main source set
+compileJava {
+    options.annotationProcessorGeneratedSourcesDirectory = file("build/generated/sources/annotationProcessor/java/main")
+}
+
+// Explicitly set the directory for generated sources for the test source set
+compileTestJava {
+    options.annotationProcessorGeneratedSourcesDirectory = file("build/generated/sources/annotationProcessor/java/test")
+}
+
 defaultTasks "bootRun"
 
 springBoot {
@@ -413,4 +439,3 @@ task cleanResources(type: Delete) {
 
 compileJava.dependsOn processResources
 processResources.dependsOn bootBuildInfo
-
