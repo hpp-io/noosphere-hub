@@ -27,6 +27,7 @@ targetCompatibility=17
 assert System.properties["java.specification.version"] == "17" || "21" || "24"
 
 ext {
+    querydslVersion = "5.1.0"
     springProfiles = ""
     if (project.hasProperty("tls")) {
         springProfiles += ",tls"
@@ -64,6 +65,7 @@ if (project.hasProperty("zipkin")) {
 
 idea {
     module {
+        sourceDirs += file("build/generated/sources/annotationProcessor/java/main")
         excludeDirs += files("node_modules")
     }
 }
@@ -102,6 +104,11 @@ compileJava {
 // Explicitly set the directory for generated sources for the test source set
 compileTestJava {
     options.annotationProcessorGeneratedSourcesDirectory = file("build/generated/sources/annotationProcessor/java/test")
+}
+
+tasks.named("clean") {
+    // Also clean the generated sources directory
+    delete "build/generated"
 }
 
 defaultTasks "bootRun"
