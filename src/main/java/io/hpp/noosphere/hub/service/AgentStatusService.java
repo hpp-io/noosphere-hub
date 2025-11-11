@@ -95,30 +95,25 @@ public class AgentStatusService {
             .map(agentStatusMapper::toDto);
     }
 
-    public void updateKeepAlive(String userId, UUID agentId, Instant timestamp)
-        throws AgentNotFoundException, PermissionDeniedException {
+    public void updateKeepAlive(String userId, UUID agentId, Instant timestamp) throws AgentNotFoundException, PermissionDeniedException {
         Agent agent = agentService.validateOwner(agentId, userId);
-        AgentStatus agentStatus = null;
-        if (agent != null) {
-            if (!StatusCode.ACTIVE.equals(agent.getStatusCode())) {
-                agent.setStatusCode(StatusCode.ACTIVE);
-                agent = agentRepository.save(agent);
-            }
-            Optional<AgentStatus> optionalAgentStatus = agentStatusRepository.findByAgentId(agentId);
-            if (optionalAgentStatus.isPresent()) {
-                agentStatus = optionalAgentStatus.get();
-                agentStatus.setLastKeepAliveAt(timestamp);
-                agentStatus = agentStatusRepository.save(agentStatus);
-            } else {
-                agentStatus = new AgentStatus();
-                agentStatus.setAgent(agent);
-                agentStatus.setCreatedAt(timestamp);
-                agentStatus.setLastKeepAliveAt(timestamp);
-                agentStatus = agentStatusRepository.save(agentStatus);
-            }
-        } else {
-            throw new AgentNotFoundException(agentId.toString());
+
+        if (!StatusCode.ACTIVE.equals(agent.getStatusCode())) {
+            agent.setStatusCode(StatusCode.ACTIVE);
+            agentRepository.save(agent);
         }
+
+        AgentStatus agentStatus = agentStatusRepository
+            .findByAgentId(agentId)
+            .orElseGet(() -> {
+                AgentStatus newStatus = new AgentStatus();
+                newStatus.setAgent(agent);
+                newStatus.setCreatedAt(timestamp);
+                return newStatus;
+            });
+
+        agentStatus.setLastKeepAliveAt(timestamp);
+        agentStatusRepository.save(agentStatus);
     }
 
     /**

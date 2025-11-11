@@ -3,6 +3,7 @@ package io.hpp.noosphere.hub.web.rest;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.hpp.noosphere.hub.config.OpenApiConfiguration;
 import io.hpp.noosphere.hub.exception.PermissionDeniedException;
+import io.hpp.noosphere.hub.exception.ValidatorNotFoundException;
 import io.hpp.noosphere.hub.repository.ValidatorRepository;
 import io.hpp.noosphere.hub.service.UserService;
 import io.hpp.noosphere.hub.service.ValidatorService;
@@ -54,159 +55,158 @@ import tech.jhipster.web.util.ResponseUtil;
 @RestController
 @RequestMapping("/api/validators")
 @Tag(
-  name = "Validator",
-  description = "Validator Controller",
-  extensions = {@Extension(properties = {@ExtensionProperty(name = OpenApiConfiguration.TAG_ORDER, value = "1")})}
+    name = "Validator",
+    description = "Validator Controller",
+    extensions = { @Extension(properties = { @ExtensionProperty(name = OpenApiConfiguration.TAG_ORDER, value = "1") }) }
 )
 public class ValidatorResource {
 
-  private static final Logger LOG = LoggerFactory.getLogger(ValidatorResource.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ValidatorResource.class);
 
-  private static final String ENTITY_NAME = "nooSphereHubValidator";
-  private final IAuthenticationFacade authenticationFacade;
-  private final ValidatorService validatorService;
-  private final ValidatorRepository validatorRepository;
-  private final UserService userService;
+    private static final String ENTITY_NAME = "nooSphereHubValidator";
+    private final IAuthenticationFacade authenticationFacade;
+    private final ValidatorService validatorService;
+    private final ValidatorRepository validatorRepository;
+    private final UserService userService;
 
-  @Value("${jhipster.clientApp.name}")
-  private String applicationName;
+    @Value("${jhipster.clientApp.name}")
+    private String applicationName;
 
-  public ValidatorResource(
-    ValidatorService validatorService,
-    ValidatorRepository validatorRepository,
-    UserService userService,
-    IAuthenticationFacade authenticationFacade
-  ) {
-    this.authenticationFacade = authenticationFacade;
-    this.validatorService = validatorService;
-    this.validatorRepository = validatorRepository;
-    this.userService = userService;
-  }
-
-  @PostMapping("")
-  @JsonView(JsonViewType.Update.class)
-  public ResponseEntity<ValidatorDTO> createValidator(@RequestBody ValidatorDTO validatorDTO) throws URISyntaxException {
-    LOG.debug("REST request to save Validator : {}", validatorDTO);
-    if (validatorDTO.getId() != null) {
-      throw new BadRequestAlertException("A new validator cannot already have an ID", ENTITY_NAME, "idexists");
-    }
-    Instant now = Instant.now();
-    validatorDTO = validatorService.create(authenticationFacade.getUserId(), validatorDTO, now);
-    return ResponseEntity.created(new URI("/api/validators/" + validatorDTO.getId()))
-      .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, validatorDTO.getId().toString()))
-      .body(validatorDTO);
-  }
-
-  /**
-   * {@code PUT  /validators/:id} : Updates an existing validator.
-   *
-   * @param id           the id of the validatorDTO to save.
-   * @param validatorDTO the validatorDTO to update.
-   * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated validatorDTO, or with status {@code 400 (Bad Request)} if the
-   * validatorDTO is not valid, or with status {@code 500 (Internal Server Error)} if the validatorDTO couldn't be updated.
-   * @throws URISyntaxException if the Location URI syntax is incorrect.
-   */
-  @PutMapping("/{id}")
-  @JsonView(JsonViewType.Update.class)
-  public ResponseEntity<ValidatorDTO> updateValidator(
-    @PathVariable(value = "id", required = true) final UUID id,
-    @Valid @RequestBody ValidatorDTO validatorDTO
-  ) throws PermissionDeniedException {
-    LOG.debug("REST request to update Validator : {}, {}", id, validatorDTO);
-    if (validatorDTO.getId() == null) {
-      throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
-    }
-    if (!Objects.equals(id, validatorDTO.getId())) {
-      throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+    public ValidatorResource(
+        ValidatorService validatorService,
+        ValidatorRepository validatorRepository,
+        UserService userService,
+        IAuthenticationFacade authenticationFacade
+    ) {
+        this.authenticationFacade = authenticationFacade;
+        this.validatorService = validatorService;
+        this.validatorRepository = validatorRepository;
+        this.userService = userService;
     }
 
-    if (!validatorRepository.existsById(id)) {
-      throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+    @PostMapping("")
+    @JsonView(JsonViewType.Update.class)
+    public ResponseEntity<ValidatorDTO> createValidator(@RequestBody ValidatorDTO validatorDTO) throws URISyntaxException {
+        LOG.debug("REST request to save Validator : {}", validatorDTO);
+        if (validatorDTO.getId() != null) {
+            throw new BadRequestAlertException("A new validator cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+        Instant now = Instant.now();
+        validatorDTO = validatorService.create(authenticationFacade.getUserId(), validatorDTO, now);
+        return ResponseEntity.created(new URI("/api/validators/" + validatorDTO.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, validatorDTO.getId().toString()))
+            .body(validatorDTO);
     }
-    Instant now = Instant.now();
-    validatorDTO = validatorService.partialUpdate(userService, authenticationFacade.getUserId(), validatorDTO, now);
-    return ResponseEntity.ok()
-      .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, validatorDTO.getId().toString()))
-      .body(validatorDTO);
-  }
 
-  /**
-   * {@code POST  /validators/search} : search validators.
-   *
-   * @param searchVm the search criteria of the request.
-   * @param pageable the pagination information.
-   * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of validators in body.
-   */
-  @PostMapping("/search")
-  @Operation(summary = "Search Validator")
-  @io.swagger.v3.oas.annotations.parameters.RequestBody(
-    required = true,
-    description = "Search Criteria",
-    content = @Content(schema = @Schema(implementation = SearchValidatorVm.class), mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE)
-  )
-  @ApiResponses(
-    {
-      @ApiResponse(
-        responseCode = "200",
-        content = @Content(
-          mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE,
-          array = @ArraySchema(schema = @Schema(implementation = ValidatorDTO.class))
-        ),
-        description = "Successful operation"
-      ),
-      @ApiResponse(
-        responseCode = "500",
-        content = @Content(mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE),
-        description = "Internal server error"
-      ),
+    /**
+     * {@code PUT  /validators/:id} : Updates an existing validator.
+     *
+     * @param id           the id of the validatorDTO to save.
+     * @param validatorDTO the validatorDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated validatorDTO, or with status {@code 400 (Bad Request)} if the
+     * validatorDTO is not valid, or with status {@code 500 (Internal Server Error)} if the validatorDTO couldn't be updated.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PutMapping("/{id}")
+    @JsonView(JsonViewType.Update.class)
+    public ResponseEntity<ValidatorDTO> updateValidator(
+        @PathVariable(value = "id", required = true) final UUID id,
+        @Valid @RequestBody ValidatorDTO validatorDTO
+    ) throws PermissionDeniedException, ValidatorNotFoundException {
+        LOG.debug("REST request to update Validator : {}, {}", id, validatorDTO);
+        if (validatorDTO.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if (!Objects.equals(id, validatorDTO.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!validatorRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+        Instant now = Instant.now();
+        validatorDTO = validatorService.partialUpdate(userService, authenticationFacade.getUserId(), validatorDTO, now);
+        return ResponseEntity.ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, validatorDTO.getId().toString()))
+            .body(validatorDTO);
     }
-  )
-  @JsonView(JsonViewType.Update.class)
-  public ResponseEntity<List<ValidatorDTO>> search(
-    @RequestBody SearchValidatorVm searchVm,
-    @org.springdoc.core.annotations.ParameterObject Pageable pageable
-  ) {
-    LOG.debug("REST request to search Validators");
-    Page<ValidatorDTO> page = validatorService.search(
-      searchVm.getSearchText(),
-      searchVm.getName(),
-      searchVm.getStatusCode(),
-      searchVm.getCreatedByUserId(),
-      searchVm.getWalletAddress(),
-      searchVm.getVerifierAddress(),
-      pageable);
-    HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-    return ResponseEntity.ok().headers(headers).body(page.getContent());
-  }
 
-  /**
-   * {@code GET  /validators/:id} : get the "id" validator.
-   *
-   * @param id the id of the validatorDTO to retrieve.
-   * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the validatorDTO, or with status {@code 404 (Not Found)}.
-   */
-  @GetMapping("/{id}")
-  @JsonView(JsonViewType.Update.class)
-  public ResponseEntity<ValidatorDTO> getValidator(@PathVariable("id") UUID id) {
-    LOG.debug("REST request to get Validator : {}", id);
-    Optional<ValidatorDTO> validatorDTO = validatorService.findOne(id);
-    return ResponseUtil.wrapOrNotFound(validatorDTO);
-  }
+    /**
+     * {@code POST  /validators/search} : search validators.
+     *
+     * @param searchVm the search criteria of the request.
+     * @param pageable the pagination information.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of validators in body.
+     */
+    @PostMapping("/search")
+    @Operation(summary = "Search Validator")
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+        required = true,
+        description = "Search Criteria",
+        content = @Content(schema = @Schema(implementation = SearchValidatorVm.class), mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    )
+    @ApiResponses(
+        {
+            @ApiResponse(
+                responseCode = "200",
+                content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE,
+                    array = @ArraySchema(schema = @Schema(implementation = ValidatorDTO.class))
+                ),
+                description = "Successful operation"
+            ),
+            @ApiResponse(
+                responseCode = "500",
+                content = @Content(mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE),
+                description = "Internal server error"
+            ),
+        }
+    )
+    @JsonView(JsonViewType.Update.class)
+    public ResponseEntity<List<ValidatorDTO>> search(
+        @RequestBody SearchValidatorVm searchVm,
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable
+    ) {
+        LOG.debug("REST request to search Validators");
+        Page<ValidatorDTO> page = validatorService.search(
+            searchVm.getSearchText(),
+            searchVm.getName(),
+            searchVm.getStatusCode(),
+            searchVm.getCreatedByUserId(),
+            searchVm.getWalletAddress(),
+            searchVm.getVerifierAddress(),
+            pageable
+        );
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
 
-  /**
-   * {@code DELETE  /validators/:id} : delete the "id" validator.
-   *
-   * @param id the id of the validatorDTO to delete.
-   * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
-   */
-  @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deleteValidator(@PathVariable("id") UUID id) throws PermissionDeniedException {
-    LOG.debug("REST request to delete Validator : {}", id);
-    validatorService.delete(authenticationFacade.getUserId(), id);
-    return ResponseEntity.noContent()
-      .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
-      .build();
-  }
+    /**
+     * {@code GET  /validators/:id} : get the "id" validator.
+     *
+     * @param id the id of the validatorDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the validatorDTO, or with status {@code 404 (Not Found)}.
+     */
+    @GetMapping("/{id}")
+    @JsonView(JsonViewType.Update.class)
+    public ResponseEntity<ValidatorDTO> getValidator(@PathVariable("id") UUID id) {
+        LOG.debug("REST request to get Validator : {}", id);
+        Optional<ValidatorDTO> validatorDTO = validatorService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(validatorDTO);
+    }
 
-
+    /**
+     * {@code DELETE  /validators/:id} : delete the "id" validator.
+     *
+     * @param id the id of the validatorDTO to delete.
+     * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteValidator(@PathVariable("id") UUID id) throws PermissionDeniedException, ValidatorNotFoundException {
+        LOG.debug("REST request to delete Validator : {}", id);
+        validatorService.delete(authenticationFacade.getUserId(), id);
+        return ResponseEntity.noContent()
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
+            .build();
+    }
 }

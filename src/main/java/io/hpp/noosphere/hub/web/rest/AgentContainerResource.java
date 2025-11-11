@@ -2,6 +2,7 @@ package io.hpp.noosphere.hub.web.rest;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import io.hpp.noosphere.hub.config.OpenApiConfiguration;
+import io.hpp.noosphere.hub.exception.AgentNotFoundException;
 import io.hpp.noosphere.hub.exception.PermissionDeniedException;
 import io.hpp.noosphere.hub.service.AgentContainerService;
 import io.hpp.noosphere.hub.service.AgentService;
@@ -98,7 +99,7 @@ public class AgentContainerResource {
     public ResponseEntity<AgentContainerDTO> createAgentContainer(
         @PathVariable(value = "agentId", required = true) final UUID agentId,
         @PathVariable(value = "containerId", required = true) final UUID containerId
-    ) throws URISyntaxException, PermissionDeniedException {
+    ) throws URISyntaxException, PermissionDeniedException, AgentNotFoundException {
         LOG.debug("REST request to save Agent {}, Container {}", agentId, containerId);
         Instant now = Instant.now();
         AgentContainerDTO agentContainerDTO = agentContainerService.create(
@@ -149,7 +150,7 @@ public class AgentContainerResource {
     public ResponseEntity<Void> deleteAgentContainer(
         @PathVariable(value = "agentId", required = true) final UUID agentId,
         @PathVariable(value = "containerId", required = true) final UUID containerId
-    ) throws PermissionDeniedException {
+    ) throws PermissionDeniedException, AgentNotFoundException {
         LOG.debug("REST request to delete AgentContainer : {}", containerId);
         agentContainerService.delete(agentService, authenticationFacade.getUserId(), agentId, containerId);
         return ResponseEntity.noContent()

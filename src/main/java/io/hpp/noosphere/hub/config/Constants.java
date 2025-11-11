@@ -21,7 +21,10 @@ public final class Constants {
     public static final String PROPERTY_NAME_VERIFIED = "verified";
     public static final String PROPERTY_NAME_USER = "user";
     public static final String PROPERTY_NAME_GROUP = "group";
+    public static final String PROPERTY_NAME_CONTAINER = "container";
+    public static final String PROPERTY_NAME_USER_SUBSCRIPTION = "userSubscription";
     public static final String PROPERTY_NAME_AGENT = "agent";
+    public static final String PROPERTY_NAME_AGENT_REQUEST = "agentRequest";
     public static final String PROPERTY_NAME_VALIDATOR = "validator";
     public static final String PROPERTY_NAME_PERMISSION_DENIED = "permissionDenied";
     public static final String PROPERTY_NAME_EMAIL = "email";
@@ -51,7 +54,6 @@ public final class Constants {
     public static final String EVENT_NAME_WALLET_CREATED = "WalletCreated";
     public static final String KEYSTORE_TYPE = "PKCS12";
     public static final String KEYSTORE_ETH_KEY_ALIAS = "hpp-eth-key";
-
 
     private Constants() {}
 }

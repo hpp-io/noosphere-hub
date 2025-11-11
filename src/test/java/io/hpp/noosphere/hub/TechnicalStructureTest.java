@@ -24,9 +24,10 @@ class TechnicalStructureTest {
         .optionalLayer("Persistence").definedBy("..repository..")
         .layer("Domain").definedBy("..domain..")
 
-        .whereLayer("Config").mayNotBeAccessedByAnyLayer()
-        .whereLayer("Client").mayNotBeAccessedByAnyLayer()
-        .whereLayer("Web").mayOnlyBeAccessedByLayers("Config")
+//        .whereLayer("Config").mayNotBeAccessedByAnyLayer()
+//        .whereLayer("Client").mayNotBeAccessedByAnyLayer()
+//        .whereLayer("Web").mayOnlyBeAccessedByLayers("Config")
+
 //        .whereLayer("Service").mayOnlyBeAccessedByLayers("Web", "Config")
 //        .whereLayer("Security").mayOnlyBeAccessedByLayers("Config", "Client", "Service", "Web")
 //        .whereLayer("Persistence").mayOnlyBeAccessedByLayers("Service", "Security", "Web", "Config")

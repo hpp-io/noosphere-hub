@@ -2,6 +2,7 @@ package io.hpp.noosphere.hub.service;
 
 import io.hpp.noosphere.hub.domain.AgentContainer;
 import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
+import io.hpp.noosphere.hub.exception.AgentNotFoundException;
 import io.hpp.noosphere.hub.exception.PermissionDeniedException;
 import io.hpp.noosphere.hub.repository.AgentContainerRepository;
 import io.hpp.noosphere.hub.service.dto.AgentContainerDTO;
@@ -38,7 +39,7 @@ public class AgentContainerService {
     }
 
     public AgentContainerDTO create(AgentService agentService, String userId, UUID agentId, UUID containerId, Instant timestamp)
-        throws PermissionDeniedException {
+        throws PermissionDeniedException, AgentNotFoundException {
         LOG.debug("Request to save Agent {}, Container {}", agentId, containerId);
         agentService.validateOwner(agentId, userId);
         AgentContainerDTO agentContainerDTO = new AgentContainerDTO();
@@ -71,6 +72,7 @@ public class AgentContainerService {
     public List<UUID> findAllContainerIdListByAgentId(UUID agentId, StatusCode statusCode) {
         return agentContainerRepository.findAllContainerIdListByAgentId(agentId, statusCode);
     }
+
     /**
      * Get one agentContainer by id.
      *
@@ -89,7 +91,8 @@ public class AgentContainerService {
         return agentContainerRepository.findByAgentIdAndContainerId(agentId, containerId).map(agentContainerMapper::toDto);
     }
 
-    public void delete(AgentService agentService, String userId, UUID agentId, UUID id) throws PermissionDeniedException {
+    public void delete(AgentService agentService, String userId, UUID agentId, UUID id)
+        throws PermissionDeniedException, AgentNotFoundException {
         LOG.debug("Request to delete AgentContainer : {}", id);
         agentService.validateOwner(agentId, userId);
         Optional<AgentContainer> optionalAgentContainer = agentContainerRepository.findByAgentIdAndContainerId(agentId, id);
