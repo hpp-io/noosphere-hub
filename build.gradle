@@ -27,7 +27,7 @@ targetCompatibility=17
 assert System.properties["java.specification.version"] == "17" || "21" || "24"
 
 ext {
-    querydslVersion = "${querydslVersion}"
+    querydslVersion = "5.1.0"
     springProfiles = ""
     if (project.hasProperty("tls")) {
         springProfiles += ",tls"
