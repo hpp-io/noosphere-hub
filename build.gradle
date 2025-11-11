@@ -27,7 +27,7 @@ targetCompatibility=17
 assert System.properties["java.specification.version"] == "17" || "21" || "24"
 
 ext {
-    querydslVersion = "5.1.0"
+    querydslVersion = "${querydslVersion}"
     springProfiles = ""
     if (project.hasProperty("tls")) {
         springProfiles += ",tls"
@@ -63,13 +63,6 @@ if (project.hasProperty("zipkin")) {
     apply from: "gradle/zipkin.gradle"
 }
 
-idea {
-    module {
-        sourceDirs += file("build/generated/sources/annotationProcessor/java/main")
-        excludeDirs += files("node_modules")
-    }
-}
-
 eclipse {
     sourceSets {
         main {
@@ -88,22 +81,6 @@ sourceSets {
             ]
         }
     }
-}
-
-// Configure the Java compiler to be explicit about annotation processing
-tasks.withType(JavaCompile).configureEach {
-    // Use the modern 'Generated' annotation for Jakarta EE
-    options.getCompilerArgs().add("-Aquerydsl.generatedAnnotationClass=jakarta.annotation.processing.Generated")
-}
-
-// Explicitly set the directory for generated sources for the main source set
-compileJava {
-    options.annotationProcessorGeneratedSourcesDirectory = file("build/generated/sources/annotationProcessor/java/main")
-}
-
-// Explicitly set the directory for generated sources for the test source set
-compileTestJava {
-    options.annotationProcessorGeneratedSourcesDirectory = file("build/generated/sources/annotationProcessor/java/test")
 }
 
 tasks.named("clean") {
@@ -243,7 +220,6 @@ dependencies {
     implementation "org.web3j:abi:${web3jVersion}"
     implementation "org.web3j:codegen:${web3jVersion}"
 }
-
 
 ext {
     // 처리할 컨트랙트 목록 (파일명 확장자 제외)
