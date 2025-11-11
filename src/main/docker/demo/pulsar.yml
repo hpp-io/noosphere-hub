@@ -2,6 +2,7 @@
 name: noospherehub
 services:
   noosphere-pulsar:
+    container_name: noosphere-pulsar
     image: apachepulsar/pulsar:4.0.4
     # If you want to expose these ports outside your dev PC,
     # remove the "127.0.0.1:" prefix

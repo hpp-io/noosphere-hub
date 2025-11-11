@@ -3,6 +3,7 @@ name: noospherehub
 services:
   app:
     image: noospherehub
+    container_name: noosphere-hub
     environment:
       - _JAVA_OPTIONS=-Xmx512m -Xms256m
       - SPRING_PROFILES_ACTIVE=prod,api-docs
