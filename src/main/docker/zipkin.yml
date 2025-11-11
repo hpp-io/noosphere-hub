@@ -2,6 +2,7 @@
 name: noospherehub
 services:
   noosphere-zipkin:
+    container_name: noosphere-zipkin
     image: openzipkin/zipkin:3.5.1
     ports:
       - 127.0.0.1:9411:9411

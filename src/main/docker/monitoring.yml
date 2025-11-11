@@ -2,6 +2,7 @@
 name: noospherehub
 services:
   noosphere-prometheus:
+    container_name: noosphere-prometheus
     image: prom/prometheus:v3.3.1
     volumes:
       - ./prometheus/:/etc/prometheus/
@@ -15,6 +16,7 @@ services:
     # grafana/provisioning/datasources/datasource.yml
     network_mode: 'host' # to test locally running service
   noosphere-grafana:
+    container_name: noosphere-grafana
     image: grafana/grafana:12.0.0
     volumes:
       - ./grafana/provisioning/:/etc/grafana/provisioning/

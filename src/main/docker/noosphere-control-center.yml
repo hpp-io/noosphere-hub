@@ -31,6 +31,7 @@
 name: noospherehub
 services:
   noosphere-control-center:
+    container_name: noosphere-control-center
     image: 'jhipster/jhipster-control-center:v0.5.0'
     command:
       - /bin/sh

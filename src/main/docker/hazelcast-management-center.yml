@@ -2,6 +2,7 @@
 name: noospherehub
 services:
   noosphere-hazelcast-management-center:
+    container_name: noosphere-hazelcast-management-center
     image: hazelcast/management-center:5.7.1
     # If you want to expose these ports outside your dev PC,
     # remove the "127.0.0.1:" prefix
