@@ -11,7 +11,7 @@ services:
       - SPRING_CLOUD_CONSUL_HOST=noosphere-consul
       - SPRING_CLOUD_CONSUL_PORT=8500
       - SPRING_DATASOURCE_URL=jdbc:mysql://noosphere-mysql:3356/nshub?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
-      - SPRING_LIQUIBASE_URL=jdbc:mysql://noosphere-:3306/nshub?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
+      - SPRING_LIQUIBASE_URL=jdbc:mysql://noosphere-mysql:3306/nshub?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
       - SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI=http://noosphere-auth:9080/realms/noosphere
       - SPRING_PULSAR_CLIENT_SERVICE_URL=pulsar://noosphere-pulsar:6650
       - SPRING_PULSAR_ADMINISTRATION_SERVICE_URL=http://noosphere-pulsar:8080
