@@ -3,7 +3,7 @@ name: noospherehub
 services:
   noosphere-auth:
     container_name: noosphere-auth
-    image: ghcr.io/hpp-io/noosphere-auth:test-amd64
+    image: ghcr.io/hpp-io/noosphere-auth:test2-amd64
     command: 'start-dev --import-realm'
     volumes:
       - ../realm-config:/opt/keycloak/data/import

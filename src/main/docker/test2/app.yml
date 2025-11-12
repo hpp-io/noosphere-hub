@@ -2,7 +2,7 @@
 name: noospherehub
 services:
   noosphere-hub:
-    image: ghcr.io/hpp-io/noosphere-hub:test
+    image: ghcr.io/hpp-io/noosphere-hub:test2
     container_name: noosphere-hub
     environment:
       - _JAVA_OPTIONS=-Xmx512m -Xms256m
