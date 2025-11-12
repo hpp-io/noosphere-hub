@@ -10,11 +10,18 @@ services:
       - MANAGEMENT_PROMETHEUS_METRICS_EXPORT_ENABLED=true
       - SPRING_CLOUD_CONSUL_HOST=noosphere-consul
       - SPRING_CLOUD_CONSUL_PORT=8500
+      - SPRING_DATASOURCE_USERNAME=${DATABASE_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${DATABASE_PASSWORD}
       - SPRING_DATASOURCE_URL=jdbc:mysql://noosphere-mysql:3356/nshub?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
       - SPRING_LIQUIBASE_URL=jdbc:mysql://noosphere-mysql:3306/nshub?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
       - SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI=http://noosphere-auth:9080/realms/noosphere
+      - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET=${HPP_AUTH_WEB_APP_SECRET}
       - SPRING_PULSAR_CLIENT_SERVICE_URL=pulsar://noosphere-pulsar:6650
       - SPRING_PULSAR_ADMINISTRATION_SERVICE_URL=http://noosphere-pulsar:8080
+      - APPLICATION_KEYCLOAK_ADMIN_CLIENT_SECRET=${HPP_AUTH_ADMIN_CLI_SECRET}
+      - APPLICATION_KEYSTORE_STORE_PASSWORD=${HPP_KEYSTORE_PASSWORD}
+      - APPLICATION_KEYSTORE_KEYS_ETH=${HPP_ETH_KEY_ALIAS}
+      - APPLICATION_BLOCKCHAIN_ROUTER_ADDRESS=${HPP_ROUTER_ADDRESS}
     healthcheck:
       test:
         - CMD

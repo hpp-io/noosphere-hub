@@ -134,7 +134,7 @@ application:
       eth: '${HPP_ETH_KEY_ALIAS}'
   blockchain:
     rpc-url: http://localhost:8545
-    router-address: '0x5FbDB2315678afecb367f032d93F642f64180aa3'
+    router-address: '${HPP_ROUTER_ADDRESS}'
     connection-timeout: 30000 # in milliseconds
     read-timeout: 30000 # in milliseconds
     write-timeout: 30000 # in milliseconds
