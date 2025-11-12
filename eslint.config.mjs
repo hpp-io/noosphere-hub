@@ -1,7 +1,6 @@
 // @ts-check
 
 import globals from 'globals';
-import prettier from 'eslint-plugin-prettier/recommended';
 import tseslint from 'typescript-eslint';
 import eslint from '@eslint/js';
 import react from 'eslint-plugin-react/configs/recommended.js';
@@ -72,7 +71,7 @@ export default tseslint.config(
       'no-labels': 'error',
       'no-caller': 'error',
       'no-bitwise': 'error',
-      'no-console': ['error', { allow: ['warn', 'error'] }],
+      'no-console': ['error', { allow: ['warn', 'error', 'info', 'log'] }],
       'no-new-wrappers': 'error',
       'no-eval': 'error',
       'no-new': 'error',
@@ -112,5 +111,5 @@ export default tseslint.config(
     },
   },
   // jhipster-needle-eslint-add-config - JHipster will add additional config here
-  prettier,
+  // prettier,
 );
