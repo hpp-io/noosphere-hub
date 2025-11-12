@@ -7,7 +7,7 @@ services:
     # If you want to expose these ports outside your dev PC,
     # remove the "127.0.0.1:" prefix
     ports:
-      - 9080:8080
+      - 9082:8080
       - 6650:6650
     environment:
       PULSAR_MEM: ' -Xms512m -Xmx512m -XX:MaxDirectMemorySize=1g'
