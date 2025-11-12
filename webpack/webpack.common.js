@@ -99,6 +99,7 @@ module.exports = async options => {
           DEVELOPMENT: JSON.stringify(development),
           VERSION: JSON.stringify(environment.VERSION),
           SERVER_API_URL: JSON.stringify(environment.SERVER_API_URL),
+          'process.env.NODE_ENV': JSON.stringify(development ? 'development' : test2 ? 'test2' : 'production'),
         }),
         new ESLintPlugin({
           configType: 'flat',
