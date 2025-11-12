@@ -5,9 +5,11 @@ import static io.hpp.noosphere.hub.config.Constants.KEYSTORE_TYPE;
 import io.hpp.noosphere.hub.config.ApplicationProperties;
 import io.hpp.noosphere.hub.service.uil.CommonUtils;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.KeyStore;
+import java.util.Base64;
 import javax.crypto.SecretKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,15 +57,7 @@ public class KeystoreService {
                 SecretKey secretKey = skEntry.getSecretKey();
 
                 byte[] keyBytes = secretKey.getEncoded();
-                //      LOG.debug("Key length: " + keyBytes.length + " bytes");
-
-                //      String base64Key = Base64.getEncoder().encodeToString(keyBytes);
-                //      LOG.debug("Key (Base64): " + base64Key);
-                //
-                String hexKey = CommonUtils.bytesToHex(keyBytes);
-                //      LOG.debug("Key (Hex): " + hexKey);
-
-                return hexKey;
+                return new String(Base64.getDecoder().decode(keyBytes), StandardCharsets.UTF_8);
             }
         } catch (Exception e) {
             LOG.error("Failed to getSecretKey " + keyAlias, e);
