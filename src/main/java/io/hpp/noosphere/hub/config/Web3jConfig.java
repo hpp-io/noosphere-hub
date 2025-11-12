@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.concurrent.TimeUnit;
 import okhttp3.OkHttpClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.web3j.crypto.Credentials;
@@ -17,13 +19,11 @@ import org.web3j.tx.gas.DefaultGasProvider;
 @Configuration
 public class Web3jConfig {
 
+    private static final Logger LOG = LoggerFactory.getLogger(Web3jConfig.class);
     private final ApplicationProperties applicationProperties;
     private final KeystoreService keystoreService;
 
-    public Web3jConfig(
-      ApplicationProperties applicationProperties,
-      KeystoreService keystoreService
-    ) {
+    public Web3jConfig(ApplicationProperties applicationProperties, KeystoreService keystoreService) {
         this.applicationProperties = applicationProperties;
         this.keystoreService = keystoreService;
     }
@@ -35,6 +35,8 @@ public class Web3jConfig {
         long connectTimeout = getTimeoutValue(applicationProperties.getBlockchain().getConnectionTimeout(), 30000);
         long readTimeout = getTimeoutValue(applicationProperties.getBlockchain().getReadTimeout(), 30000);
         long writeTimeout = getTimeoutValue(applicationProperties.getBlockchain().getWriteTimeout(), 30000);
+
+        LOG.info("rpcUrl=" + rpcUrl);
 
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
             .connectTimeout(connectTimeout, TimeUnit.MILLISECONDS)
@@ -74,13 +76,17 @@ public class Web3jConfig {
         @Override
         public BigInteger getGasPrice(String contractFunc) {
             BigInteger basePrice = super.getGasPrice(contractFunc);
-            return basePrice.multiply(BigInteger.valueOf((long) (blockchainConfig.getGasPriceRatio() * 100))).divide(BigInteger.valueOf(100));
+            return basePrice
+                .multiply(BigInteger.valueOf((long) (blockchainConfig.getGasPriceRatio() * 100)))
+                .divide(BigInteger.valueOf(100));
         }
 
         @Override
         public BigInteger getGasLimit(String contractFunc) {
             BigInteger baseLimit = super.getGasLimit(contractFunc);
-            return baseLimit.multiply(BigInteger.valueOf((long) (blockchainConfig.getGasLimitRatio() * 100))).divide(BigInteger.valueOf(100));
+            return baseLimit
+                .multiply(BigInteger.valueOf((long) (blockchainConfig.getGasLimitRatio() * 100)))
+                .divide(BigInteger.valueOf(100));
         }
     }
 
