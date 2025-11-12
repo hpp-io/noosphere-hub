@@ -118,7 +118,7 @@ jhipster:
 
 application:
   keycloak:
-    auth-url: http://host.docker.internal:7080
+    auth-url: http://127.0.0.1:7080
     realm-id: noosphere
     admin-client-id: admin-cli
     admin-client-secret: '${HPP_AUTH_ADMIN_CLI_SECRET}'
@@ -133,7 +133,7 @@ application:
     keys:
       eth: '${HPP_ETH_KEY_ALIAS}'
   blockchain:
-    rpc-url: http://host.docker.internal:8545
+    rpc-url: http://127.0.0.1:8545
     router-address: '${HPP_ROUTER_ADDRESS}'
     connection-timeout: 30000 # in milliseconds
     read-timeout: 30000 # in milliseconds
