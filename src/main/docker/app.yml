@@ -20,8 +20,11 @@ services:
       - SPRING_PULSAR_ADMINISTRATION_SERVICE_URL=http://noosphere-pulsar:9082
       - APPLICATION_KEYCLOAK_ADMIN_CLIENT_SECRET=${HPP_AUTH_ADMIN_CLI_SECRET}
       - APPLICATION_KEYSTORE_STORE_PASSWORD=${HPP_KEYSTORE_PASSWORD}
+      - APPLICATION_KEYSTORE_PATH=/app/hpp-keystore.p12
       - APPLICATION_KEYSTORE_KEYS_ETH=${HPP_ETH_KEY_ALIAS}
       - APPLICATION_BLOCKCHAIN_ROUTER_ADDRESS=${HPP_ROUTER_ADDRESS}
+    volumes:
+      - ../../../hpp-keystore.p12:/app/hpp-keystore.p12
     healthcheck:
       test:
         - CMD
