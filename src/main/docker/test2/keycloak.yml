@@ -4,7 +4,7 @@ services:
   noosphere-auth:
     container_name: noosphere-auth
     image: ghcr.io/hpp-io/noosphere-auth:test2-amd64
-    command: 'start-dev --import-realm'
+    command: 'start'
     volumes:
       - ../realm-config:/opt/keycloak/data/import
       - ../realm-config/keycloak-health-check.sh:/opt/keycloak/health-check.sh
@@ -14,18 +14,21 @@ services:
       - KC_DB_USERNAME=${DATABASE_USERNAME}
       - KC_DB_PASSWORD=${DATABASE_PASSWORD}
       - KC_DB=mysql
+      - KC_PROXY=passthrough
+      - KC_HOSTNAME=authtest.hpp.io
+      - KC_HOSTNAME_URL=https://authtest.hpp.io
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
       - KC_FEATURES=scripts
       - KC_HTTP_PORT=9080
-      - KC_HTTPS_PORT=9443
+#      - KC_HTTPS_PORT=9443
       - KC_HEALTH_ENABLED=true
       - KC_HTTP_ENABLED=true
       - KC_HTTP_MANAGEMENT_PORT=9990
-      - KC_HOSTNAME_STRICT=false
-      - KC_HOSTNAME_STRICT_HTTPS=false
+      - KC_HOSTNAME_STRICT=true
+      - KC_HOSTNAME_STRICT_HTTPS=true
       - JDBC_PARAMS='useUnicode=true&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=Asia/Seoul&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true'
-      - PROXY_ADDRESS_FORWARDING=true
+#      - PROXY_ADDRESS_FORWARDING=true
       - JAVA_OPTS='-Djava.net.preferIPv4Stack=true -Xms1G -Xmx3G -XX:MetaspaceSize=512M -XX:MaxMetaspaceSize=1G'
     # If you want to expose these ports outside your dev PC,
     # remove the "127.0.0.1:" prefix
@@ -42,3 +45,40 @@ services:
       start_period: 10s
     labels:
       org.springframework.boot.ignore: true
+
+
+#  keycloak-test:
+#    container_name: keycloak-test
+#    image: quay.io/keycloak/keycloak:latest  # The OFFICIAL image
+#    command: 'start'
+#    environment:
+#      - KC_DB=dev-file # Using a simple file DB for a quick test
+#      - KC_PROXY=passthrough
+#      - KC_HOSTNAME=test.hpp.io # We will use a NEW subdomain
+#      - KC_HOSTNAME_URL=https://test.hpp.io
+#      - KC_HOSTNAME_STRICT=true
+#      - KC_HOSTNAME_STRICT_HTTPS=true
+#      - KEYCLOAK_ADMIN=admin
+#      - KEYCLOAK_ADMIN_PASSWORD=admin
+#      - KC_HTTP_PORT=8080 # Using the default port
+#      - KC_HTTP_ENABLED=true
+#    ports:
+#      - "8080:8080" # Expose to host port 8080
+#
+#  whoami:
+#    image: "containous/whoami"
+#    container_name: "header-dumper"
+#    ports:
+#      - "8081:80"
+
+  nginx-proxy:
+    image: nginx:latest
+    container_name: keycloak-proxy
+    volumes:
+      # Mount the config file you just created
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      # This IS exposed. This is what cloudflared will talk to.
+      - "9898:80"
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'

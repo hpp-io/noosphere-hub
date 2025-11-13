@@ -25,3 +25,7 @@ services:
     extends:
       file: ./anvil.yml
       service: noosphere-anvil
+  noosphere-gateway:
+    extends:
+      file: ./gateway.yml
+      service: noosphere-gateway

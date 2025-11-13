@@ -5,7 +5,7 @@ services:
     image: ghcr.io/hpp-io/noosphere-hub:test2
     container_name: noosphere-hub
     environment:
-      - _JAVA_OPTIONS=-Xmx512m -Xms256m
+      - _JAVA_OPTIONS=-Xmx2048m -Xms1024m
       - SPRING_PROFILES_ACTIVE=test2,api-docs
       - MANAGEMENT_PROMETHEUS_METRICS_EXPORT_ENABLED=true
       - SPRING_CLOUD_CONSUL_HOST=noosphere-consul
@@ -14,10 +14,11 @@ services:
       - SPRING_DATASOURCE_PASSWORD=${DATABASE_PASSWORD}
       - SPRING_DATASOURCE_URL=jdbc:mysql://noosphere-mysql:3306/nshub?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
       - SPRING_LIQUIBASE_URL=jdbc:mysql://noosphere-mysql:3306/nshub?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
-      - SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI=http://noosphere-auth:9080/realms/noosphere
+      - SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI=https://authtest.hpp.io/realms/noosphere
       - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET=${HPP_AUTH_WEB_APP_SECRET}
       - SPRING_PULSAR_CLIENT_SERVICE_URL=pulsar://noosphere-pulsar:6650
       - SPRING_PULSAR_ADMINISTRATION_SERVICE_URL=http://noosphere-pulsar:9082
+      - APPLICATION_KEYCLOAK_AUTH_URL=https://authtest.hpp.io
       - APPLICATION_KEYCLOAK_ADMIN_CLIENT_SECRET=${HPP_AUTH_ADMIN_CLI_SECRET}
       - APPLICATION_KEYSTORE_STORE_PASSWORD=${HPP_KEYSTORE_PASSWORD}
       - APPLICATION_KEYSTORE_PATH=/app/hpp-keystore.p12
@@ -63,3 +64,7 @@ services:
     extends:
       file: ./consul.yml
       service: noosphere-consul-config-loader
+  noosphere-gateway:
+    extends:
+      file: ./gateway.yml
+      service: noosphere-gateway
