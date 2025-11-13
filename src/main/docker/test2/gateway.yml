@@ -15,6 +15,10 @@ services:
       - SPRING_PULSAR_CLIENT_SERVICE_URL=pulsar://noosphere-pulsar:6650
       - SPRING_PULSAR_ADMINISTRATION_SERVICE_URL=http://noosphere-pulsar:9082
       - APPLICATION_KEYCLOAK_AUTH_URL=https://authtest.hpp.io
+      - LOGGING_FILE_PATH=/app/logs
+    volumes:
+      - ../../../../hpp-keystore.p12:/app/hpp-keystore.p12
+      - /data/noosphere/logs/ng-logs/:/app/logs/
     ports:
       - 8280:8280
     extra_hosts:

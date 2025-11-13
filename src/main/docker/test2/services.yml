@@ -21,10 +21,6 @@ services:
     extends:
       file: ./consul.yml
       service: noosphere-consul-config-loader
-  noosphere-anvil:
-    extends:
-      file: ./anvil.yml
-      service: noosphere-anvil
   noosphere-gateway:
     extends:
       file: ./gateway.yml

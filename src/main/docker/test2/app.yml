@@ -24,8 +24,10 @@ services:
       - APPLICATION_KEYSTORE_PATH=/app/hpp-keystore.p12
       - APPLICATION_KEYSTORE_KEYS_ETH=${HPP_ETH_KEY_ALIAS}
       - APPLICATION_BLOCKCHAIN_ROUTER_ADDRESS=${HPP_ROUTER_ADDRESS}
+      - LOGGING_FILE_PATH=/app/logs
     volumes:
       - ../../../../hpp-keystore.p12:/app/hpp-keystore.p12
+      - /data/noosphere/logs/nshub-logs/:/app/logs/
     ports:
       - 8085:8085
     extra_hosts:
