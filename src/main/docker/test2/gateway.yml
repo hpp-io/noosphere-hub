@@ -17,7 +17,6 @@ services:
       - APPLICATION_KEYCLOAK_AUTH_URL=https://authtest.hpp.io
       - LOGGING_FILE_PATH=/app/logs
     volumes:
-      - ../../../../hpp-keystore.p12:/app/hpp-keystore.p12
       - /data/noosphere/logs/ng-logs/:/app/logs/
     ports:
       - 8280:8280
