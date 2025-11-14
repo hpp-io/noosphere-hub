@@ -6,7 +6,7 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
                         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
   <changeSet id="20251106000001-1" author="jungsoo">
-    <addColumn tableName="validator">
+    <addColumn tableName="verifier">
       <column name="wallet_address" type="varchar(255)">
         <constraints nullable="false" />
       </column>
@@ -14,7 +14,7 @@
         <constraints nullable="false" />
       </column>
     </addColumn>
-    <dropColumn tableName="validator" columnName="api_key"/>
+    <dropColumn tableName="verifier" columnName="api_key"/>
     <addColumn tableName="agent">
       <column name="wallet_address" type="varchar(255)">
         <constraints nullable="false" />

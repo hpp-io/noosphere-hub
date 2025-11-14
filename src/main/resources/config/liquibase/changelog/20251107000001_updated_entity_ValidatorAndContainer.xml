@@ -34,11 +34,11 @@
   </changeSet>
 
   <changeSet id="20251107000001-2" author="jungsoo">
-    <dropColumn tableName="validator" columnName="price"/>
-    <dropColumn tableName="validator" columnName="parameters"/>
-    <dropColumn tableName="validator" columnName="description"/>
-    <dropColumn tableName="validator" columnName="name"/>
-    <addColumn tableName="validator">
+    <dropColumn tableName="verifier" columnName="price"/>
+    <dropColumn tableName="verifier" columnName="parameters"/>
+    <dropColumn tableName="verifier" columnName="description"/>
+    <dropColumn tableName="verifier" columnName="name"/>
+    <addColumn tableName="verifier">
       <column name="name" type="varchar(255)">
         <constraints nullable="false"/>
       </column>

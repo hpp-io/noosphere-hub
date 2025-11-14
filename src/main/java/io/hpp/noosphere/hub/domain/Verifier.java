@@ -28,13 +28,13 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 @Entity
-@Table(name = "validator")
+@Table(name = "verifier")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @RequiredArgsConstructor
 @Getter
 @Setter
 @SuppressWarnings("common-java:DuplicatedBlocks")
-public class Validator implements Serializable {
+public class Verifier implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
@@ -102,26 +102,40 @@ public class Validator implements Serializable {
 
   // jhipster-needle-entity-add-field - JHipster will add fields here
 
-
   @Override
   public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
 
-    if (!(o instanceof Validator validator)) {
+    if (!(o instanceof Verifier verifier)) {
       return false;
     }
 
-    return new EqualsBuilder().append(id, validator.id).append(name, validator.name)
-      .append(verifierAddress, validator.verifierAddress).append(imageName, validator.imageName).append(port, validator.port)
-      .append(statusCode, validator.statusCode).append(createdAt, validator.createdAt).append(updatedAt, validator.updatedAt).isEquals();
+    return new EqualsBuilder()
+      .append(id, verifier.id)
+      .append(name, verifier.name)
+      .append(verifierAddress, verifier.verifierAddress)
+      .append(imageName, verifier.imageName)
+      .append(port, verifier.port)
+      .append(statusCode, verifier.statusCode)
+      .append(createdAt, verifier.createdAt)
+      .append(updatedAt, verifier.updatedAt)
+      .isEquals();
   }
 
   @Override
   public int hashCode() {
-    return new HashCodeBuilder(17, 37).append(id).append(name).append(verifierAddress).append(imageName).append(port)
-      .append(statusCode).append(createdAt).append(updatedAt).toHashCode();
+    return new HashCodeBuilder(17, 37)
+      .append(id)
+      .append(name)
+      .append(verifierAddress)
+      .append(imageName)
+      .append(port)
+      .append(statusCode)
+      .append(createdAt)
+      .append(updatedAt)
+      .toHashCode();
   }
 
   @Override

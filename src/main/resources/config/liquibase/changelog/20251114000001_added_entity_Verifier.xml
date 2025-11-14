@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+  <changeSet id="20251114000001-1" author="jungsoo">
+    <dropTable tableName="validator" />
+    <createTable tableName="verifier">
+      <column name="id" type="${uuidType}">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="name" type="varchar(255)">
+        <constraints nullable="true" />
+      </column>
+      <column name="wallet_address" type="varchar(255)">
+        <constraints nullable="false" />
+      </column>
+      <column name="verifier_address" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="status_code" type="varchar(20)">
+        <constraints nullable="false" />
+      </column>
+      <column name="image_name" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="port" type="integer">
+        <constraints nullable="false"/>
+      </column>
+      <column name="command" type="varchar(1024)">
+        <constraints nullable="true"/>
+      </column>
+      <column name="env" type="${clobType}">
+        <constraints nullable="true"/>
+      </column>
+      <column name="volumes" type="${clobType}">
+        <constraints nullable="true"/>
+      </column>
+      <column name="payments" type="${clobType}">
+        <constraints nullable="false"/>
+      </column>
+      <column name="created_at" type="${datetimeType}">
+        <constraints nullable="false" />
+      </column>
+      <column name="updated_at" type="${datetimeType}">
+        <constraints nullable="true" />
+      </column>
+      <column name="created_by_user_id" type="varchar(100)">
+        <constraints nullable="true"  />
+      </column>
+      <column name="updated_by_user_id" type="varchar(100)">
+        <constraints nullable="true"  />
+      </column>
+      <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
+    </createTable>
+    <dropDefaultValue tableName="verifier" columnName="created_at" columnDataType="${datetimeType}"/>
+    <dropDefaultValue tableName="verifier" columnName="updated_at" columnDataType="${datetimeType}"/>
+
+  </changeSet>
+
+  <changeSet id="20251114000001-2" author="jungsoo">
+
+    <addForeignKeyConstraint baseColumnNames="created_by_user_id"
+      baseTableName="verifier"
+      constraintName="fk_verifier__created_by_user_id"
+      referencedColumnNames="id"
+      referencedTableName="jhi_user"
+    />
+
+    <addForeignKeyConstraint baseColumnNames="updated_by_user_id"
+      baseTableName="verifier"
+      constraintName="fk_verifier__updated_by_user_id"
+      referencedColumnNames="id"
+      referencedTableName="jhi_user"
+    />
+  </changeSet>
+</databaseChangeLog>

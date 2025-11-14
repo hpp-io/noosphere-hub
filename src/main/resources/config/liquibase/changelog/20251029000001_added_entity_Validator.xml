@@ -10,7 +10,7 @@
         Added the entity Container.
     -->
     <changeSet id="20251029000001-1" author="jungsoo">
-        <createTable tableName="validator">
+        <createTable tableName="verifier">
             <column name="id" type="${uuidType}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -43,21 +43,21 @@
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
-        <dropDefaultValue tableName="validator" columnName="created_at" columnDataType="${datetimeType}"/>
-        <dropDefaultValue tableName="validator" columnName="updated_at" columnDataType="${datetimeType}"/>
+        <dropDefaultValue tableName="verifier" columnName="created_at" columnDataType="${datetimeType}"/>
+        <dropDefaultValue tableName="verifier" columnName="updated_at" columnDataType="${datetimeType}"/>
     </changeSet>
 
     <changeSet id="20251029000001-2" author="jungsoo">
 
         <addForeignKeyConstraint baseColumnNames="created_by_user_id"
-          baseTableName="validator"
+          baseTableName="verifier"
           constraintName="fk_validator__created_by_user_id"
           referencedColumnNames="id"
           referencedTableName="jhi_user"
         />
 
         <addForeignKeyConstraint baseColumnNames="updated_by_user_id"
-          baseTableName="validator"
+          baseTableName="verifier"
           constraintName="fk_validator__updated_by_user_id"
           referencedColumnNames="id"
           referencedTableName="jhi_user"
