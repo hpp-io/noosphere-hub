@@ -26,8 +26,8 @@ services:
       - APPLICATION_BLOCKCHAIN_ROUTER_ADDRESS=${HPP_ROUTER_ADDRESS}
       - LOGGING_FILE_PATH=/app/logs
     volumes:
-      - ../../../../hpp-keystore.p12:/app/hpp-keystore.p12
-      - ../../../../truststore.p12:/app/truststore.p12
+      - /data/noosphere/config/hpp-keystore.p12:/app/hpp-keystore.p12
+      - /data/noosphere/config/truststore.p12:/app/truststore.p12
       - /data/noosphere/logs/nshub-logs:/app/logs
     ports:
       - 8085:8085
