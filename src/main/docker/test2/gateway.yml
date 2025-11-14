@@ -17,6 +17,7 @@ services:
       - APPLICATION_KEYCLOAK_ADMIN_CLIENT_SECRET=${HPP_AUTH_ADMIN_CLI_SECRET}
       - LOGGING_FILE_PATH=/app/logs
       - HPP_APP_KIT_PROJECT_ID=${HPP_APP_KIT_PROJECT_ID}
+      - HPP_ENV=${HPP_ENV}
     volumes:
       - /data/noosphere/config/truststore.p12:/app/truststore.p12
       - /data/noosphere/logs/ng-logs:/app/logs

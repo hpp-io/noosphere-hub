@@ -24,6 +24,7 @@ services:
       - APPLICATION_KEYSTORE_KEYS_ETH=${HPP_ETH_KEY_ALIAS}
       - APPLICATION_BLOCKCHAIN_ROUTER_ADDRESS=${HPP_ROUTER_ADDRESS}
       - HPP_APP_KIT_PROJECT_ID=${HPP_APP_KIT_PROJECT_ID}
+      - HPP_ENV=${HPP_ENV}
       - LOGGING_FILE_PATH=/app/logs
     volumes:
       - /data/noosphere/config/hpp-keystore.p12:/app/hpp-keystore.p12
