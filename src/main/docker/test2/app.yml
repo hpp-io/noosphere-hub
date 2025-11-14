@@ -47,27 +47,3 @@ services:
   #        condition: service_healthy
   #      keycloak:
   #        condition: service_healthy
-  noosphere-mysql:
-    extends:
-      file: ./mysql.yml
-      service: noosphere-mysql
-  noosphere-auth:
-    extends:
-      file: ./keycloak.yml
-      service: noosphere-auth
-  noosphere-pulsar:
-    extends:
-      file: ./pulsar.yml
-      service: noosphere-pulsar
-  noosphere-consul:
-    extends:
-      file: ./consul.yml
-      service: noosphere-consul
-  noosphere-consul-config-loader:
-    extends:
-      file: ./consul.yml
-      service: noosphere-consul-config-loader
-  noosphere-gateway:
-    extends:
-      file: ./gateway.yml
-      service: noosphere-gateway
