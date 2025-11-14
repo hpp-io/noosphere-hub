@@ -45,15 +45,12 @@ spring:
         format: yaml
         profile-separator: '-'
       discovery:
-        prefer-ip-address: true
-        tags:
-          - profile=${spring.profiles.active}
-          - version='@project.version@'
-          - git-version=${git.commit.id.describe:}
-          - git-commit=${git.commit.id.abbrev:}
-          - git-branch=${git.branch:}
-      host: localhost
-      port: 8500
+        instanceId: noosphere-hub:${spring.application.instance-id:${random.value}}
+        service-name: noosphere-hub
+        scheme: https
+        hostname: nstest.hpp.io
+        port: 443
+      host: noosphere-consul
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3356/nshub?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true

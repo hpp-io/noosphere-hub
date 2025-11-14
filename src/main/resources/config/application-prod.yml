@@ -40,9 +40,12 @@ spring:
   cloud:
     consul:
       discovery:
-        prefer-ip-address: true
-      host: localhost
-      port: 8500
+        instanceId: noosphere-hub:${spring.application.instance-id:${random.value}}
+        service-name: noosphere-hub
+        scheme: https
+        hostname: nsapp.hpp.io
+        port: 443
+      host: noosphere-consul
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     url: jdbc:mysql://localhost:3306/NoosphereHub?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true

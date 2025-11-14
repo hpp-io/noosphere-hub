@@ -116,9 +116,18 @@ spring:
   cloud:
     consul:
       discovery:
+        prefer-ip-address: false
+        heartbeat:
+          enabled: true
         healthCheckPath: /management/health
-        instanceId: noospherehub:${spring.application.instance-id:${random.value}}
-        service-name: noospherehub
+        tags:
+          - profile=${spring.profiles.active}
+          - version='@project.version@'
+          - git-version=${git.commit.id.describe:}
+          - git-commit=${git.commit.id.abbrev:}
+          - git-branch=${git.branch:}
+      host: localhost
+      port: 8500
       config:
         watch:
           enabled: false
