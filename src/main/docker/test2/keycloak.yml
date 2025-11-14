@@ -1,8 +1,8 @@
-# This configuration is intended for development purpose, it's **your** responsibility to harden it for production
 name: noospherehub
 services:
   noosphere-auth:
     container_name: noosphere-auth
+    user: '0:110'
     image: ghcr.io/hpp-io/noosphere-auth:test2-amd64
     command: 'start'
     volumes:

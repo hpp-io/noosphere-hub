@@ -1,10 +1,9 @@
-# This configuration is intended for development purpose, it's **your** responsibility to harden it for production
 name: noospherehub
 services:
   noosphere-hub:
     image: ghcr.io/hpp-io/noosphere-hub:test2
     container_name: noosphere-hub
-    user: '0:124'
+    user: '0:110'
     environment:
       - _JAVA_OPTIONS=-Xmx2048m -Xms1024m -Djava.net.preferIPv4Stack=true -Djavax.net.ssl.trustStore=/app/truststore.p12 -Djavax.net.ssl.trustStorePassword=${HPP_KEYSTORE_PASSWORD} -Dspring.cloud.consul.discovery.hostname=nstest.hpp.io -Dspring.cloud.consul.discovery.prefer-ip-address=false -Dspring.cloud.consul.discovery.scheme=https
       - SPRING_PROFILES_ACTIVE=test2,api-docs

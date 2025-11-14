@@ -2,6 +2,7 @@ name: noospherehub
 services:
   noosphere-mysql:
     container_name: noosphere-mysql
+    user: '0:110'
     image: mysql:9.2.0
     volumes:
       - ../config/mysql:/etc/mysql/conf.d
