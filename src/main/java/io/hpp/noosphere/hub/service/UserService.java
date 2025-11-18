@@ -460,7 +460,7 @@ public class UserService {
     }
 
     public String updateWithNewWallet(String userId, String ownerAddress, Instant timestamp) {
-        String walletAddress = walletService.createAndUpdateWallet(ownerAddress);
+        String walletAddress = walletService.createWallet(ownerAddress);
 
         if (CommonUtils.isValid(walletAddress)) {
             this.updateWalletAddress(userId, walletAddress, timestamp);

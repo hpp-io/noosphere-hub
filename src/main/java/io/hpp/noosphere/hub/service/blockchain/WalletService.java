@@ -35,7 +35,7 @@ public class WalletService {
     return web3WalletFactoryService.getWalletAddressFromTransactionReceipt(transactionReceipt);
   }
 
-  public String createAndUpdateWallet(String ownerAddress) {
+  public String createWallet(String ownerAddress) {
     try {
       CompletableFuture<String> walletAddressFuture = web3WalletFactoryService.createWallet(ownerAddress)
         .thenApply(transactionReceipt -> {
