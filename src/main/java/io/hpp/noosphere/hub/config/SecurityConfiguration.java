@@ -7,8 +7,6 @@ import io.hpp.noosphere.hub.security.ApiKeyAuthFilter;
 import io.hpp.noosphere.hub.security.ApiKeyAuthManager;
 import io.hpp.noosphere.hub.security.AuthoritiesConstants;
 import io.hpp.noosphere.hub.security.SecurityUtils;
-import io.hpp.noosphere.hub.security.WalletApiKeyAuthFilter;
-import io.hpp.noosphere.hub.security.WalletApiKeyAuthManager;
 import io.hpp.noosphere.hub.security.oauth2.AudienceValidator;
 import io.hpp.noosphere.hub.service.UserService;
 import io.hpp.noosphere.hub.web.filter.SpaWebFilter;
@@ -50,14 +48,12 @@ public class SecurityConfiguration {
   private final JHipsterProperties jHipsterProperties;
   private final CorsFilter corsFilter;
   private final ApiKeyAuthFilter apiKeyAuthFilter;
-  private final WalletApiKeyAuthFilter walletApiKeyAuthFilter;
   private final UserService userService;
   @Value("${spring.security.oauth2.client.provider.oidc.issuer-uri}")
   private String issuerUri;
 
   public SecurityConfiguration(
     ApiKeyAuthFilter apiKeyAuthFilter,
-    WalletApiKeyAuthFilter walletApiKeyAuthFilter,
     UserService userService,
     CorsFilter corsFilter,
     JHipsterProperties jHipsterProperties
@@ -65,14 +61,11 @@ public class SecurityConfiguration {
     this.corsFilter = corsFilter;
     this.jHipsterProperties = jHipsterProperties;
     this.apiKeyAuthFilter = apiKeyAuthFilter;
-    this.walletApiKeyAuthFilter = walletApiKeyAuthFilter;
     this.userService = userService;
   }
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http, MvcRequestMatcher.Builder mvc) throws Exception {
-    apiKeyAuthFilter.setAuthenticationManager(new ApiKeyAuthManager(userService));
-    walletApiKeyAuthFilter.setAuthenticationManager(new WalletApiKeyAuthManager(userService));
     http
       .csrf(AbstractHttpConfigurer::disable)
       .addFilterBefore(corsFilter, CsrfFilter.class)
@@ -89,7 +82,6 @@ public class SecurityConfiguration {
           )
       )
       .addFilterBefore(apiKeyAuthFilter, UsernamePasswordAuthenticationFilter.class)
-      .addFilterBefore(walletApiKeyAuthFilter, UsernamePasswordAuthenticationFilter.class)
       .authorizeHttpRequests(authz ->
         // prettier-ignore
         authz
@@ -103,7 +95,8 @@ public class SecurityConfiguration {
           .requestMatchers(mvc.pattern("/api/authenticate")).permitAll()
           .requestMatchers(mvc.pattern("/api/auth-info")).permitAll()
           .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/agents/register")).permitAll()
-          .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/validators/register")).permitAll()
+          .requestMatchers(mvc.pattern(HttpMethod.POST, "/api/verifiers/register")).permitAll()
+          .requestMatchers(mvc.pattern(HttpMethod.GET, "/api/users/from-api-key")).permitAll()
           .requestMatchers(mvc.pattern("/api/admin/**")).hasAuthority(AuthoritiesConstants.ADMIN)
           .requestMatchers(mvc.pattern("/api/**")).authenticated()
           .requestMatchers(mvc.pattern("/v3/api-docs/**")).hasAuthority(AuthoritiesConstants.ADMIN)

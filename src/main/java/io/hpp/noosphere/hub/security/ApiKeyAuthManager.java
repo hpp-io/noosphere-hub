@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
@@ -23,10 +22,9 @@ public class ApiKeyAuthManager implements AuthenticationManager {
 
   private UserService userService;
 
-  public ApiKeyAuthManager(UserService userService){
+  public ApiKeyAuthManager(UserService userService) {
     this.userService = userService;
   }
-
 
   @Override
   public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -36,20 +34,15 @@ public class ApiKeyAuthManager implements AuthenticationManager {
     }
     try {
       UserDTO userDTO = userService.findByApiKey(apiKey, true);
-      Set<String>  authorities = userDTO.getAuthorities();
+      Set<String> authorities = userDTO.getAuthorities();
       Collection<SimpleGrantedAuthority> authorityList = new ArrayList<>();
-      authentication.getAuthorities().clear();
-      for (String authority: authorities){
+      for (String authority : authorities) {
         authorityList.add(new SimpleGrantedAuthority(authority));
       }
-     authentication = new ApiKeyAuthentication(apiKey, userDTO.getId(), authorityList);
-//      authentication.getAuthorities().addAll(authorityList);
+      return new ApiKeyAuthentication(apiKey, userDTO.getId(), authorityList);
     } catch (Exception e) {
       log.error("failed to find user by api key " + apiKey, e);
       throw new BadCredentialsException("The API key was not found or not the expected value.");
     }
-//    authentication.setAuthenticated(true);
-    return authentication;
   }
-
 }

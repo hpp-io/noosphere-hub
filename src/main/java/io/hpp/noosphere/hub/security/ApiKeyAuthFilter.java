@@ -1,29 +1,36 @@
 package io.hpp.noosphere.hub.security;
 
-
 import static io.hpp.noosphere.hub.config.Constants.HTTP_HEADER_API_KEY;
 
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
+import java.io.IOException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.filter.GenericFilterBean;
 
 @Component
-public class ApiKeyAuthFilter extends AbstractPreAuthenticatedProcessingFilter {
+public class ApiKeyAuthFilter extends GenericFilterBean {
 
-  @Autowired
+  private ApiKeyAuthManager manager;
+
   public ApiKeyAuthFilter(ApiKeyAuthManager manager) {
-    this.setAuthenticationManager(manager);
+    this.manager = manager;
   }
 
   @Override
-  protected Object getPreAuthenticatedPrincipal(HttpServletRequest request) {
-    return request.getHeader(HTTP_HEADER_API_KEY);
-  }
+  public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    HttpServletRequest httpRequest = (HttpServletRequest) request;
+    String apiKey = httpRequest.getHeader(HTTP_HEADER_API_KEY);
 
-  @Override
-  protected Object getPreAuthenticatedCredentials(HttpServletRequest request) {
-    return "N/A";
-  }
+    if (apiKey != null) {
+      ApiKeyAuthentication apiKeyAuthentication = new ApiKeyAuthentication(apiKey, null, null);
+      SecurityContextHolder.getContext().setAuthentication(manager.authenticate(apiKeyAuthentication));
+    }
 
+    chain.doFilter(request, response);
+  }
 }
