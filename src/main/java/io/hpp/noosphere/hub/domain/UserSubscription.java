@@ -71,6 +71,23 @@ public class UserSubscription implements Serializable {
   @Enumerated(EnumType.STRING)
   private StatusCode statusCode;
 
+  @Column(name = "activated_at")
+  private Instant activatedAt;
+
+  @NotNull
+  @Column(name = "num_exec")
+  private Integer numberOfExecution;
+
+  @NotNull
+  @Column(name = "wallet_address")
+  private String walletAddress;
+
+  @Column(name = "verifier_address")
+  private String verifierAddress;
+
+  @Column(name = "ref_id")
+  private String referenceId;
+
   @NotNull
   @Column(name = "created_at", nullable = false)
   private Instant createdAt;
@@ -90,13 +107,15 @@ public class UserSubscription implements Serializable {
     }
 
     return new EqualsBuilder().append(id, that.id).append(amount, that.amount).append(periodType, that.periodType)
+      .append(referenceId, that.referenceId).append(walletAddress, that.walletAddress)
       .append(periodValue, that.periodValue).append(owner, that.owner).append(container, that.container).append(statusCode, that.statusCode)
       .append(createdAt, that.createdAt).append(updatedAt, that.updatedAt).isEquals();
   }
 
   @Override
   public int hashCode() {
-    return new HashCodeBuilder(17, 37).append(id).append(amount).append(periodType).append(periodValue).append(owner).append(container).append(statusCode)
+    return new HashCodeBuilder(17, 37).append(id).append(amount).append(periodType).append(periodValue)
+      .append(referenceId).append(walletAddress).append(owner).append(container).append(statusCode)
       .append(createdAt).append(updatedAt).toHashCode();
   }
 
@@ -104,9 +123,14 @@ public class UserSubscription implements Serializable {
   public String toString() {
     return new ToStringBuilder(this)
       .append("id", id)
+      .append("referenceId", referenceId)
       .append("amount", amount)
       .append("periodType", periodType)
       .append("periodValue", periodValue)
+      .append("activatedAt", activatedAt)
+      .append("numberOfExecution", numberOfExecution)
+      .append("walletAddress", walletAddress)
+      .append("verifierAddress", verifierAddress)
       .append("owner", owner != null ? owner.getId() : null)
       .append("container", container != null ? container.getId() : null)
       .append("statusCode", statusCode)

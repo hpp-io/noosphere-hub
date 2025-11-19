@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 import io.hpp.noosphere.hub.domain.enumeration.PeriodType;
 import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Lob;
 import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -26,71 +25,96 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @Schema
 public class UserSubscriptionDTO implements Serializable {
 
-    @JsonView(JsonViewType.Shallow.class)
-    private UUID id;
+  @JsonView(JsonViewType.Shallow.class)
+  private UUID id;
 
-    @JsonView(JsonViewType.Update.class)
-    private BigDecimal amount;
+  @JsonView(JsonViewType.Update.class)
+  private BigDecimal amount;
 
-    @NotNull
-    @JsonView(JsonViewType.Update.class)
-    private PeriodType periodType;
+  @NotNull
+  @JsonView(JsonViewType.Update.class)
+  private PeriodType periodType;
 
-    @NotNull
-    @JsonView(JsonViewType.Update.class)
-    private Integer periodValue;
-
-    @NotNull
-    @JsonView(JsonViewType.Full.class)
-    private StatusCode statusCode;
-
-    @JsonView(JsonViewType.Full.class)
-    private Instant createdAt;
-
-    @JsonView(JsonViewType.Full.class)
-    private Instant updatedAt;
-
-    @JsonView(JsonViewType.Update.class)
-    private UserDTO owner;
-
-    @JsonView(JsonViewType.Update.class)
-    private ContainerDTO container;
+  @NotNull
+  @JsonView(JsonViewType.Update.class)
+  private Integer periodValue;
 
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
+  @JsonView(JsonViewType.Update.class)
+  private Instant activatedAt;
 
-        if (!(o instanceof UserSubscriptionDTO that)) {
-            return false;
-        }
+  @JsonView(JsonViewType.Update.class)
+  private Integer numberOfExecution;
 
-      return new EqualsBuilder().append(id, that.id).append(amount, that.amount).append(periodType, that.periodType)
-          .append(periodValue, that.periodValue).append(statusCode, that.statusCode).append(createdAt, that.createdAt).append(updatedAt, that.updatedAt)
-          .append(owner, that.owner).append(container, that.container).isEquals();
+  @NotNull
+  @JsonView(JsonViewType.Update.class)
+  private String walletAddress;
+
+  @JsonView(JsonViewType.Update.class)
+  private String verifierAddress;
+
+
+  @JsonView(JsonViewType.Update.class)
+  private String referenceId;
+
+  @NotNull
+  @JsonView(JsonViewType.Full.class)
+  private StatusCode statusCode;
+
+  @JsonView(JsonViewType.Full.class)
+  private Instant createdAt;
+
+  @JsonView(JsonViewType.Full.class)
+  private Instant updatedAt;
+
+  @JsonView(JsonViewType.Update.class)
+  private UserDTO owner;
+
+  @JsonView(JsonViewType.Update.class)
+  private ContainerDTO container;
+
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
     }
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(id).append(amount).append(periodType).append(periodValue).append(statusCode).append(createdAt)
-          .append(updatedAt)
-          .append(owner).append(container).toHashCode();
+    if (!(o instanceof UserSubscriptionDTO that)) {
+      return false;
     }
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-          .append("id", id)
-          .append("amount", amount)
-          .append("periodType", periodType)
-          .append("periodValue", periodValue)
-          .append("statusCode", statusCode)
-          .append("createdAt", createdAt)
-          .append("updatedAt", updatedAt)
-          .append("owner", owner!=null ? owner.getId() : null)
-          .append("container", container!=null ? container.getId() : null)
-          .toString();
-    }
+    return new EqualsBuilder().append(id, that.id).append(amount, that.amount).append(periodType, that.periodType)
+      .append(referenceId, that.referenceId).append(walletAddress, that.walletAddress)
+      .append(periodValue, that.periodValue).append(statusCode, that.statusCode).append(createdAt, that.createdAt)
+      .append(updatedAt, that.updatedAt)
+      .append(owner, that.owner).append(container, that.container).isEquals();
+  }
+
+  @Override
+  public int hashCode() {
+    return new HashCodeBuilder(17, 37).append(id).append(amount).append(periodType).append(periodValue)
+      .append(referenceId).append(walletAddress).append(statusCode).append(createdAt).append(updatedAt)
+      .append(owner).append(container).toHashCode();
+  }
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this)
+      .append("id", id)
+      .append("referenceId", referenceId)
+      .append("amount", amount)
+      .append("periodType", periodType)
+      .append("periodValue", periodValue)
+      .append("activatedAt", activatedAt)
+      .append("numberOfExecution", numberOfExecution)
+      .append("walletAddress", walletAddress)
+      .append("verifierAddress", verifierAddress)
+      .append("statusCode", statusCode)
+      .append("createdAt", createdAt)
+      .append("updatedAt", updatedAt)
+      .append("owner", owner != null ? owner.getId() : null)
+      .append("container", container != null ? container.getId() : null)
+      .toString();
+  }
 }
