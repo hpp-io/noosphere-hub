@@ -1,18 +1,11 @@
 package io.hpp.noosphere.hub.service;
 
-import static io.hpp.noosphere.hub.config.Constants.KEYSTORE_TYPE;
+import static io.hpp.noosphere.hub.config.Constants.KEY_ALIAS_HPP_WALLET_ADDRESS;
 
 import io.hpp.noosphere.hub.config.ApplicationProperties;
-import io.hpp.noosphere.hub.config.ApplicationProperties.Keystore;
 import io.hpp.noosphere.hub.security.KeystoreManager;
-import io.hpp.noosphere.hub.service.uil.CommonUtils;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.KeyStore;
-import java.util.Base64;
-import javax.crypto.SecretKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -67,6 +60,15 @@ public class KeystoreService {
       return KeystoreManager.readPrivateKeyAsHexString(credentials);
     } catch (Exception e) {
       LOG.error("Failed to getEthPrivateKey " + keyAlias, e);
+    }
+    return null;
+  }
+
+  public String getHppWalletAddress() {
+    try {
+      return KeystoreManager.readSecretKeyAsUtf8String(this.keyStore, getKeystorePassword(), KEY_ALIAS_HPP_WALLET_ADDRESS);
+    } catch (Exception e) {
+      LOG.error("Failed to getHppWalletAddress " + KEY_ALIAS_HPP_WALLET_ADDRESS, e);
     }
     return null;
   }

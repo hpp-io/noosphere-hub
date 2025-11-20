@@ -39,11 +39,20 @@ public class KeystoreManager {
     Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
   }
 
-  public static void createKeyStore(Path path, String password)
-    throws GeneralSecurityException, IOException {
+  public static KeyStore createKeyStore(String password) throws GeneralSecurityException, IOException {
     try {
       KeyStore ks = KeyStore.getInstance(KEYSTORE_TYPE);
       ks.load(null, password.toCharArray());
+      LOG.debug("Created new empty keystore");
+      return ks;
+    } catch (NoSuchAlgorithmException | CertificateException e) {
+      throw new GeneralSecurityException("Failed to create keystore", e);
+    }
+  }
+
+  public static void createKeyStore(Path path, String password) throws GeneralSecurityException, IOException {
+    try {
+      KeyStore ks = createKeyStore(password);
       saveKeyStore(ks, path, password);
       LOG.debug("Created new empty keystore at: {}", path);
     } catch (NoSuchAlgorithmException | CertificateException e) {
@@ -77,23 +86,26 @@ public class KeystoreManager {
     }
   }
 
-  public static void createKeyStoreWithHexPrivateKey(Path path, String password, String alias, String hexPrivateKey)
+  public static Credentials createKeyStoreWithHexPrivateKey(Path path, String password, String alias, String hexPrivateKey)
     throws GeneralSecurityException, IOException {
+    Credentials credentials = null;
     try {
       KeyStore ks = KeyStore.getInstance(KEYSTORE_TYPE);
       ks.load(null, password.toCharArray());
 
-      addEthWalletV3WithHexPrivateKey(ks, password, alias, hexPrivateKey);
+      credentials = addEthWalletV3WithHexPrivateKey(ks, password, alias, hexPrivateKey);
 
       saveKeyStore(ks, path, password);
+
       LOG.debug("Created new keystore with private key at: {}", path);
+
+      return credentials;
     } catch (NoSuchAlgorithmException | CertificateException e) {
       throw new GeneralSecurityException("Failed to create keystore", e);
     }
   }
 
-  public static void addSecretKey(KeyStore ks, String password, String alias, SecretKey secretKey)
-    throws GeneralSecurityException {
+  public static void addSecretKey(KeyStore ks, String password, String alias, SecretKey secretKey) throws GeneralSecurityException {
     KeyStore.ProtectionParameter protection = new KeyStore.PasswordProtection(password.toCharArray());
     KeyStore.SecretKeyEntry entry = new KeyStore.SecretKeyEntry(secretKey);
     ks.setEntry(alias, entry, protection);
@@ -107,7 +119,6 @@ public class KeystoreManager {
     addSecretKey(ks, password, alias, secretKey);
   }
 
-
   public static String readSecretKeyAsUtf8StringFromBase64dKeystore(String base64Keystore, String password, String alias)
     throws GeneralSecurityException, IOException {
     try {
@@ -118,9 +129,7 @@ public class KeystoreManager {
     }
   }
 
-
-  public static String readSecretKeyAsUtf8String(Path path, String password, String alias)
-    throws GeneralSecurityException, IOException {
+  public static String readSecretKeyAsUtf8String(Path path, String password, String alias) throws GeneralSecurityException, IOException {
     try {
       KeyStore ks = loadKeyStore(path, password);
       return readSecretKeyAsUtf8String(ks, password, alias);
@@ -139,8 +148,7 @@ public class KeystoreManager {
     }
   }
 
-  public static String readSecretKeyAsUtf8String(KeyStore ks, String password, String alias)
-    throws GeneralSecurityException {
+  public static String readSecretKeyAsUtf8String(KeyStore ks, String password, String alias) throws GeneralSecurityException {
     try {
       KeyStore.ProtectionParameter protection = new KeyStore.PasswordProtection(password.toCharArray());
 
@@ -166,41 +174,42 @@ public class KeystoreManager {
     LOG.debug("Added ETH wallet with alias '{}' to keystore.", alias);
   }
 
-
-  public static void addEthWalletV3FromBytes(KeyStore ks, String password, String alias, byte[] privateKeyBytes)
+  public static Credentials addEthWalletV3FromBytes(KeyStore ks, String password, String alias, byte[] privateKeyBytes)
     throws GeneralSecurityException {
     BigInteger privateKey = new BigInteger(1, privateKeyBytes);
-    addEthWalletV3FromBigInteger(ks, password, alias, privateKey);
+    Credentials credentials = addEthWalletV3FromBigInteger(ks, password, alias, privateKey);
     LOG.debug("Added ETH wallet with alias '{}' to keystore.", alias);
+    return credentials;
   }
 
-
-  public static void addEthWalletV3FromBigInteger(KeyStore ks, String password, String alias, BigInteger privateKey)
+  public static Credentials addEthWalletV3FromBigInteger(KeyStore ks, String password, String alias, BigInteger privateKey)
     throws GeneralSecurityException {
     ECKeyPair ecKeyPair = ECKeyPair.create(privateKey);
     KeyStore.ProtectionParameter protection = new KeyStore.PasswordProtection(password.toCharArray());
     storeEthKeyAsSecret(ks, alias, ecKeyPair, protection);
     LOG.debug("Added ETH wallet with alias '{}' to keystore.", alias);
+    return Credentials.create(ecKeyPair);
   }
 
-  public static void addEthWalletV3WithHexPrivateKey(KeyStore ks, String password, String alias, String hexPrivateKey)
+  public static Credentials addEthWalletV3WithHexPrivateKey(KeyStore ks, String password, String alias, String hexPrivateKey)
     throws GeneralSecurityException {
+    Credentials credentials = null;
     if (hexPrivateKey != null) {
       if (hexPrivateKey.startsWith("0x")) {
         hexPrivateKey = hexPrivateKey.substring(2);
       }
 
       BigInteger privateKey = new BigInteger(hexPrivateKey, 16);
-      addEthWalletV3FromBigInteger(ks, password, alias, privateKey);
+      credentials = addEthWalletV3FromBigInteger(ks, password, alias, privateKey);
 
       LOG.debug("Added ETH wallet with alias '{}' to keystore.", alias);
     } else {
       LOG.error("Failed to add ETH wallet with alias '{}' to keystore because private key is null.", alias);
     }
+    return credentials;
   }
 
-  public static KeyStore loadKeyStore(Path path, String password)
-    throws IOException, GeneralSecurityException {
+  public static KeyStore loadKeyStore(Path path, String password) throws IOException, GeneralSecurityException {
     KeyStore ks = KeyStore.getInstance(KEYSTORE_TYPE);
     try (InputStream fis = Files.newInputStream(path)) {
       ks.load(fis, password.toCharArray());
@@ -210,15 +219,13 @@ public class KeystoreManager {
     return ks;
   }
 
-  private static KeyStore loadKeyStore(InputStream is, String password)
-    throws IOException, GeneralSecurityException {
+  private static KeyStore loadKeyStore(InputStream is, String password) throws IOException, GeneralSecurityException {
     KeyStore ks = KeyStore.getInstance(KEYSTORE_TYPE);
     ks.load(is, password.toCharArray());
     return ks;
   }
 
-  private static KeyStore loadKeyStoreFromBase64String(String base64Encoded, String password)
-    throws IOException, GeneralSecurityException {
+  private static KeyStore loadKeyStoreFromBase64String(String base64Encoded, String password) throws IOException, GeneralSecurityException {
     byte[] decodedFile = Base64.getDecoder().decode(base64Encoded);
     InputStream is = new ByteArrayInputStream(decodedFile);
     return loadKeyStore(is, password);
@@ -231,8 +238,7 @@ public class KeystoreManager {
     return loadKeyStore(is, password);
   }
 
-  public static void saveKeyStore(KeyStore ks, Path path, String password)
-    throws IOException, GeneralSecurityException {
+  public static void saveKeyStore(KeyStore ks, Path path, String password) throws IOException, GeneralSecurityException {
     try (OutputStream os = Files.newOutputStream(path)) {
       ks.store(os, password.toCharArray());
     } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException e) {
@@ -259,8 +265,7 @@ public class KeystoreManager {
     }
   }
 
-  public static Credentials readEthKeyFromSecret(Path path, String password, String alias)
-    throws GeneralSecurityException, IOException {
+  public static Credentials readEthKeyFromSecret(Path path, String password, String alias) throws GeneralSecurityException, IOException {
     try {
       KeyStore ks = loadKeyStore(path, password);
       return readEthKeyFromSecret(ks, password, alias);
@@ -269,8 +274,7 @@ public class KeystoreManager {
     }
   }
 
-  public static Credentials readEthKeyFromSecret(KeyStore ks, String password, String alias)
-    throws GeneralSecurityException {
+  public static Credentials readEthKeyFromSecret(KeyStore ks, String password, String alias) throws GeneralSecurityException {
     try {
       KeyStore.ProtectionParameter protection = new KeyStore.PasswordProtection(password.toCharArray());
       KeyStore.SecretKeyEntry entry = (KeyStore.SecretKeyEntry) ks.getEntry(alias, protection);
@@ -283,7 +287,6 @@ public class KeystoreManager {
       throw new GeneralSecurityException("Failed to load ETH key", e);
     }
   }
-
 
   public static String readPrivateKeyAsHexString(Credentials credentials) {
     BigInteger privateKey = credentials.getEcKeyPair().getPrivateKey();

@@ -55,5 +55,7 @@ public final class Constants {
   public static final String KEYSTORE_TYPE = "PKCS12";
   public static final String KEYSTORE_ETH_KEY_ALIAS = "hpp-eth-key";
 
+  public static final String KEY_ALIAS_HPP_WALLET_ADDRESS = "hpp-wallet-addr";
+
   private Constants() {}
 }
