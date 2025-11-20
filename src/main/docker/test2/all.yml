@@ -11,7 +11,7 @@ services:
     container_name: noosphere-hub
     user: '0:110'
     environment:
-      - _JAVA_OPTIONS=-Xmx2048m -Xms1024m -Djava.net.preferIPv4Stack=true -Djavax.net.ssl.trustStore=/app/truststore.p12 -Djavax.net.ssl.trustStorePassword=${HPP_KEYSTORE_PASSWORD} -Dspring.cloud.consul.discovery.hostname=nstest.hpp.io -Dspring.cloud.consul.discovery.prefer-ip-address=false -Dspring.cloud.consul.discovery.scheme=https
+      - _JAVA_OPTIONS=-Xmx2048m -Xms1024m -Djava.net.preferIPv4Stack=true -Djavax.net.ssl.trustStore=/app/truststore.p12 -Djavax.net.ssl.trustStorePassword=${HPP_KEYSTORE_PASSWORD}
       - SPRING_PROFILES_ACTIVE=test2,api-docs
       - MANAGEMENT_PROMETHEUS_METRICS_EXPORT_ENABLED=true
       - SPRING_DATASOURCE_USERNAME=${DATABASE_USERNAME}
