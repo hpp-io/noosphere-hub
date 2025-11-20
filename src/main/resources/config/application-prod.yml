@@ -42,9 +42,6 @@ spring:
       discovery:
         instanceId: noosphere-hub:${spring.application.instance-id:${random.value}}
         service-name: noosphere-hub
-        scheme: https
-        hostname: nsapp.hpp.io
-        port: 443
       host: noosphere-consul
   datasource:
     type: com.zaxxer.hikari.HikariDataSource

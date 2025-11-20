@@ -47,9 +47,6 @@ spring:
       discovery:
         instanceId: noosphere-hub:${spring.application.instance-id:${random.value}}
         service-name: noosphere-hub
-        scheme: https
-        hostname: nstest.hpp.io
-        port: 443
       host: noosphere-consul
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
