@@ -24,9 +24,9 @@ services:
       - SPRING_PULSAR_ADMINISTRATION_SERVICE_URL=http://noosphere-pulsar:9082
       - SPRING_CLOUD_CONSUL_HOST=noosphere-consul
       - SPRING_CLOUD_CONSUL_DISCOVERY_PREFER_IP_ADDRESS=true
-#      - SPRING_CLOUD_CONSUL_DISCOVERY_SCHEME=https
-#      - SPRING_CLOUD_CONSUL_DISCOVERY_HOSTNAME=nshubtest.hpp.io
-#      - SPRING_CLOUD_CONSUL_DISCOVERY_PORT=443
+      #      - SPRING_CLOUD_CONSUL_DISCOVERY_SCHEME=https
+      #      - SPRING_CLOUD_CONSUL_DISCOVERY_HOSTNAME=nshubtest.hpp.io
+      #      - SPRING_CLOUD_CONSUL_DISCOVERY_PORT=443
       - APPLICATION_KEYCLOAK_AUTH_URL=https://authtest.hpp.io
       - APPLICATION_KEYCLOAK_ADMIN_CLIENT_SECRET=${HPP_AUTH_ADMIN_CLI_SECRET}
       - APPLICATION_KEYSTORE_STORE_PASSWORD=${HPP_KEYSTORE_PASSWORD}
@@ -196,6 +196,9 @@ services:
   noosphere-pulsar:
     container_name: noosphere-pulsar
     image: apachepulsar/pulsar:4.0.4
+    user: '0:110'
+    volumes:
+      - pulsar-logs:/pulsar/logs
     ports:
       - 9082:8080
       - 6650:6650
@@ -280,3 +283,9 @@ volumes:
       o: bind
       type: none
       device: /data/noosphere/mysql
+  pulsar-logs:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /data/noosphere/logs/pulsar-logs
