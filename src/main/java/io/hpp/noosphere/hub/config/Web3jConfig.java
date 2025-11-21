@@ -3,8 +3,11 @@ package io.hpp.noosphere.hub.config;
 import static io.hpp.noosphere.hub.config.Constants.KEYSTORE_ETH_KEY_ALIAS;
 
 import io.hpp.noosphere.hub.service.KeystoreService;
+import io.hpp.noosphere.hub.service.blockchain.CustomWeb3jService;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
@@ -29,7 +32,12 @@ public class Web3jConfig {
   }
 
   @Bean
-  public Web3j web3j() {
+  public Web3j web3j(CustomWeb3jService customWeb3jService) {
+    return customWeb3jService;
+  }
+
+  @Bean
+  public CustomWeb3jService customWeb3jService(ScheduledExecutorService scheduledExecutorService) {
     String rpcUrl = applicationProperties.getBlockchain().getRpcUrl();
 
     long connectTimeout = getTimeoutValue(applicationProperties.getBlockchain().getConnectionTimeout(), 30000);
@@ -44,7 +52,7 @@ public class Web3jConfig {
       .writeTimeout(writeTimeout, TimeUnit.MILLISECONDS);
 
     HttpService httpService = new HttpService(rpcUrl, clientBuilder.build());
-    return Web3j.build(httpService);
+    return new CustomWeb3jService(httpService, 1000, scheduledExecutorService);
   }
 
   private long getTimeoutValue(Long timeout, int defaultValue) {
@@ -89,5 +97,10 @@ public class Web3jConfig {
     } catch (IOException e) {
       throw new RuntimeException("Retrieving Chain ID failed", e);
     }
+  }
+
+  @Bean
+  public ScheduledExecutorService scheduledExecutorService() {
+    return Executors.newSingleThreadScheduledExecutor();
   }
 }
