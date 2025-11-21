@@ -59,13 +59,13 @@ services:
     image: ghcr.io/hpp-io/noosphere-scheduler:test
     container_name: noosphere-scheduler
     environment:
-      - _JAVA_OPTIONS=-Xmx512m -Xms256m
+      - _JAVA_OPTIONS=-Xmx2048m -Xms1024m -Djava.net.preferIPv4Stack=true -Djavax.net.ssl.trustStore=/app/truststore.p12 -Djavax.net.ssl.trustStorePassword=${HPP_KEYSTORE_PASSWORD}
       - SPRING_PROFILES_ACTIVE=test
       - MANAGEMENT_PROMETHEUS_METRICS_EXPORT_ENABLED=true
       - SPRING_CLOUD_CONSUL_HOST=noosphere-consul
       - SPRING_CLOUD_CONSUL_PORT=8500
-      - SPRING_DATASOURCE_URL=jdbc:mysql://noosphere-mysql:3306/scheduler?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true
-      - SPRING_LIQUIBASE_URL=jdbc:mysql://noosphere-mysql:3306/scheduler?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_URL=jdbc:mysql://noosphere-mysql:3306/scheduler?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
+      - SPRING_LIQUIBASE_URL=jdbc:mysql://noosphere-mysql:3306/scheduler?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
       - SPRING_DATASOURCE_USERNAME=${DATABASE_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${DATABASE_PASSWORD}
       - APPLICATION_CHAIN_WALLET_KEYSTORE_PASSWORD=${HPP_KEYSTORE_PASSWORD}
@@ -76,6 +76,7 @@ services:
       - LOGGING_FILE_PATH=/app/logs
     volumes:
       - /data/noosphere/config/hpp-keystore.p12:/app/hpp-keystore.p12
+      - /data/noosphere/config/truststore.p12:/app/truststore.p12
       - /data/noosphere/logs/scheduler-logs:/app/logs
     ports:
       - 8185:8185
@@ -84,7 +85,7 @@ services:
         - CMD
         - curl
         - -f
-        - http://localhost:8081/management/health
+        - https://nstest.hpp.io/management/health
       interval: 5s
       timeout: 5s
       retries: 40
