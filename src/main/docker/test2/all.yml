@@ -80,6 +80,8 @@ services:
       - /data/noosphere/logs/scheduler-logs:/app/logs
     ports:
       - 8185:8185
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
     healthcheck:
       test:
         - CMD
