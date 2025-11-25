@@ -38,7 +38,7 @@ services:
       - HPP_ENV=${HPP_ENV}
       - LOGGING_FILE_PATH=/app/logs
     volumes:
-      - /data/noosphere/config/hpp-keystore.p12:/app/hpp-keystore.p12
+      - /data/noosphere/config/keystore/keystore0.p12:/app/hpp-keystore.p12
       - /data/noosphere/config/truststore.p12:/app/truststore.p12
       - /data/noosphere/logs/nshub-logs:/app/logs
     ports:
