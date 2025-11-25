@@ -2,8 +2,8 @@ package io.hpp.noosphere.hub.scheduler;
 
 import static io.hpp.noosphere.hub.config.Constants.COLUMN_NAME_LAST_KEEP_ALIVE_AT;
 
+import io.hpp.noosphere.common.domain.enumeration.StatusCode;
 import io.hpp.noosphere.hub.config.ApplicationProperties;
-import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
 import io.hpp.noosphere.hub.service.AgentService;
 import io.hpp.noosphere.hub.service.AgentStatusService;
 import io.hpp.noosphere.hub.service.dto.AgentStatusDTO;
@@ -28,7 +28,6 @@ public class AgentStatusScheduledTask {
   private final AgentService agentService;
   private final ApplicationProperties applicationProperties;
 
-
   public AgentStatusScheduledTask(
     AgentStatusService agentStatusService,
     AgentService agentService,
@@ -38,7 +37,6 @@ public class AgentStatusScheduledTask {
     this.agentService = agentService;
     this.applicationProperties = applicationProperties;
   }
-
 
   @Scheduled(cron = "${application.schedule-task.agent-status.cron}")
   public void validateAgentStatus() {
@@ -74,5 +72,4 @@ public class AgentStatusScheduledTask {
       LOG.error("Failed to process validateAgentStatus", e);
     }
   }
-
 }

@@ -1,8 +1,8 @@
 package io.hpp.noosphere.hub.security;
 
+import io.hpp.noosphere.common.service.util.CommonUtils;
 import io.hpp.noosphere.hub.service.UserService;
 import io.hpp.noosphere.hub.service.dto.UserDTO;
-import io.hpp.noosphere.hub.service.uil.CommonUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;

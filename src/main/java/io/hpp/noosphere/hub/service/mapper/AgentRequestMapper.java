@@ -1,5 +1,6 @@
 package io.hpp.noosphere.hub.service.mapper;
 
+import io.hpp.noosphere.common.service.mapper.EntityMapper;
 import io.hpp.noosphere.hub.domain.Agent;
 import io.hpp.noosphere.hub.domain.AgentRequest;
 import io.hpp.noosphere.hub.domain.Container;

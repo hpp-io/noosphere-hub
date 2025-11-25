@@ -3,10 +3,11 @@ package io.hpp.noosphere.hub.repository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import io.hpp.noosphere.common.domain.enumeration.StatusCode;
+import io.hpp.noosphere.common.repository.QuerydslUtil;
+import io.hpp.noosphere.common.service.util.CommonUtils;
 import io.hpp.noosphere.hub.domain.Container;
 import io.hpp.noosphere.hub.domain.QContainer;
-import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
-import io.hpp.noosphere.hub.service.uil.CommonUtils;
 import jakarta.persistence.EntityManager;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
@@ -15,13 +16,17 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ContainerRepository extends JpaRepository<Container, UUID>, ContainerRepositoryCustom {
-
-}
+public interface ContainerRepository extends JpaRepository<Container, UUID>, ContainerRepositoryCustom {}
 
 interface ContainerRepositoryCustom {
-
-  Page<Container> search(String searchText, String name, StatusCode statusCode, String createdByUserId, String walletAddress, Pageable pageable);
+  Page<Container> search(
+    String searchText,
+    String name,
+    StatusCode statusCode,
+    String createdByUserId,
+    String walletAddress,
+    Pageable pageable
+  );
 
   Page<Container> findActiveByName(String name, Pageable pageable);
 
@@ -40,7 +45,14 @@ class ContainerRepositoryCustomImpl implements ContainerRepositoryCustom {
   }
 
   @Override
-  public Page<Container> search(String searchText, String name, StatusCode statusCode, String createdByUserId, String walletAddress, Pageable pageable) {
+  public Page<Container> search(
+    String searchText,
+    String name,
+    StatusCode statusCode,
+    String createdByUserId,
+    String walletAddress,
+    Pageable pageable
+  ) {
     QContainer qContainer = QContainer.container;
     BooleanBuilder builder = new BooleanBuilder();
     if (statusCode != null) {

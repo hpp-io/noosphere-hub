@@ -2,11 +2,10 @@ package io.hpp.noosphere.hub.web.rest.errors;
 
 import static org.springframework.core.annotation.AnnotatedElementUtils.findMergedAnnotation;
 
-import io.hpp.noosphere.hub.exception.AlreadyExistsException;
-import io.hpp.noosphere.hub.exception.ErrorConstants;
-import io.hpp.noosphere.hub.exception.NotFoundException;
-import io.hpp.noosphere.hub.exception.PropertyValueAlertException;
-import io.hpp.noosphere.hub.service.uil.CommonUtils;
+import io.hpp.noosphere.common.exception.ErrorConstants;
+import io.hpp.noosphere.common.exception.NotFoundException;
+import io.hpp.noosphere.common.exception.PropertyValueAlertException;
+import io.hpp.noosphere.common.service.util.CommonUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.Arrays;
@@ -60,6 +59,7 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
   private static final Logger LOG = LoggerFactory.getLogger(ExceptionTranslator.class);
   private final Environment env;
   private final MessageSource messageSource;
+
   @Value("${jhipster.clientApp.name}")
   private String applicationName;
 
@@ -93,9 +93,7 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
   }
 
   private ProblemDetailWithCause getProblemDetailWithCause(Throwable ex) {
-    if (
-      ex instanceof ErrorResponseException exp && exp.getBody() instanceof ProblemDetailWithCause problemDetailWithCause
-    ) {
+    if (ex instanceof ErrorResponseException exp && exp.getBody() instanceof ProblemDetailWithCause problemDetailWithCause) {
       return problemDetailWithCause;
     }
     return ProblemDetailWithCauseBuilder.instance().withStatus(toStatus(ex).value()).build();
@@ -124,7 +122,9 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
 
     Map<String, Object> problemProperties = problem.getProperties();
     if (problemProperties == null || !problemProperties.containsKey(MESSAGE_KEY)) {
-      String messageKey = CommonUtils.buildMessageKey(err) != null ? CommonUtils.buildMessageKey(err) : ("error.http." + problem.getStatus());
+      String messageKey = CommonUtils.buildMessageKey(err) != null
+        ? CommonUtils.buildMessageKey(err)
+        : ("error.http." + problem.getStatus());
       try {
         problem.setDetail(null);
         if (err instanceof PropertyValueAlertException) {
@@ -136,7 +136,6 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
           String message = messageSource.getMessage(messageKey, null, Locale.ENGLISH);
           problem.setProperty(MESSAGE_KEY, message);
         }
-
       } catch (Exception e) {
         problem.setProperty(MESSAGE_KEY, messageKey);
       }
@@ -148,7 +147,7 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
 
     if (
       (err instanceof MethodArgumentNotValidException fieldException) &&
-        (problemProperties == null || !problemProperties.containsKey(FIELD_ERRORS_KEY))
+      (problemProperties == null || !problemProperties.containsKey(FIELD_ERRORS_KEY))
     ) {
       problem.setProperty(FIELD_ERRORS_KEY, getFieldErrors(fieldException));
     }
@@ -214,8 +213,6 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
     return ErrorConstants.DEFAULT_TYPE;
   }
 
-
-
   private String getCustomizedTitle(Throwable err) {
     if (err instanceof MethodArgumentNotValidException) {
       return "Method argument not valid";
@@ -269,12 +266,12 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
   private HttpHeaders buildHeaders(Throwable err) {
     return err instanceof BadRequestAlertException badRequestAlertException
       ? HeaderUtil.createFailureAlert(
-      applicationName,
-      true,
-      badRequestAlertException.getEntityName(),
-      badRequestAlertException.getErrorKey(),
-      badRequestAlertException.getMessage()
-    )
+        applicationName,
+        true,
+        badRequestAlertException.getEntityName(),
+        badRequestAlertException.getErrorKey(),
+        badRequestAlertException.getMessage()
+      )
       : null;
   }
 
@@ -292,17 +289,6 @@ public class ExceptionTranslator extends ResponseEntityExceptionHandler {
 
   private boolean containsPackageName(String message) {
     // This list is for sure not complete
-    return StringUtils.containsAny(
-      message,
-      "org.",
-      "java.",
-      "net.",
-      "jakarta.",
-      "javax.",
-      "com.",
-      "io.",
-      "de.",
-      "io.hpp.noosphere.hub"
-    );
+    return StringUtils.containsAny(message, "org.", "java.", "net.", "jakarta.", "javax.", "com.", "io.", "de.", "io.hpp.noosphere.hub");
   }
 }

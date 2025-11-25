@@ -1,7 +1,7 @@
 package io.hpp.noosphere.hub.domain;
 
+import io.hpp.noosphere.common.domain.enumeration.StatusCode;
 import io.hpp.noosphere.hub.domain.enumeration.PeriodType;
-import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -95,7 +95,6 @@ public class UserSubscription implements Serializable {
   @Column(name = "updated_at")
   private Instant updatedAt;
 
-
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -106,17 +105,36 @@ public class UserSubscription implements Serializable {
       return false;
     }
 
-    return new EqualsBuilder().append(id, that.id).append(amount, that.amount).append(periodType, that.periodType)
-      .append(referenceId, that.referenceId).append(walletAddress, that.walletAddress)
-      .append(periodValue, that.periodValue).append(owner, that.owner).append(container, that.container).append(statusCode, that.statusCode)
-      .append(createdAt, that.createdAt).append(updatedAt, that.updatedAt).isEquals();
+    return new EqualsBuilder()
+      .append(id, that.id)
+      .append(amount, that.amount)
+      .append(periodType, that.periodType)
+      .append(referenceId, that.referenceId)
+      .append(walletAddress, that.walletAddress)
+      .append(periodValue, that.periodValue)
+      .append(owner, that.owner)
+      .append(container, that.container)
+      .append(statusCode, that.statusCode)
+      .append(createdAt, that.createdAt)
+      .append(updatedAt, that.updatedAt)
+      .isEquals();
   }
 
   @Override
   public int hashCode() {
-    return new HashCodeBuilder(17, 37).append(id).append(amount).append(periodType).append(periodValue)
-      .append(referenceId).append(walletAddress).append(owner).append(container).append(statusCode)
-      .append(createdAt).append(updatedAt).toHashCode();
+    return new HashCodeBuilder(17, 37)
+      .append(id)
+      .append(amount)
+      .append(periodType)
+      .append(periodValue)
+      .append(referenceId)
+      .append(walletAddress)
+      .append(owner)
+      .append(container)
+      .append(statusCode)
+      .append(createdAt)
+      .append(updatedAt)
+      .toHashCode();
   }
 
   @Override

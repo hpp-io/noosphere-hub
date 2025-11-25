@@ -27,13 +27,19 @@ targetCompatibility=17
 assert System.properties["java.specification.version"] == "17" || "21" || "24"
 
 ext {
-    querydslVersion = "5.1.0"
     springProfiles = ""
+    def noosphereCommonBaseVersion = noosphereCommonVersion
+    noosphereCommonVersion = "${noosphereCommonBaseVersion}-test-SNAPSHOT" // Default version
     if (project.hasProperty("tls")) {
         springProfiles += ",tls"
     }
     if (project.hasProperty("e2e")) {
         springProfiles += ",e2e"
+    }
+    if (project.hasProperty("prod")) {
+        noosphereCommonVersion = noosphereCommonBaseVersion
+    } else if (project.hasProperty("test2")) {
+        noosphereCommonVersion = "${noosphereCommonBaseVersion}-test-SNAPSHOT"
     }
 }
 
@@ -41,6 +47,13 @@ repositories {
     // Local maven repository is required for libraries built locally with maven like development jhipster-bom.
     // mavenLocal()
     mavenCentral()
+    maven {
+        url "https://maven.pkg.github.com/hpp-io/noosphere-common"
+        credentials {
+            username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR") ?: System.getenv("GITHUB_USERNAME")
+            password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
+        }
+    }
     // jhipster-needle-gradle-repositories - JHipster will add additional repositories
 }
 
@@ -213,212 +226,10 @@ dependencies {
 //    developmentOnly "org.springframework.boot:spring-boot-docker-compose"
     implementation "org.keycloak:keycloak-admin-client:26.0.7"
     implementation "org.zalando:problem-spring-web:0.29.1"
+    implementation libs.web3j.core
     // jhipster-needle-gradle-dependency - JHipster will add additional dependencies here
-
-    implementation "org.bouncycastle:bcprov-jdk18on:1.77"
-
-    // Web3j dependencies
-    implementation "org.web3j:core:${web3jVersion}"
-    implementation "org.web3j:crypto:${web3jVersion}"
-    implementation "org.web3j:contracts:${web3jVersion}"
-    implementation "org.web3j:utils:${web3jVersion}"
-    implementation "org.web3j:abi:${web3jVersion}"
-    implementation "org.web3j:codegen:${web3jVersion}"
+    implementation "io.hpp:noosphere-common:${noosphereCommonVersion}"
 }
-
-ext {
-    // 처리할 컨트랙트 목록 (파일명 확장자 제외)
-    selectedContracts = [
-            'Router',
-            'DelegateeCoordinator',
-            'WalletFactory',
-            'Wallet',
-            'SubscriptionBatchReader',
-            'TransientComputeClient',
-            'Delegator'
-            // 필요한 컨트랙트만 추가
-    ]
-
-    // 또는 프로젝트 프로퍼티로 설정 (gradle 실행시 -PcontractNames=Contract1,Contract2)
-    if (project.hasProperty('contractNames')) {
-        selectedContracts = project.contractNames.split(',').collect { it.trim() }
-    }
-}
-
-tasks.register('generateWeb3jWrappers') {
-    description = 'Generate Web3j contract wrappers from selected Foundry artifacts'
-    group = 'build'
-
-    def foundryOutDir = file("../noosphere-evm/out")
-    def outputDir = file("src/main/java")
-    def packageName = "io.hpp.noosphere.hub.service.blockchain.contract"
-    def tempDir = file("build/tmp/web3j")
-
-    inputs.dir(foundryOutDir)
-    outputs.dir(outputDir)
-
-    doLast {
-        outputDir.mkdirs()
-        tempDir.mkdirs()
-
-        if (!foundryOutDir.exists()) {
-            println "Foundry output directory not found: ${foundryOutDir.absolutePath}"
-            println "Please run 'forge build' first in your contract directory"
-            return
-        }
-
-        println "Selected contracts to process: ${selectedContracts}"
-
-        selectedContracts.each { contractName ->
-            def contractProcessed = false
-
-            foundryOutDir.listFiles()?.each { contractDir ->
-                if (contractDir.isDirectory()) {
-                    def exactJsonFile = new File(contractDir, "${contractName}.json")
-                    if (exactJsonFile.exists()) {
-                        processContractFile(contractName, exactJsonFile, tempDir, outputDir, packageName)
-                        contractProcessed = true
-                        return
-                    }
-
-
-                    contractDir.listFiles()?.each { jsonFile ->
-                        if (jsonFile.name == "${contractName}.json") {
-                            processContractFile(contractName, jsonFile, tempDir, outputDir, packageName)
-                            contractProcessed = true
-                        }
-                    }
-                }
-            }
-
-            if (!contractProcessed) {
-                println "Warning: Contract '${contractName}' not found in Foundry artifacts"
-                println "Available contracts:"
-                listAvailableContracts(foundryOutDir)
-            }
-        }
-    }
-}
-
-def processContractFile(String contractName, File jsonFile, File tempDir, File outputDir, String packageName) {
-    println "Processing contract: ${contractName} from ${jsonFile.absolutePath}"
-
-    try {
-        def jsonSlurper = new groovy.json.JsonSlurper()
-        def contractJson = jsonSlurper.parse(jsonFile)
-
-        def abi = contractJson.abi
-        def bytecode = contractJson.bytecode?.object
-
-        if (abi && bytecode) {
-            // 임시 ABI와 bin 파일 생성
-            def abiFile = new File(tempDir, "${contractName}.abi")
-            def binFile = new File(tempDir, "${contractName}.bin")
-
-            abiFile.text = groovy.json.JsonBuilder.newInstance(abi).toPrettyString()
-            binFile.text = bytecode.startsWith('0x') ? bytecode.substring(2) : bytecode
-
-            // Web3j wrapper 생성
-            generateWrapper(contractName, abiFile, binFile, outputDir, packageName)
-
-            println "✓ Generated wrapper for ${contractName}"
-        } else {
-            println "✗ Skipping ${contractName}: missing ABI or bytecode"
-        }
-    } catch (Exception e) {
-        println "✗ Error processing ${contractName}: ${e.message}"
-        e.printStackTrace()
-    }
-}
-
-def listAvailableContracts(File foundryOutDir) {
-    def availableContracts = []
-
-    foundryOutDir.listFiles()?.each { contractDir ->
-        if (contractDir.isDirectory()) {
-            contractDir.listFiles()?.each { jsonFile ->
-                if (jsonFile.name.endsWith('.json')) {
-                    def contractName = jsonFile.name.replace('.json', '')
-                    availableContracts << "${contractDir.name}/${contractName}"
-                }
-            }
-        }
-    }
-
-    availableContracts.each { contract ->
-        println "  - ${contract}"
-    }
-}
-
-def generateWrapper(String contractName, File abiFile, File binFile, File outputDir, String packageName) {
-    try {
-        javaexec {
-            classpath = configurations.runtimeClasspath
-            main = 'org.web3j.codegen.SolidityFunctionWrapperGenerator'
-            args = [
-                    '-a', abiFile.absolutePath,
-                    '-b', binFile.absolutePath,
-                    '-o', outputDir.absolutePath,
-                    '-p', packageName,
-                    '-c', contractName
-            ]
-        }
-    } catch (Exception e) {
-        println "Failed to generate wrapper for ${contractName}: ${e.message}"
-        throw e
-    }
-}
-
-selectedContracts.each { contractName ->
-    task "generate${contractName}Wrapper" {
-        description = "Generate Web3j wrapper for ${contractName} contract only"
-        group = 'web3j'
-
-        doLast {
-            def foundryOutDir = file("./contract/out")
-            def outputDir = file("src/main/java/io/hpp/noosphere/agent/web3j/contracts")
-            def packageName = "io.hpp.noosphere.agent.web3j.contracts"
-            def tempDir = file("build/tmp/web3j")
-
-            outputDir.mkdirs()
-            tempDir.mkdirs()
-
-            def contractProcessed = false
-            foundryOutDir.listFiles()?.each { contractDir ->
-                if (contractDir.isDirectory()) {
-                    contractDir.listFiles()?.each { jsonFile ->
-                        if (jsonFile.name == "${contractName}.json") {
-                            processContractFile(contractName, jsonFile, tempDir, outputDir, packageName)
-                            contractProcessed = true
-                        }
-                    }
-                }
-            }
-
-            if (!contractProcessed) {
-                println "Contract '${contractName}' not found"
-            }
-        }
-    }
-}
-
-tasks.register('listFoundryContracts') {
-    description = 'List all available contracts from Foundry build output'
-    group = 'web3j'
-
-    doLast {
-        def foundryOutDir = file("./contract/out")
-
-        if (!foundryOutDir.exists()) {
-            println "Foundry output directory not found. Run 'forge build' first."
-            return
-        }
-
-        println "Available contracts in Foundry output:"
-        listAvailableContracts(foundryOutDir)
-    }
-}
-
 
 task cleanResources(type: Delete) {
     delete "build/resources"

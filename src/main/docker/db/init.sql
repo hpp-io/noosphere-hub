@@ -1,6 +1,8 @@
 CREATE DATABASE nshub;
 CREATE DATABASE keycloak;
 CREATE DATABASE scheduler;
+CREATE DATABASE nsgw;
 GRANT ALL PRIVILEGES ON keycloak.* TO 'nsuser';
 GRANT ALL PRIVILEGES ON nshub.* TO 'nsuser';
 GRANT ALL PRIVILEGES ON scheduler.* TO 'nsuser';
+GRANT ALL PRIVILEGES ON nsgw.* TO 'nsuser';

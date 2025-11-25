@@ -1,9 +1,9 @@
 package io.hpp.noosphere.hub.web.rest;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import io.hpp.noosphere.common.exception.PermissionDeniedException;
 import io.hpp.noosphere.hub.config.OpenApiConfiguration;
 import io.hpp.noosphere.hub.exception.AgentNotFoundException;
-import io.hpp.noosphere.hub.exception.PermissionDeniedException;
 import io.hpp.noosphere.hub.repository.AgentRepository;
 import io.hpp.noosphere.hub.service.AgentContainerService;
 import io.hpp.noosphere.hub.service.AgentService;
@@ -61,195 +61,189 @@ import tech.jhipster.web.util.ResponseUtil;
 @RestController
 @RequestMapping("/api/agents")
 @Tag(
-    name = "Agent",
-    description = "Agent Controller",
-    extensions = { @Extension(properties = { @ExtensionProperty(name = OpenApiConfiguration.TAG_ORDER, value = "1") }) }
+  name = "Agent",
+  description = "Agent Controller",
+  extensions = { @Extension(properties = { @ExtensionProperty(name = OpenApiConfiguration.TAG_ORDER, value = "1") }) }
 )
 public class AgentResource {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AgentResource.class);
+  private static final Logger LOG = LoggerFactory.getLogger(AgentResource.class);
 
-    private static final String ENTITY_NAME = "nooSphereHubAgent";
-    private final IAuthenticationFacade authenticationFacade;
-    private final AgentService agentService;
-    private final AgentRepository agentRepository;
-    private final UserService userService;
-    private final UserSubscriptionService userSubscriptionService;
-    private final AgentContainerService agentContainerService;
+  private static final String ENTITY_NAME = "nooSphereHubAgent";
+  private final IAuthenticationFacade authenticationFacade;
+  private final AgentService agentService;
+  private final AgentRepository agentRepository;
+  private final UserService userService;
+  private final UserSubscriptionService userSubscriptionService;
+  private final AgentContainerService agentContainerService;
 
-    @Value("${jhipster.clientApp.name}")
-    private String applicationName;
+  @Value("${jhipster.clientApp.name}")
+  private String applicationName;
 
-    public AgentResource(
-        AgentService agentService,
-        AgentRepository agentRepository,
-        UserService userService,
-        UserSubscriptionService userSubscriptionService,
-        AgentContainerService agentContainerService,
-        IAuthenticationFacade authenticationFacade
-    ) {
-        this.authenticationFacade = authenticationFacade;
-        this.agentService = agentService;
-        this.agentRepository = agentRepository;
-        this.userSubscriptionService = userSubscriptionService;
-        this.agentContainerService = agentContainerService;
-        this.userService = userService;
+  public AgentResource(
+    AgentService agentService,
+    AgentRepository agentRepository,
+    UserService userService,
+    UserSubscriptionService userSubscriptionService,
+    AgentContainerService agentContainerService,
+    IAuthenticationFacade authenticationFacade
+  ) {
+    this.authenticationFacade = authenticationFacade;
+    this.agentService = agentService;
+    this.agentRepository = agentRepository;
+    this.userSubscriptionService = userSubscriptionService;
+    this.agentContainerService = agentContainerService;
+    this.userService = userService;
+  }
+
+  /**
+   * {@code PUT  /agents/:id} : Updates an existing agent.
+   *
+   * @param id       the id of the agentDTO to save.
+   * @param agentDTO the agentDTO to update.
+   * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated agentDTO, or with status {@code 400 (Bad Request)} if the
+   * agentDTO is not valid, or with status {@code 500 (Internal Server Error)} if the agentDTO couldn't be updated.
+   * @throws URISyntaxException if the Location URI syntax is incorrect.
+   */
+  @PutMapping("/{id}")
+  @JsonView(JsonViewType.Update.class)
+  public ResponseEntity<AgentDTO> updateAgent(
+    @PathVariable(value = "id", required = true) final UUID id,
+    @Valid @RequestBody AgentDTO agentDTO
+  ) throws PermissionDeniedException, AgentNotFoundException {
+    LOG.debug("REST request to update Agent : {}, {}", id, agentDTO);
+    if (agentDTO.getId() == null) {
+      throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+    }
+    if (!Objects.equals(id, agentDTO.getId())) {
+      throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
     }
 
-    /**
-     * {@code PUT  /agents/:id} : Updates an existing agent.
-     *
-     * @param id       the id of the agentDTO to save.
-     * @param agentDTO the agentDTO to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated agentDTO, or with status {@code 400 (Bad Request)} if the
-     * agentDTO is not valid, or with status {@code 500 (Internal Server Error)} if the agentDTO couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
-    @PutMapping("/{id}")
-    @JsonView(JsonViewType.Update.class)
-    public ResponseEntity<AgentDTO> updateAgent(
-        @PathVariable(value = "id", required = true) final UUID id,
-        @Valid @RequestBody AgentDTO agentDTO
-    ) throws PermissionDeniedException, AgentNotFoundException {
-        LOG.debug("REST request to update Agent : {}, {}", id, agentDTO);
-        if (agentDTO.getId() == null) {
-            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
-        }
-        if (!Objects.equals(id, agentDTO.getId())) {
-            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
-        }
-
-        if (!agentRepository.existsById(id)) {
-            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
-        }
-        Instant now = Instant.now();
-        agentDTO = agentService.partialUpdate(userService, authenticationFacade.getUserId(), agentDTO, now);
-        return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, agentDTO.getId().toString()))
-            .body(agentDTO);
+    if (!agentRepository.existsById(id)) {
+      throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
     }
+    Instant now = Instant.now();
+    agentDTO = agentService.partialUpdate(userService, authenticationFacade.getUserId(), agentDTO, now);
+    return ResponseEntity.ok()
+      .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, agentDTO.getId().toString()))
+      .body(agentDTO);
+  }
 
-    /**
-     * {@code POST  /agents/search} : search agents.
-     *
-     * @param searchVm the search criteria of the request.
-     * @param pageable the pagination information.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of agents in body.
-     */
-    @PostMapping("/search")
-    @Operation(summary = "Search Agent")
-    @io.swagger.v3.oas.annotations.parameters.RequestBody(
-        required = true,
-        description = "Search Criteria",
-        content = @Content(schema = @Schema(implementation = SearchAgentVm.class), mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    )
-    @ApiResponses(
-        {
-            @ApiResponse(
-                responseCode = "200",
-                content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE,
-                    array = @ArraySchema(schema = @Schema(implementation = AgentDTO.class))
-                ),
-                description = "Successful operation"
-            ),
-            @ApiResponse(
-                responseCode = "500",
-                content = @Content(mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE),
-                description = "Internal server error"
-            ),
-        }
-    )
-    @JsonView(JsonViewType.Update.class)
-    public ResponseEntity<List<AgentDTO>> search(
-        @RequestBody SearchAgentVm searchVm,
-        @org.springdoc.core.annotations.ParameterObject Pageable pageable
-    ) {
-        LOG.debug("REST request to search Agents");
-        Page<AgentDTO> page = agentService.search(
-            searchVm.getSearchText(),
-            searchVm.getName(),
-            searchVm.getStatusCode(),
-            searchVm.getCreatedByUserId(),
-            searchVm.getWalletAddress(),
-            pageable
-        );
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+  /**
+   * {@code POST  /agents/search} : search agents.
+   *
+   * @param searchVm the search criteria of the request.
+   * @param pageable the pagination information.
+   * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of agents in body.
+   */
+  @PostMapping("/search")
+  @Operation(summary = "Search Agent")
+  @io.swagger.v3.oas.annotations.parameters.RequestBody(
+    required = true,
+    description = "Search Criteria",
+    content = @Content(schema = @Schema(implementation = SearchAgentVm.class), mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE)
+  )
+  @ApiResponses(
+    {
+      @ApiResponse(
+        responseCode = "200",
+        content = @Content(
+          mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE,
+          array = @ArraySchema(schema = @Schema(implementation = AgentDTO.class))
+        ),
+        description = "Successful operation"
+      ),
+      @ApiResponse(
+        responseCode = "500",
+        content = @Content(mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE),
+        description = "Internal server error"
+      ),
     }
+  )
+  @JsonView(JsonViewType.Update.class)
+  public ResponseEntity<List<AgentDTO>> search(
+    @RequestBody SearchAgentVm searchVm,
+    @org.springdoc.core.annotations.ParameterObject Pageable pageable
+  ) {
+    LOG.debug("REST request to search Agents");
+    Page<AgentDTO> page = agentService.search(
+      searchVm.getSearchText(),
+      searchVm.getName(),
+      searchVm.getStatusCode(),
+      searchVm.getCreatedByUserId(),
+      searchVm.getWalletAddress(),
+      pageable
+    );
+    HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+    return ResponseEntity.ok().headers(headers).body(page.getContent());
+  }
 
-    /**
-     * {@code GET  /agents/:id} : get the "id" agent.
-     *
-     * @param id the id of the agentDTO to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the agentDTO, or with status {@code 404 (Not Found)}.
-     */
-    @GetMapping("/{id}")
-    @JsonView(JsonViewType.Update.class)
-    public ResponseEntity<AgentDTO> getAgent(@PathVariable("id") UUID id) {
-        LOG.debug("REST request to get Agent : {}", id);
-        Optional<AgentDTO> agentDTO = agentService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(agentDTO);
-    }
+  /**
+   * {@code GET  /agents/:id} : get the "id" agent.
+   *
+   * @param id the id of the agentDTO to retrieve.
+   * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the agentDTO, or with status {@code 404 (Not Found)}.
+   */
+  @GetMapping("/{id}")
+  @JsonView(JsonViewType.Update.class)
+  public ResponseEntity<AgentDTO> getAgent(@PathVariable("id") UUID id) {
+    LOG.debug("REST request to get Agent : {}", id);
+    Optional<AgentDTO> agentDTO = agentService.findOne(id);
+    return ResponseUtil.wrapOrNotFound(agentDTO);
+  }
 
-    /**
-     * {@code DELETE  /agents/:id} : delete the "id" agent.
-     *
-     * @param id the id of the agentDTO to delete.
-     * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
-     */
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAgent(@PathVariable("id") UUID id) throws PermissionDeniedException, AgentNotFoundException {
-        LOG.debug("REST request to delete Agent : {}", id);
-        agentService.delete(authenticationFacade.getUserId(), id);
-        return ResponseEntity.noContent()
-            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
-            .build();
-    }
+  /**
+   * {@code DELETE  /agents/:id} : delete the "id" agent.
+   *
+   * @param id the id of the agentDTO to delete.
+   * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
+   */
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> deleteAgent(@PathVariable("id") UUID id) throws PermissionDeniedException, AgentNotFoundException {
+    LOG.debug("REST request to delete Agent : {}", id);
+    agentService.delete(authenticationFacade.getUserId(), id);
+    return ResponseEntity.noContent()
+      .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
+      .build();
+  }
 
-    @JsonView(JsonViewType.Shallow.class)
-    @PostMapping("/register")
-    public ResponseEntity<AgentDTO> registerAgent(@Valid @RequestBody RegisterAgentVm agentVm) throws URISyntaxException {
-        LOG.debug("REST request to register Agent : {}", agentVm);
-        Instant now = Instant.now();
-        AgentDTO agentDTO = agentService.register(
-            agentVm.getName(),
-            agentVm.getApiKey(),
-            agentVm.getWalletAddress(),
-            agentVm.getEmail(),
-            now
-        );
-        return ResponseEntity.created(new URI("/api/agents/" + agentDTO.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, agentDTO.getId().toString()))
-            .body(agentDTO);
-    }
+  @JsonView(JsonViewType.Shallow.class)
+  @PostMapping("/register")
+  public ResponseEntity<AgentDTO> registerAgent(@Valid @RequestBody RegisterAgentVm agentVm) throws URISyntaxException {
+    LOG.debug("REST request to register Agent : {}", agentVm);
+    Instant now = Instant.now();
+    AgentDTO agentDTO = agentService.register(agentVm.getName(), agentVm.getApiKey(), agentVm.getWalletAddress(), agentVm.getEmail(), now);
+    return ResponseEntity.created(new URI("/api/agents/" + agentDTO.getId()))
+      .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, agentDTO.getId().toString()))
+      .body(agentDTO);
+  }
 
-    @Operation(summary = "Get Subscriptions")
-    @ApiResponses(
-        {
-            @ApiResponse(
-                responseCode = "200",
-                content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE,
-                    array = @ArraySchema(schema = @Schema(implementation = UserSubscriptionDTO.class))
-                ),
-                description = "Successful operation"
-            ),
-            @ApiResponse(
-                responseCode = "500",
-                content = @Content(mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE),
-                description = "Internal server error"
-            ),
-        }
-    )
-    @GetMapping("/{id}/subscriptions")
-    @JsonView(JsonViewType.Update.class)
-    public ResponseEntity<List<UserSubscriptionDTO>> getSubscriptions(
-        @PathVariable("id") UUID id,
-        @Parameter(description = "Return Size", required = true) @RequestParam(value = "size", required = true) final Integer size
-    ) {
-        LOG.debug("REST request to get subscriptions for Agent: {}", id);
-        List<UserSubscriptionDTO> list = userSubscriptionService.findAllByAgentId(agentContainerService, id, size);
-        return ResponseEntity.ok().body(list);
+  @Operation(summary = "Get Subscriptions")
+  @ApiResponses(
+    {
+      @ApiResponse(
+        responseCode = "200",
+        content = @Content(
+          mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE,
+          array = @ArraySchema(schema = @Schema(implementation = UserSubscriptionDTO.class))
+        ),
+        description = "Successful operation"
+      ),
+      @ApiResponse(
+        responseCode = "500",
+        content = @Content(mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE),
+        description = "Internal server error"
+      ),
     }
+  )
+  @GetMapping("/{id}/subscriptions")
+  @JsonView(JsonViewType.Update.class)
+  public ResponseEntity<List<UserSubscriptionDTO>> getSubscriptions(
+    @PathVariable("id") UUID id,
+    @Parameter(description = "Return Size", required = true) @RequestParam(value = "size", required = true) final Integer size
+  ) {
+    LOG.debug("REST request to get subscriptions for Agent: {}", id);
+    List<UserSubscriptionDTO> list = userSubscriptionService.findAllByAgentId(agentContainerService, id, size);
+    return ResponseEntity.ok().body(list);
+  }
 }

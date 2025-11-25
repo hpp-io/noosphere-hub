@@ -1,7 +1,7 @@
 package io.hpp.noosphere.hub.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
+import io.hpp.noosphere.common.domain.enumeration.StatusCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -105,11 +105,10 @@ public class Container implements Serializable {
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "container")
   @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-  @JsonIgnoreProperties(value = {"node", "container"}, allowSetters = true)
+  @JsonIgnoreProperties(value = { "node", "container" }, allowSetters = true)
   private Set<AgentContainer> agentContainers = new HashSet<>();
 
   // jhipster-needle-entity-add-field - JHipster will add fields here
-
 
   @Override
   public boolean equals(Object o) {
@@ -121,15 +120,28 @@ public class Container implements Serializable {
       return false;
     }
 
-    return new EqualsBuilder().append(id, container.id).append(name, container.name).append(imageName, container.imageName)
-      .append(port, container.port).append(statusCode, container.statusCode).append(createdAt, container.createdAt)
-      .append(updatedAt, container.updatedAt).isEquals();
+    return new EqualsBuilder()
+      .append(id, container.id)
+      .append(name, container.name)
+      .append(imageName, container.imageName)
+      .append(port, container.port)
+      .append(statusCode, container.statusCode)
+      .append(createdAt, container.createdAt)
+      .append(updatedAt, container.updatedAt)
+      .isEquals();
   }
 
   @Override
   public int hashCode() {
-    return new HashCodeBuilder(17, 37).append(id).append(name).append(imageName).append(port)
-      .append(statusCode).append(createdAt).append(updatedAt).toHashCode();
+    return new HashCodeBuilder(17, 37)
+      .append(id)
+      .append(name)
+      .append(imageName)
+      .append(port)
+      .append(statusCode)
+      .append(createdAt)
+      .append(updatedAt)
+      .toHashCode();
   }
 
   @Override

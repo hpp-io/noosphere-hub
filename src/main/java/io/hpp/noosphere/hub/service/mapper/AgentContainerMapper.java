@@ -1,5 +1,6 @@
 package io.hpp.noosphere.hub.service.mapper;
 
+import io.hpp.noosphere.common.service.mapper.EntityMapper;
 import io.hpp.noosphere.hub.domain.Agent;
 import io.hpp.noosphere.hub.domain.AgentContainer;
 import io.hpp.noosphere.hub.domain.Container;
@@ -15,21 +16,21 @@ import org.mapstruct.*;
  */
 @Mapper(componentModel = "spring", uses = { AgentMapper.class, ContainerMapper.class, UserMapper.class })
 public interface AgentContainerMapper extends EntityMapper<AgentContainerDTO, AgentContainer> {
-    @Mapping(target = "agent", source = "agent", qualifiedByName = "agentId")
-    @Mapping(target = "container", source = "container", qualifiedByName = "containerId")
-    AgentContainerDTO toDto(AgentContainer s);
+  @Mapping(target = "agent", source = "agent", qualifiedByName = "agentId")
+  @Mapping(target = "container", source = "container", qualifiedByName = "containerId")
+  AgentContainerDTO toDto(AgentContainer s);
 
-    @Named("agentId")
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", source = "id")
-    AgentDTO toDtoAgentId(Agent agent);
+  @Named("agentId")
+  @BeanMapping(ignoreByDefault = true)
+  @Mapping(target = "id", source = "id")
+  AgentDTO toDtoAgentId(Agent agent);
 
-    @Named("containerId")
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", source = "id")
-    ContainerDTO toDtoContainerId(Container container);
+  @Named("containerId")
+  @BeanMapping(ignoreByDefault = true)
+  @Mapping(target = "id", source = "id")
+  ContainerDTO toDtoContainerId(Container container);
 
-    default String map(UUID value) {
-        return Objects.toString(value, null);
-    }
+  default String map(UUID value) {
+    return Objects.toString(value, null);
+  }
 }

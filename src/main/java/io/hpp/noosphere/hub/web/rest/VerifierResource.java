@@ -1,9 +1,9 @@
 package io.hpp.noosphere.hub.web.rest;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import io.hpp.noosphere.common.exception.PermissionDeniedException;
 import io.hpp.noosphere.hub.config.OpenApiConfiguration;
 import io.hpp.noosphere.hub.domain.Verifier;
-import io.hpp.noosphere.hub.exception.PermissionDeniedException;
 import io.hpp.noosphere.hub.exception.VerifierNotFoundException;
 import io.hpp.noosphere.hub.repository.VerifierRepository;
 import io.hpp.noosphere.hub.service.UserService;

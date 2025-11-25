@@ -2,10 +2,10 @@ package io.hpp.noosphere.hub.service;
 
 import static io.hpp.noosphere.hub.config.Constants.DEFAULT_LANGUAGE;
 
+import io.hpp.noosphere.common.domain.enumeration.StatusCode;
+import io.hpp.noosphere.common.exception.PermissionDeniedException;
 import io.hpp.noosphere.hub.domain.User;
 import io.hpp.noosphere.hub.domain.Verifier;
-import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
-import io.hpp.noosphere.hub.exception.PermissionDeniedException;
 import io.hpp.noosphere.hub.exception.VerifierNotFoundException;
 import io.hpp.noosphere.hub.repository.VerifierRepository;
 import io.hpp.noosphere.hub.service.dto.UserDTO;

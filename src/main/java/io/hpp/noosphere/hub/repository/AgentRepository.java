@@ -3,10 +3,11 @@ package io.hpp.noosphere.hub.repository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import io.hpp.noosphere.common.domain.enumeration.StatusCode;
+import io.hpp.noosphere.common.repository.QuerydslUtil;
+import io.hpp.noosphere.common.service.util.CommonUtils;
 import io.hpp.noosphere.hub.domain.Agent;
 import io.hpp.noosphere.hub.domain.QAgent;
-import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
-import io.hpp.noosphere.hub.service.uil.CommonUtils;
 import jakarta.persistence.EntityManager;
 import java.util.Optional;
 import java.util.UUID;
@@ -20,20 +21,23 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface AgentRepository extends JpaRepository<Agent, UUID>, AgentRepositoryCustom {
-
-}
+public interface AgentRepository extends JpaRepository<Agent, UUID>, AgentRepositoryCustom {}
 
 interface AgentRepositoryCustom {
-
-  Page<Agent> search(String searchText, String name, StatusCode statusCode, String createdByUserId, String walletAddress, Pageable pageable);
+  Page<Agent> search(
+    String searchText,
+    String name,
+    StatusCode statusCode,
+    String createdByUserId,
+    String walletAddress,
+    Pageable pageable
+  );
 
   Page<Agent> findActiveByName(String name, Pageable pageable);
 
   Page<Agent> findActiveByCreatedByUserId(String userId, Pageable pageable);
 
   Optional<Agent> findByIdAndCreatedByUserId(UUID id, String createdByUserId);
-
 }
 
 @Repository
@@ -48,7 +52,14 @@ class AgentRepositoryCustomImpl implements AgentRepositoryCustom {
   }
 
   @Override
-  public Page<Agent> search(String searchText, String name, StatusCode statusCode, String createdByUserId, String walletAddress, Pageable pageable) {
+  public Page<Agent> search(
+    String searchText,
+    String name,
+    StatusCode statusCode,
+    String createdByUserId,
+    String walletAddress,
+    Pageable pageable
+  ) {
     QAgent qAgent = QAgent.agent;
     BooleanBuilder builder = new BooleanBuilder();
     if (statusCode != null) {
@@ -96,6 +107,4 @@ class AgentRepositoryCustomImpl implements AgentRepositoryCustom {
     JPQLQuery<Agent> query = jpaQueryFactory.selectFrom(qAgent).where(builder);
     return Optional.ofNullable(query.fetchOne());
   }
-
-
 }

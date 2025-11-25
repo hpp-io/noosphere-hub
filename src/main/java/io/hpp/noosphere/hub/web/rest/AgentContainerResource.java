@@ -1,9 +1,9 @@
 package io.hpp.noosphere.hub.web.rest;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import io.hpp.noosphere.common.exception.PermissionDeniedException;
 import io.hpp.noosphere.hub.config.OpenApiConfiguration;
 import io.hpp.noosphere.hub.exception.AgentNotFoundException;
-import io.hpp.noosphere.hub.exception.PermissionDeniedException;
 import io.hpp.noosphere.hub.service.AgentContainerService;
 import io.hpp.noosphere.hub.service.AgentService;
 import io.hpp.noosphere.hub.service.dto.AgentContainerDTO;
@@ -50,111 +50,103 @@ import tech.jhipster.web.util.ResponseUtil;
 @RestController
 @RequestMapping("/api/agents")
 @Tag(
-    name = "Register Container",
-    description = "Register Container Controller",
-    extensions = { @Extension(properties = { @ExtensionProperty(name = OpenApiConfiguration.TAG_ORDER, value = "3") }) }
+  name = "Register Container",
+  description = "Register Container Controller",
+  extensions = { @Extension(properties = { @ExtensionProperty(name = OpenApiConfiguration.TAG_ORDER, value = "3") }) }
 )
 public class AgentContainerResource {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AgentContainerResource.class);
+  private static final Logger LOG = LoggerFactory.getLogger(AgentContainerResource.class);
 
-    private static final String ENTITY_NAME = "nooSphereHubAgentContainer";
-    private final AgentContainerService agentContainerService;
-    private final AgentService agentService;
-    private final IAuthenticationFacade authenticationFacade;
+  private static final String ENTITY_NAME = "nooSphereHubAgentContainer";
+  private final AgentContainerService agentContainerService;
+  private final AgentService agentService;
+  private final IAuthenticationFacade authenticationFacade;
 
-    @Value("${jhipster.clientApp.name}")
-    private String applicationName;
+  @Value("${jhipster.clientApp.name}")
+  private String applicationName;
 
-    public AgentContainerResource(
-        AgentContainerService agentContainerService,
-        AgentService agentService,
-        IAuthenticationFacade authenticationFacade
-    ) {
-        this.agentContainerService = agentContainerService;
-        this.authenticationFacade = authenticationFacade;
-        this.agentService = agentService;
+  public AgentContainerResource(
+    AgentContainerService agentContainerService,
+    AgentService agentService,
+    IAuthenticationFacade authenticationFacade
+  ) {
+    this.agentContainerService = agentContainerService;
+    this.authenticationFacade = authenticationFacade;
+    this.agentService = agentService;
+  }
+
+  @Operation(summary = "Register Container")
+  @ApiResponses(
+    {
+      @ApiResponse(
+        responseCode = "200",
+        content = @Content(schema = @Schema(implementation = AgentContainerDTO.class), mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE),
+        description = "Successful operation"
+      ),
+      @ApiResponse(
+        responseCode = "500",
+        content = @Content(mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE),
+        description = "Internal server error"
+      ),
     }
+  )
+  @JsonView(JsonViewType.Shallow.class)
+  @PutMapping("/{agentId}/containers/{containerId}")
+  public ResponseEntity<AgentContainerDTO> createAgentContainer(
+    @PathVariable(value = "agentId", required = true) final UUID agentId,
+    @PathVariable(value = "containerId", required = true) final UUID containerId
+  ) throws URISyntaxException, PermissionDeniedException, AgentNotFoundException {
+    LOG.debug("REST request to save Agent {}, Container {}", agentId, containerId);
+    Instant now = Instant.now();
+    AgentContainerDTO agentContainerDTO = agentContainerService.create(
+      agentService,
+      authenticationFacade.getUserId(),
+      agentId,
+      containerId,
+      now
+    );
+    return ResponseEntity.created(new URI("/api/agent-containers/" + agentContainerDTO.getId()))
+      .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, agentContainerDTO.getId().toString()))
+      .body(agentContainerDTO);
+  }
 
-    @Operation(summary = "Register Container")
-    @ApiResponses(
-        {
-            @ApiResponse(
-                responseCode = "200",
-                content = @Content(
-                    schema = @Schema(implementation = AgentContainerDTO.class),
-                    mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE
-                ),
-                description = "Successful operation"
-            ),
-            @ApiResponse(
-                responseCode = "500",
-                content = @Content(mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE),
-                description = "Internal server error"
-            ),
-        }
-    )
-    @JsonView(JsonViewType.Shallow.class)
-    @PutMapping("/{agentId}/containers/{containerId}")
-    public ResponseEntity<AgentContainerDTO> createAgentContainer(
-        @PathVariable(value = "agentId", required = true) final UUID agentId,
-        @PathVariable(value = "containerId", required = true) final UUID containerId
-    ) throws URISyntaxException, PermissionDeniedException, AgentNotFoundException {
-        LOG.debug("REST request to save Agent {}, Container {}", agentId, containerId);
-        Instant now = Instant.now();
-        AgentContainerDTO agentContainerDTO = agentContainerService.create(
-            agentService,
-            authenticationFacade.getUserId(),
-            agentId,
-            containerId,
-            now
-        );
-        return ResponseEntity.created(new URI("/api/agent-containers/" + agentContainerDTO.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, agentContainerDTO.getId().toString()))
-            .body(agentContainerDTO);
-    }
+  @Operation(summary = "Search Registered Containers")
+  @PostMapping("/{agentId}/containers/search")
+  @JsonView(JsonViewType.Shallow.class)
+  public ResponseEntity<List<AgentContainerDTO>> search(
+    @PathVariable(value = "agentId", required = true) final UUID agentId,
+    @RequestBody SearchAgentContainerVm searchVm,
+    @org.springdoc.core.annotations.ParameterObject Pageable pageable
+  ) {
+    LOG.debug("REST request to get a page of AgentContainers");
+    Page<AgentContainerDTO> page = agentContainerService.search(agentId, searchVm.getContainerName(), searchVm.getStatusCode(), pageable);
+    HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+    return ResponseEntity.ok().headers(headers).body(page.getContent());
+  }
 
-    @Operation(summary = "Search Registered Containers")
-    @PostMapping("/{agentId}/containers/search")
-    @JsonView(JsonViewType.Shallow.class)
-    public ResponseEntity<List<AgentContainerDTO>> search(
-        @PathVariable(value = "agentId", required = true) final UUID agentId,
-        @RequestBody SearchAgentContainerVm searchVm,
-        @org.springdoc.core.annotations.ParameterObject Pageable pageable
-    ) {
-        LOG.debug("REST request to get a page of AgentContainers");
-        Page<AgentContainerDTO> page = agentContainerService.search(
-            agentId,
-            searchVm.getContainerName(),
-            searchVm.getStatusCode(),
-            pageable
-        );
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
-    }
+  @Operation(summary = "Get Registered Container")
+  @GetMapping("/{agentId}/containers/{containerId}")
+  @JsonView(JsonViewType.Shallow.class)
+  public ResponseEntity<AgentContainerDTO> getAgentContainer(
+    @PathVariable(value = "agentId", required = true) final UUID agentId,
+    @PathVariable(value = "containerId", required = true) final UUID containerId
+  ) {
+    LOG.debug("REST request to get Agent {}, Container {}", agentId, containerId);
+    Optional<AgentContainerDTO> agentContainerDTO = agentContainerService.findOne(agentId, containerId);
+    return ResponseUtil.wrapOrNotFound(agentContainerDTO);
+  }
 
-    @Operation(summary = "Get Registered Container")
-    @GetMapping("/{agentId}/containers/{containerId}")
-    @JsonView(JsonViewType.Shallow.class)
-    public ResponseEntity<AgentContainerDTO> getAgentContainer(
-        @PathVariable(value = "agentId", required = true) final UUID agentId,
-        @PathVariable(value = "containerId", required = true) final UUID containerId
-    ) {
-        LOG.debug("REST request to get Agent {}, Container {}", agentId, containerId);
-        Optional<AgentContainerDTO> agentContainerDTO = agentContainerService.findOne(agentId, containerId);
-        return ResponseUtil.wrapOrNotFound(agentContainerDTO);
-    }
-
-    @Operation(summary = "Delete Registered Container")
-    @DeleteMapping("/{agentId}/containers/{containerId}")
-    public ResponseEntity<Void> deleteAgentContainer(
-        @PathVariable(value = "agentId", required = true) final UUID agentId,
-        @PathVariable(value = "containerId", required = true) final UUID containerId
-    ) throws PermissionDeniedException, AgentNotFoundException {
-        LOG.debug("REST request to delete AgentContainer : {}", containerId);
-        agentContainerService.delete(agentService, authenticationFacade.getUserId(), agentId, containerId);
-        return ResponseEntity.noContent()
-            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, containerId.toString()))
-            .build();
-    }
+  @Operation(summary = "Delete Registered Container")
+  @DeleteMapping("/{agentId}/containers/{containerId}")
+  public ResponseEntity<Void> deleteAgentContainer(
+    @PathVariable(value = "agentId", required = true) final UUID agentId,
+    @PathVariable(value = "containerId", required = true) final UUID containerId
+  ) throws PermissionDeniedException, AgentNotFoundException {
+    LOG.debug("REST request to delete AgentContainer : {}", containerId);
+    agentContainerService.delete(agentService, authenticationFacade.getUserId(), agentId, containerId);
+    return ResponseEntity.noContent()
+      .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, containerId.toString()))
+      .build();
+  }
 }

@@ -1,10 +1,10 @@
 package io.hpp.noosphere.hub.service;
 
+import io.hpp.noosphere.common.domain.enumeration.StatusCode;
+import io.hpp.noosphere.common.exception.PermissionDeniedException;
 import io.hpp.noosphere.hub.domain.Agent;
 import io.hpp.noosphere.hub.domain.AgentStatus;
-import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
 import io.hpp.noosphere.hub.exception.AgentNotFoundException;
-import io.hpp.noosphere.hub.exception.PermissionDeniedException;
 import io.hpp.noosphere.hub.repository.AgentRepository;
 import io.hpp.noosphere.hub.repository.AgentStatusRepository;
 import io.hpp.noosphere.hub.service.dto.AgentStatusDTO;
@@ -26,127 +26,127 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class AgentStatusService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AgentStatusService.class);
+  private static final Logger LOG = LoggerFactory.getLogger(AgentStatusService.class);
 
-    private final AgentStatusRepository agentStatusRepository;
-    private final AgentRepository agentRepository;
+  private final AgentStatusRepository agentStatusRepository;
+  private final AgentRepository agentRepository;
 
-    private final AgentStatusMapper agentStatusMapper;
-    private final AgentService agentService;
+  private final AgentStatusMapper agentStatusMapper;
+  private final AgentService agentService;
 
-    public AgentStatusService(
-        AgentStatusRepository agentStatusRepository,
-        AgentStatusMapper agentStatusMapper,
-        AgentRepository agentRepository,
-        AgentService agentService
-    ) {
-        this.agentStatusRepository = agentStatusRepository;
-        this.agentStatusMapper = agentStatusMapper;
-        this.agentRepository = agentRepository;
-        this.agentService = agentService;
+  public AgentStatusService(
+    AgentStatusRepository agentStatusRepository,
+    AgentStatusMapper agentStatusMapper,
+    AgentRepository agentRepository,
+    AgentService agentService
+  ) {
+    this.agentStatusRepository = agentStatusRepository;
+    this.agentStatusMapper = agentStatusMapper;
+    this.agentRepository = agentRepository;
+    this.agentService = agentService;
+  }
+
+  /**
+   * Save a agentStatus.
+   *
+   * @param agentStatusDTO the entity to save.
+   * @return the persisted entity.
+   */
+  public AgentStatusDTO save(AgentStatusDTO agentStatusDTO, Instant timestamp) {
+    LOG.debug("Request to save AgentStatus : {}", agentStatusDTO);
+    if (agentStatusDTO.getId() == null) {
+      agentStatusDTO.setCreatedAt(timestamp);
+    }
+    AgentStatus agentStatus = agentStatusMapper.toEntity(agentStatusDTO);
+    agentStatus = agentStatusRepository.save(agentStatus);
+    return agentStatusMapper.toDto(agentStatus);
+  }
+
+  /**
+   * Update a agentStatus.
+   *
+   * @param agentStatusDTO the entity to save.
+   * @return the persisted entity.
+   */
+  public AgentStatusDTO update(AgentStatusDTO agentStatusDTO) {
+    LOG.debug("Request to update AgentStatus : {}", agentStatusDTO);
+    AgentStatus agentStatus = agentStatusMapper.toEntity(agentStatusDTO);
+    agentStatus = agentStatusRepository.save(agentStatus);
+    return agentStatusMapper.toDto(agentStatus);
+  }
+
+  /**
+   * Partially update a agentStatus.
+   *
+   * @param agentStatusDTO the entity to update partially.
+   * @return the persisted entity.
+   */
+  public Optional<AgentStatusDTO> partialUpdate(AgentStatusDTO agentStatusDTO) {
+    LOG.debug("Request to partially update AgentStatus : {}", agentStatusDTO);
+
+    return agentStatusRepository
+      .findById(agentStatusDTO.getId())
+      .map(existingAgentStatus -> {
+        agentStatusMapper.partialUpdate(existingAgentStatus, agentStatusDTO);
+
+        return existingAgentStatus;
+      })
+      .map(agentStatusRepository::save)
+      .map(agentStatusMapper::toDto);
+  }
+
+  public void updateKeepAlive(String userId, UUID agentId, Instant timestamp) throws AgentNotFoundException, PermissionDeniedException {
+    Agent agent = agentService.validateOwner(agentId, userId);
+
+    if (!StatusCode.ACTIVE.equals(agent.getStatusCode())) {
+      agent.setStatusCode(StatusCode.ACTIVE);
+      agentRepository.save(agent);
     }
 
-    /**
-     * Save a agentStatus.
-     *
-     * @param agentStatusDTO the entity to save.
-     * @return the persisted entity.
-     */
-    public AgentStatusDTO save(AgentStatusDTO agentStatusDTO, Instant timestamp) {
-        LOG.debug("Request to save AgentStatus : {}", agentStatusDTO);
-        if (agentStatusDTO.getId() == null) {
-            agentStatusDTO.setCreatedAt(timestamp);
-        }
-        AgentStatus agentStatus = agentStatusMapper.toEntity(agentStatusDTO);
-        agentStatus = agentStatusRepository.save(agentStatus);
-        return agentStatusMapper.toDto(agentStatus);
-    }
+    AgentStatus agentStatus = agentStatusRepository
+      .findByAgentId(agentId)
+      .orElseGet(() -> {
+        AgentStatus newStatus = new AgentStatus();
+        newStatus.setAgent(agent);
+        newStatus.setCreatedAt(timestamp);
+        return newStatus;
+      });
 
-    /**
-     * Update a agentStatus.
-     *
-     * @param agentStatusDTO the entity to save.
-     * @return the persisted entity.
-     */
-    public AgentStatusDTO update(AgentStatusDTO agentStatusDTO) {
-        LOG.debug("Request to update AgentStatus : {}", agentStatusDTO);
-        AgentStatus agentStatus = agentStatusMapper.toEntity(agentStatusDTO);
-        agentStatus = agentStatusRepository.save(agentStatus);
-        return agentStatusMapper.toDto(agentStatus);
-    }
+    agentStatus.setLastKeepAliveAt(timestamp);
+    agentStatusRepository.save(agentStatus);
+  }
 
-    /**
-     * Partially update a agentStatus.
-     *
-     * @param agentStatusDTO the entity to update partially.
-     * @return the persisted entity.
-     */
-    public Optional<AgentStatusDTO> partialUpdate(AgentStatusDTO agentStatusDTO) {
-        LOG.debug("Request to partially update AgentStatus : {}", agentStatusDTO);
+  /**
+   * Get all the agentStatuses.
+   *
+   * @param pageable the pagination information.
+   * @return the list of entities.
+   */
+  @Transactional(readOnly = true)
+  public Page<AgentStatusDTO> search(String agentName, StatusCode agentStatusCode, Pageable pageable) {
+    LOG.debug("Request to search AgentStatuses");
+    return agentStatusRepository.search(agentName, agentStatusCode, pageable).map(agentStatusMapper::toDto);
+  }
 
-        return agentStatusRepository
-            .findById(agentStatusDTO.getId())
-            .map(existingAgentStatus -> {
-                agentStatusMapper.partialUpdate(existingAgentStatus, agentStatusDTO);
+  /**
+   * Get one agentStatus by id.
+   *
+   * @param id the id of the entity.
+   * @return the entity.
+   */
+  @Transactional(readOnly = true)
+  public Optional<AgentStatusDTO> findOne(UUID id) {
+    LOG.debug("Request to get AgentStatus : {}", id);
+    return agentStatusRepository.findById(id).map(agentStatusMapper::toDto);
+  }
 
-                return existingAgentStatus;
-            })
-            .map(agentStatusRepository::save)
-            .map(agentStatusMapper::toDto);
-    }
-
-    public void updateKeepAlive(String userId, UUID agentId, Instant timestamp) throws AgentNotFoundException, PermissionDeniedException {
-        Agent agent = agentService.validateOwner(agentId, userId);
-
-        if (!StatusCode.ACTIVE.equals(agent.getStatusCode())) {
-            agent.setStatusCode(StatusCode.ACTIVE);
-            agentRepository.save(agent);
-        }
-
-        AgentStatus agentStatus = agentStatusRepository
-            .findByAgentId(agentId)
-            .orElseGet(() -> {
-                AgentStatus newStatus = new AgentStatus();
-                newStatus.setAgent(agent);
-                newStatus.setCreatedAt(timestamp);
-                return newStatus;
-            });
-
-        agentStatus.setLastKeepAliveAt(timestamp);
-        agentStatusRepository.save(agentStatus);
-    }
-
-    /**
-     * Get all the agentStatuses.
-     *
-     * @param pageable the pagination information.
-     * @return the list of entities.
-     */
-    @Transactional(readOnly = true)
-    public Page<AgentStatusDTO> search(String agentName, StatusCode agentStatusCode, Pageable pageable) {
-        LOG.debug("Request to search AgentStatuses");
-        return agentStatusRepository.search(agentName, agentStatusCode, pageable).map(agentStatusMapper::toDto);
-    }
-
-    /**
-     * Get one agentStatus by id.
-     *
-     * @param id the id of the entity.
-     * @return the entity.
-     */
-    @Transactional(readOnly = true)
-    public Optional<AgentStatusDTO> findOne(UUID id) {
-        LOG.debug("Request to get AgentStatus : {}", id);
-        return agentStatusRepository.findById(id).map(agentStatusMapper::toDto);
-    }
-
-    /**
-     * Delete the agentStatus by id.
-     *
-     * @param id the id of the entity.
-     */
-    public void delete(UUID id) {
-        LOG.debug("Request to delete AgentStatus : {}", id);
-        agentStatusRepository.deleteById(id);
-    }
+  /**
+   * Delete the agentStatus by id.
+   *
+   * @param id the id of the entity.
+   */
+  public void delete(UUID id) {
+    LOG.debug("Request to delete AgentStatus : {}", id);
+    agentStatusRepository.deleteById(id);
+  }
 }

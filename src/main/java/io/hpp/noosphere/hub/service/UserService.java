@@ -6,19 +6,20 @@ import static io.hpp.noosphere.hub.config.Constants.PROPERTY_NAME_LANG_KEY;
 import static io.hpp.noosphere.hub.config.Constants.PROPERTY_NAME_USER;
 import static io.hpp.noosphere.hub.config.Constants.PROPERTY_NAME_WALLET_ADDRESS;
 
+import io.hpp.noosphere.common.exception.InvalidDataException;
+import io.hpp.noosphere.common.service.KeycloakService;
+import io.hpp.noosphere.common.service.blockchain.WalletService;
+import io.hpp.noosphere.common.service.blockchain.Web3WalletFactoryService;
+import io.hpp.noosphere.common.service.util.CommonUtils;
 import io.hpp.noosphere.hub.config.ApplicationProperties;
 import io.hpp.noosphere.hub.config.Constants;
 import io.hpp.noosphere.hub.domain.Authority;
 import io.hpp.noosphere.hub.domain.User;
-import io.hpp.noosphere.hub.exception.InvalidDataException;
 import io.hpp.noosphere.hub.repository.AuthorityRepository;
 import io.hpp.noosphere.hub.repository.UserRepository;
 import io.hpp.noosphere.hub.security.SecurityUtils;
-import io.hpp.noosphere.hub.service.blockchain.WalletService;
-import io.hpp.noosphere.hub.service.blockchain.Web3WalletFactoryService;
 import io.hpp.noosphere.hub.service.dto.UserDTO;
 import io.hpp.noosphere.hub.service.mapper.UserMapper;
-import io.hpp.noosphere.hub.service.uil.CommonUtils;
 import jakarta.persistence.EntityManager;
 import java.time.Instant;
 import java.util.Collection;
@@ -211,60 +212,50 @@ public class UserService {
   public void updateWalletAddress(String userId, String walletAddress, Instant timestamp) {
     if (CommonUtils.isValid(userId) && CommonUtils.isValid(walletAddress)) {
       this.findOptionalEntityById(userId).ifPresent(user -> {
-        user.setWalletAddress(walletAddress);
-        user.setLastModifiedDate(timestamp);
-        keycloakService.updateKeycloakUser(user.getId(), user.getEmail(), null, null, null, null, null, null, walletAddress);
-        userRepository.save(user);
-        this.clearUserCaches(user);
-      });
+          user.setWalletAddress(walletAddress);
+          user.setLastModifiedDate(timestamp);
+          keycloakService.updateKeycloakUser(user.getId(), user.getEmail(), null, null, null, null, null, null, walletAddress);
+          userRepository.save(user);
+          this.clearUserCaches(user);
+        });
     }
   }
 
   public void updateApiKey(String userId, String apiKey, Instant timestamp) {
     if (CommonUtils.isValid(userId) && CommonUtils.isValid(apiKey)) {
       this.findOptionalEntityById(userId).ifPresent(user -> {
-        user.setApiKey(apiKey);
-        user.setLastModifiedDate(timestamp);
-        keycloakService.updateKeycloakUser(user.getId(), user.getEmail(), null, null, null, apiKey, null, null, null);
-        userRepository.save(user);
-        this.clearUserCaches(user);
-      });
+          user.setApiKey(apiKey);
+          user.setLastModifiedDate(timestamp);
+          keycloakService.updateKeycloakUser(user.getId(), user.getEmail(), null, null, null, apiKey, null, null, null);
+          userRepository.save(user);
+          this.clearUserCaches(user);
+        });
     }
   }
 
   public void updateUserProfile(String userId, String firstName, String lastName, String langKey, String imageUrl, Instant timestamp) {
     if (CommonUtils.isValid(userId)) {
       this.findOptionalEntityById(userId).ifPresent(user -> {
-        if (CommonUtils.isValid(firstName)) {
-          user.setFirstName(firstName.trim());
-        }
-        if (CommonUtils.isValid(lastName)) {
-          user.setLastName(lastName.trim());
-        }
-        if (CommonUtils.isValid(firstName) || CommonUtils.isValid(lastName)) {
-          user.setName(CommonUtils.buildFullName(langKey, firstName, lastName));
-        }
-        if (CommonUtils.isValid(langKey)) {
-          user.setLangKey(langKey.trim());
-        }
-        if (CommonUtils.isValid(imageUrl)) {
-          user.setImageUrl(imageUrl.trim());
-        }
-        user.setLastModifiedDate(timestamp);
-        keycloakService.updateKeycloakUser(
-          user.getId(),
-          user.getEmail(),
-          firstName,
-          lastName,
-          null,
-          null,
-          langKey,
-          imageUrl,
-          null
-        );
-        userRepository.save(user);
-        this.clearUserCaches(user);
-      });
+          if (CommonUtils.isValid(firstName)) {
+            user.setFirstName(firstName.trim());
+          }
+          if (CommonUtils.isValid(lastName)) {
+            user.setLastName(lastName.trim());
+          }
+          if (CommonUtils.isValid(firstName) || CommonUtils.isValid(lastName)) {
+            user.setName(CommonUtils.buildFullName(langKey, firstName, lastName));
+          }
+          if (CommonUtils.isValid(langKey)) {
+            user.setLangKey(langKey.trim());
+          }
+          if (CommonUtils.isValid(imageUrl)) {
+            user.setImageUrl(imageUrl.trim());
+          }
+          user.setLastModifiedDate(timestamp);
+          keycloakService.updateKeycloakUser(user.getId(), user.getEmail(), firstName, lastName, null, null, langKey, imageUrl, null);
+          userRepository.save(user);
+          this.clearUserCaches(user);
+        });
     }
   }
 
@@ -503,4 +494,3 @@ public class UserService {
     return this.updateWithNewApiKey(userId, timestamp);
   }
 }
-

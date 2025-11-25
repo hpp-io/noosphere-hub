@@ -1,9 +1,9 @@
 package io.hpp.noosphere.hub.service;
 
+import io.hpp.noosphere.common.domain.enumeration.StatusCode;
+import io.hpp.noosphere.common.exception.PermissionDeniedException;
 import io.hpp.noosphere.hub.domain.AgentContainer;
-import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
 import io.hpp.noosphere.hub.exception.AgentNotFoundException;
-import io.hpp.noosphere.hub.exception.PermissionDeniedException;
 import io.hpp.noosphere.hub.repository.AgentContainerRepository;
 import io.hpp.noosphere.hub.service.dto.AgentContainerDTO;
 import io.hpp.noosphere.hub.service.dto.AgentDTO;
@@ -27,75 +27,75 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class AgentContainerService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AgentContainerService.class);
+  private static final Logger LOG = LoggerFactory.getLogger(AgentContainerService.class);
 
-    private final AgentContainerRepository agentContainerRepository;
+  private final AgentContainerRepository agentContainerRepository;
 
-    private final AgentContainerMapper agentContainerMapper;
+  private final AgentContainerMapper agentContainerMapper;
 
-    public AgentContainerService(AgentContainerRepository agentContainerRepository, AgentContainerMapper agentContainerMapper) {
-        this.agentContainerRepository = agentContainerRepository;
-        this.agentContainerMapper = agentContainerMapper;
-    }
+  public AgentContainerService(AgentContainerRepository agentContainerRepository, AgentContainerMapper agentContainerMapper) {
+    this.agentContainerRepository = agentContainerRepository;
+    this.agentContainerMapper = agentContainerMapper;
+  }
 
-    public AgentContainerDTO create(AgentService agentService, String userId, UUID agentId, UUID containerId, Instant timestamp)
-        throws PermissionDeniedException, AgentNotFoundException {
-        LOG.debug("Request to save Agent {}, Container {}", agentId, containerId);
-        agentService.validateOwner(agentId, userId);
-        AgentContainerDTO agentContainerDTO = new AgentContainerDTO();
-        AgentDTO agentDTO = new AgentDTO();
-        agentDTO.setId(agentId);
-        agentContainerDTO.setAgent(agentDTO);
-        ContainerDTO containerDTO = new ContainerDTO();
-        containerDTO.setId(containerId);
-        agentContainerDTO.setContainer(containerDTO);
-        agentContainerDTO.setCreatedAt(timestamp);
-        agentContainerDTO.setStatusCode(StatusCode.ACTIVE);
-        AgentContainer agentContainer = agentContainerMapper.toEntity(agentContainerDTO);
-        agentContainer = agentContainerRepository.save(agentContainer);
-        return agentContainerMapper.toDto(agentContainer);
-    }
+  public AgentContainerDTO create(AgentService agentService, String userId, UUID agentId, UUID containerId, Instant timestamp)
+    throws PermissionDeniedException, AgentNotFoundException {
+    LOG.debug("Request to save Agent {}, Container {}", agentId, containerId);
+    agentService.validateOwner(agentId, userId);
+    AgentContainerDTO agentContainerDTO = new AgentContainerDTO();
+    AgentDTO agentDTO = new AgentDTO();
+    agentDTO.setId(agentId);
+    agentContainerDTO.setAgent(agentDTO);
+    ContainerDTO containerDTO = new ContainerDTO();
+    containerDTO.setId(containerId);
+    agentContainerDTO.setContainer(containerDTO);
+    agentContainerDTO.setCreatedAt(timestamp);
+    agentContainerDTO.setStatusCode(StatusCode.ACTIVE);
+    AgentContainer agentContainer = agentContainerMapper.toEntity(agentContainerDTO);
+    agentContainer = agentContainerRepository.save(agentContainer);
+    return agentContainerMapper.toDto(agentContainer);
+  }
 
-    /**
-     * Get all the agentContainers.
-     *
-     * @param pageable the pagination information.
-     * @return the list of entities.
-     */
-    @Transactional(readOnly = true)
-    public Page<AgentContainerDTO> search(UUID agentId, String containerName, StatusCode statusCode, Pageable pageable) {
-        LOG.debug("Request to search AgentContainers");
-        return agentContainerRepository.search(agentId, containerName, statusCode, pageable).map(agentContainerMapper::toDto);
-    }
+  /**
+   * Get all the agentContainers.
+   *
+   * @param pageable the pagination information.
+   * @return the list of entities.
+   */
+  @Transactional(readOnly = true)
+  public Page<AgentContainerDTO> search(UUID agentId, String containerName, StatusCode statusCode, Pageable pageable) {
+    LOG.debug("Request to search AgentContainers");
+    return agentContainerRepository.search(agentId, containerName, statusCode, pageable).map(agentContainerMapper::toDto);
+  }
 
-    @Transactional(readOnly = true)
-    public List<UUID> findAllContainerIdListByAgentId(UUID agentId, StatusCode statusCode) {
-        return agentContainerRepository.findAllContainerIdListByAgentId(agentId, statusCode);
-    }
+  @Transactional(readOnly = true)
+  public List<UUID> findAllContainerIdListByAgentId(UUID agentId, StatusCode statusCode) {
+    return agentContainerRepository.findAllContainerIdListByAgentId(agentId, statusCode);
+  }
 
-    /**
-     * Get one agentContainer by id.
-     *
-     * @param id the id of the entity.
-     * @return the entity.
-     */
-    @Transactional(readOnly = true)
-    public Optional<AgentContainerDTO> findOne(UUID id) {
-        LOG.debug("Request to get AgentContainer : {}", id);
-        return agentContainerRepository.findById(id).map(agentContainerMapper::toDto);
-    }
+  /**
+   * Get one agentContainer by id.
+   *
+   * @param id the id of the entity.
+   * @return the entity.
+   */
+  @Transactional(readOnly = true)
+  public Optional<AgentContainerDTO> findOne(UUID id) {
+    LOG.debug("Request to get AgentContainer : {}", id);
+    return agentContainerRepository.findById(id).map(agentContainerMapper::toDto);
+  }
 
-    @Transactional(readOnly = true)
-    public Optional<AgentContainerDTO> findOne(UUID agentId, UUID containerId) {
-        LOG.debug("Request to get Agent {}, Container {}", agentId, containerId);
-        return agentContainerRepository.findByAgentIdAndContainerId(agentId, containerId).map(agentContainerMapper::toDto);
-    }
+  @Transactional(readOnly = true)
+  public Optional<AgentContainerDTO> findOne(UUID agentId, UUID containerId) {
+    LOG.debug("Request to get Agent {}, Container {}", agentId, containerId);
+    return agentContainerRepository.findByAgentIdAndContainerId(agentId, containerId).map(agentContainerMapper::toDto);
+  }
 
-    public void delete(AgentService agentService, String userId, UUID agentId, UUID id)
-        throws PermissionDeniedException, AgentNotFoundException {
-        LOG.debug("Request to delete AgentContainer : {}", id);
-        agentService.validateOwner(agentId, userId);
-        Optional<AgentContainer> optionalAgentContainer = agentContainerRepository.findByAgentIdAndContainerId(agentId, id);
-        optionalAgentContainer.ifPresent(agentContainerRepository::delete);
-    }
+  public void delete(AgentService agentService, String userId, UUID agentId, UUID id)
+    throws PermissionDeniedException, AgentNotFoundException {
+    LOG.debug("Request to delete AgentContainer : {}", id);
+    agentService.validateOwner(agentId, userId);
+    Optional<AgentContainer> optionalAgentContainer = agentContainerRepository.findByAgentIdAndContainerId(agentId, id);
+    optionalAgentContainer.ifPresent(agentContainerRepository::delete);
+  }
 }

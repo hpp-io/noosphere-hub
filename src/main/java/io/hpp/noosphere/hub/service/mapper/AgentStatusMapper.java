@@ -1,5 +1,6 @@
 package io.hpp.noosphere.hub.service.mapper;
 
+import io.hpp.noosphere.common.service.mapper.EntityMapper;
 import io.hpp.noosphere.hub.domain.Agent;
 import io.hpp.noosphere.hub.domain.AgentStatus;
 import io.hpp.noosphere.hub.service.dto.AgentDTO;
@@ -13,15 +14,15 @@ import org.mapstruct.*;
  */
 @Mapper(componentModel = "spring", uses = { AgentMapper.class, UserMapper.class })
 public interface AgentStatusMapper extends EntityMapper<AgentStatusDTO, AgentStatus> {
-    @Mapping(target = "agent", source = "agent", qualifiedByName = "agentId")
-    AgentStatusDTO toDto(AgentStatus s);
+  @Mapping(target = "agent", source = "agent", qualifiedByName = "agentId")
+  AgentStatusDTO toDto(AgentStatus s);
 
-    @Named("agentId")
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", source = "id")
-    AgentDTO toDtoAgentId(Agent agent);
+  @Named("agentId")
+  @BeanMapping(ignoreByDefault = true)
+  @Mapping(target = "id", source = "id")
+  AgentDTO toDtoAgentId(Agent agent);
 
-    default String map(UUID value) {
-        return Objects.toString(value, null);
-    }
+  default String map(UUID value) {
+    return Objects.toString(value, null);
+  }
 }

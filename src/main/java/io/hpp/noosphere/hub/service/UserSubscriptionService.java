@@ -2,14 +2,14 @@ package io.hpp.noosphere.hub.service;
 
 import static io.hpp.noosphere.hub.config.Constants.COLUMN_NAME_ID;
 
+import io.hpp.noosphere.common.domain.enumeration.StatusCode;
+import io.hpp.noosphere.common.exception.PermissionDeniedException;
+import io.hpp.noosphere.common.service.blockchain.dto.SubscriptionDTO;
 import io.hpp.noosphere.hub.domain.User;
 import io.hpp.noosphere.hub.domain.UserSubscription;
 import io.hpp.noosphere.hub.domain.enumeration.PeriodType;
-import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
-import io.hpp.noosphere.hub.exception.PermissionDeniedException;
 import io.hpp.noosphere.hub.exception.UserSubscriptionNotFoundException;
 import io.hpp.noosphere.hub.repository.UserSubscriptionRepository;
-import io.hpp.noosphere.hub.service.blockchain.dto.SubscriptionDTO;
 import io.hpp.noosphere.hub.service.dto.ContainerDTO;
 import io.hpp.noosphere.hub.service.dto.UserDTO;
 import io.hpp.noosphere.hub.service.dto.UserSubscriptionDTO;
@@ -233,7 +233,6 @@ public class UserSubscriptionService {
 
     ContainerDTO newContainer = new ContainerDTO();
     newContainer.setId(UUID.fromString(subscriptionDTO.getContainerId()));
-    ;
     userSubscriptionDTO.setContainer(newContainer);
     return userSubscriptionDTO;
   }
@@ -249,7 +248,6 @@ public class UserSubscriptionService {
       UserSubscription userSubscription = userSubscriptionMapper.toEntity(userSubscriptionDTO);
       userSubscription = userSubscriptionRepository.save(userSubscription);
       retrunList.add(userSubscriptionMapper.toDto(userSubscription));
-
     }
     return retrunList;
   }

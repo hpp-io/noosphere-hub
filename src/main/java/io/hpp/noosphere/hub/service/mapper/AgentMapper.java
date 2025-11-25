@@ -1,5 +1,6 @@
 package io.hpp.noosphere.hub.service.mapper;
 
+import io.hpp.noosphere.common.service.mapper.EntityMapper;
 import io.hpp.noosphere.hub.domain.Agent;
 import io.hpp.noosphere.hub.domain.User;
 import io.hpp.noosphere.hub.service.dto.AgentDTO;
@@ -11,13 +12,13 @@ import org.mapstruct.*;
  */
 @Mapper(componentModel = "spring", uses = { UserMapper.class })
 public interface AgentMapper extends EntityMapper<AgentDTO, Agent> {
-    @Mapping(target = "createdByUser", source = "createdByUser", qualifiedByName = "userId")
-    @Mapping(target = "updatedByUser", source = "updatedByUser", qualifiedByName = "userId")
-    AgentDTO toDto(Agent s);
+  @Mapping(target = "createdByUser", source = "createdByUser", qualifiedByName = "userId")
+  @Mapping(target = "updatedByUser", source = "updatedByUser", qualifiedByName = "userId")
+  AgentDTO toDto(Agent s);
 
-    @Named("userId")
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", source = "id")
-    @Mapping(target = "name", source = "name") // Include other fields if needed
-    UserDTO toDtoUserId(User user);
+  @Named("userId")
+  @BeanMapping(ignoreByDefault = true)
+  @Mapping(target = "id", source = "id")
+  @Mapping(target = "name", source = "name") // Include other fields if needed
+  UserDTO toDtoUserId(User user);
 }

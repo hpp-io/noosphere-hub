@@ -1,10 +1,10 @@
 package io.hpp.noosphere.hub.web.rest;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import io.hpp.noosphere.common.service.blockchain.dto.SubscriptionDTO;
 import io.hpp.noosphere.hub.config.OpenApiConfiguration;
 import io.hpp.noosphere.hub.service.UserService;
 import io.hpp.noosphere.hub.service.UserSubscriptionService;
-import io.hpp.noosphere.hub.service.blockchain.dto.SubscriptionDTO;
 import io.hpp.noosphere.hub.service.dto.JsonViewType;
 import io.hpp.noosphere.hub.service.dto.UserSubscriptionDTO;
 import io.swagger.v3.oas.annotations.extensions.Extension;
@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(
   name = "User Subscription",
   description = "User Subscription Controller",
-  extensions = {@Extension(properties = {@ExtensionProperty(name = OpenApiConfiguration.TAG_ORDER, value = "1")})}
+  extensions = { @Extension(properties = { @ExtensionProperty(name = OpenApiConfiguration.TAG_ORDER, value = "1") }) }
 )
 public class UserSubscriptionResource {
 
@@ -45,7 +45,8 @@ public class UserSubscriptionResource {
   public UserSubscriptionResource(
     UserService userService,
     UserSubscriptionService userSubscriptionService,
-    IAuthenticationFacade authenticationFacade) {
+    IAuthenticationFacade authenticationFacade
+  ) {
     this.authenticationFacade = authenticationFacade;
     this.userService = userService;
     this.userSubscriptionService = userSubscriptionService;
@@ -58,7 +59,6 @@ public class UserSubscriptionResource {
     LOG.debug("REST request to create UserSubscription List : {}", subscriptionDTOList.size());
     Instant now = Instant.now();
     List<UserSubscriptionDTO> userSubscriptionDTOList = userSubscriptionService.create(userService, subscriptionDTOList, now);
-    return ResponseEntity.created(new URI("/api/user-subscriptions"))
-      .body(userSubscriptionDTOList);
+    return ResponseEntity.created(new URI("/api/user-subscriptions")).body(userSubscriptionDTOList);
   }
 }

@@ -1,10 +1,10 @@
 package io.hpp.noosphere.hub.service;
 
+import io.hpp.noosphere.common.domain.enumeration.StatusCode;
+import io.hpp.noosphere.common.exception.PermissionDeniedException;
 import io.hpp.noosphere.hub.domain.AgentRequest;
-import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
 import io.hpp.noosphere.hub.exception.AgentNotFoundException;
 import io.hpp.noosphere.hub.exception.AgentRequestNotFoundException;
-import io.hpp.noosphere.hub.exception.PermissionDeniedException;
 import io.hpp.noosphere.hub.repository.AgentRequestRepository;
 import io.hpp.noosphere.hub.service.dto.AgentDTO;
 import io.hpp.noosphere.hub.service.dto.AgentRequestDTO;

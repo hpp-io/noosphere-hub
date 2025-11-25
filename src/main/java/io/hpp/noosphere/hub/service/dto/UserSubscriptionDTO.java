@@ -1,8 +1,8 @@
 package io.hpp.noosphere.hub.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import io.hpp.noosphere.common.domain.enumeration.StatusCode;
 import io.hpp.noosphere.hub.domain.enumeration.PeriodType;
-import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -39,7 +39,6 @@ public class UserSubscriptionDTO implements Serializable {
   @JsonView(JsonViewType.Update.class)
   private Integer periodValue;
 
-
   @JsonView(JsonViewType.Update.class)
   private Instant activatedAt;
 
@@ -52,7 +51,6 @@ public class UserSubscriptionDTO implements Serializable {
 
   @JsonView(JsonViewType.Update.class)
   private String verifierAddress;
-
 
   @JsonView(JsonViewType.Update.class)
   private String referenceId;
@@ -73,7 +71,6 @@ public class UserSubscriptionDTO implements Serializable {
   @JsonView(JsonViewType.Update.class)
   private ContainerDTO container;
 
-
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -84,18 +81,36 @@ public class UserSubscriptionDTO implements Serializable {
       return false;
     }
 
-    return new EqualsBuilder().append(id, that.id).append(amount, that.amount).append(periodType, that.periodType)
-      .append(referenceId, that.referenceId).append(walletAddress, that.walletAddress)
-      .append(periodValue, that.periodValue).append(statusCode, that.statusCode).append(createdAt, that.createdAt)
+    return new EqualsBuilder()
+      .append(id, that.id)
+      .append(amount, that.amount)
+      .append(periodType, that.periodType)
+      .append(referenceId, that.referenceId)
+      .append(walletAddress, that.walletAddress)
+      .append(periodValue, that.periodValue)
+      .append(statusCode, that.statusCode)
+      .append(createdAt, that.createdAt)
       .append(updatedAt, that.updatedAt)
-      .append(owner, that.owner).append(container, that.container).isEquals();
+      .append(owner, that.owner)
+      .append(container, that.container)
+      .isEquals();
   }
 
   @Override
   public int hashCode() {
-    return new HashCodeBuilder(17, 37).append(id).append(amount).append(periodType).append(periodValue)
-      .append(referenceId).append(walletAddress).append(statusCode).append(createdAt).append(updatedAt)
-      .append(owner).append(container).toHashCode();
+    return new HashCodeBuilder(17, 37)
+      .append(id)
+      .append(amount)
+      .append(periodType)
+      .append(periodValue)
+      .append(referenceId)
+      .append(walletAddress)
+      .append(statusCode)
+      .append(createdAt)
+      .append(updatedAt)
+      .append(owner)
+      .append(container)
+      .toHashCode();
   }
 
   @Override

@@ -1,6 +1,6 @@
 package io.hpp.noosphere.hub.web.rest.vm;
 
-import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
+import io.hpp.noosphere.common.domain.enumeration.StatusCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 import java.util.UUID;

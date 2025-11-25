@@ -3,10 +3,11 @@ package io.hpp.noosphere.hub.repository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import io.hpp.noosphere.common.domain.enumeration.StatusCode;
+import io.hpp.noosphere.common.repository.QuerydslUtil;
+import io.hpp.noosphere.common.service.util.CommonUtils;
 import io.hpp.noosphere.hub.domain.AgentStatus;
 import io.hpp.noosphere.hub.domain.QAgentStatus;
-import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
-import io.hpp.noosphere.hub.service.uil.CommonUtils;
 import jakarta.persistence.EntityManager;
 import java.util.Optional;
 import java.util.UUID;
@@ -20,12 +21,9 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface AgentStatusRepository extends JpaRepository<AgentStatus, UUID>, AgentStatusRepositoryCustom {
-
-}
+public interface AgentStatusRepository extends JpaRepository<AgentStatus, UUID>, AgentStatusRepositoryCustom {}
 
 interface AgentStatusRepositoryCustom {
-
   Page<AgentStatus> search(String agentName, StatusCode agentStatusCode, Pageable pageable);
 
   Page<AgentStatus> findActiveByAgentName(String agentName, Pageable pageable);

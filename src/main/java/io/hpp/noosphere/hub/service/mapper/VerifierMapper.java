@@ -1,5 +1,6 @@
 package io.hpp.noosphere.hub.service.mapper;
 
+import io.hpp.noosphere.common.service.mapper.EntityMapper;
 import io.hpp.noosphere.hub.domain.User;
 import io.hpp.noosphere.hub.domain.Verifier;
 import io.hpp.noosphere.hub.service.dto.UserDTO;

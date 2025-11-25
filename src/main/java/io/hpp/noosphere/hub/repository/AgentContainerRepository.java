@@ -3,10 +3,11 @@ package io.hpp.noosphere.hub.repository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import io.hpp.noosphere.common.domain.enumeration.StatusCode;
+import io.hpp.noosphere.common.repository.QuerydslUtil;
+import io.hpp.noosphere.common.service.util.CommonUtils;
 import io.hpp.noosphere.hub.domain.AgentContainer;
 import io.hpp.noosphere.hub.domain.QAgentContainer;
-import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
-import io.hpp.noosphere.hub.service.uil.CommonUtils;
 import jakarta.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
@@ -21,12 +22,9 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface AgentContainerRepository extends JpaRepository<AgentContainer, UUID>, AgentContainerRepositoryCustom {
-
-}
+public interface AgentContainerRepository extends JpaRepository<AgentContainer, UUID>, AgentContainerRepositoryCustom {}
 
 interface AgentContainerRepositoryCustom {
-
   Page<AgentContainer> search(UUID agentId, String containerName, StatusCode statusCode, Pageable pageable);
 
   List<UUID> findAllContainerIdListByAgentId(UUID agentId, StatusCode statusCode);
@@ -67,7 +65,6 @@ class AgentContainerRepositoryCustomImpl implements AgentContainerRepositoryCust
       return Page.empty();
     }
   }
-
 
   @Override
   public List<UUID> findAllContainerIdListByAgentId(UUID agentId, StatusCode statusCode) {

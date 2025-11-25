@@ -1,6 +1,7 @@
 package io.hpp.noosphere.hub.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import io.hpp.noosphere.common.domain.enumeration.StatusCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Lob;
 import jakarta.validation.constraints.*;
@@ -14,7 +15,6 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
 
 /**
  * A DTO for the {@link io.hpp.noosphere.hub.domain.Agent} entity.
@@ -27,67 +27,66 @@ import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
 @Schema
 public class AgentDTO implements Serializable {
 
-    @JsonView(JsonViewType.Shallow.class)
-    private UUID id;
+  @JsonView(JsonViewType.Shallow.class)
+  private UUID id;
 
-    @JsonView(JsonViewType.Shallow.class)
-    private String name;
+  @JsonView(JsonViewType.Shallow.class)
+  private String name;
 
-    @NotNull
-    @JsonView(JsonViewType.Update.class)
-    private String walletAddress;
+  @NotNull
+  @JsonView(JsonViewType.Update.class)
+  private String walletAddress;
 
-    @NotNull
-    @JsonView(JsonViewType.Full.class)
-    private StatusCode statusCode;
+  @NotNull
+  @JsonView(JsonViewType.Full.class)
+  private StatusCode statusCode;
 
-    @Lob
-    @JsonView(JsonViewType.Update.class)
-    private String description;
+  @Lob
+  @JsonView(JsonViewType.Update.class)
+  private String description;
 
-    @JsonView(JsonViewType.Full.class)
-    private Instant createdAt;
+  @JsonView(JsonViewType.Full.class)
+  private Instant createdAt;
 
-    @JsonView(JsonViewType.Full.class)
-    private Instant updatedAt;
+  @JsonView(JsonViewType.Full.class)
+  private Instant updatedAt;
 
-    @JsonView(JsonViewType.Full.class)
-    private UserDTO createdByUser;
+  @JsonView(JsonViewType.Full.class)
+  private UserDTO createdByUser;
 
-    @JsonView(JsonViewType.Full.class)
-    private UserDTO updatedByUser;
+  @JsonView(JsonViewType.Full.class)
+  private UserDTO updatedByUser;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-
-        if (!(o instanceof AgentDTO agentDTO)) {
-            return false;
-        }
-
-      return new EqualsBuilder().append(id, agentDTO.id).append(name, agentDTO.name).isEquals();
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
     }
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(id).append(name)
-          .toHashCode();
+    if (!(o instanceof AgentDTO agentDTO)) {
+      return false;
     }
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-          .append("id", id)
-          .append("name", name)
-          .append("walletAddress", walletAddress)
-          .append("statusCode", statusCode)
-          .append("description", description)
-          .append("createdAt", createdAt)
-          .append("updatedAt", updatedAt)
-          .append("createdByUser", createdByUser !=null ? createdByUser.getId() : null)
-          .append("updatedByUser", updatedByUser !=null ? updatedByUser.getId() : null)
-          .toString();
-    }
+    return new EqualsBuilder().append(id, agentDTO.id).append(name, agentDTO.name).isEquals();
+  }
+
+  @Override
+  public int hashCode() {
+    return new HashCodeBuilder(17, 37).append(id).append(name).toHashCode();
+  }
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this)
+      .append("id", id)
+      .append("name", name)
+      .append("walletAddress", walletAddress)
+      .append("statusCode", statusCode)
+      .append("description", description)
+      .append("createdAt", createdAt)
+      .append("updatedAt", updatedAt)
+      .append("createdByUser", createdByUser != null ? createdByUser.getId() : null)
+      .append("updatedByUser", updatedByUser != null ? updatedByUser.getId() : null)
+      .toString();
+  }
 }

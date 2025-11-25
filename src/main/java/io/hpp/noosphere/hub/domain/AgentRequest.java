@@ -1,7 +1,7 @@
 package io.hpp.noosphere.hub.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
+import io.hpp.noosphere.common.domain.enumeration.StatusCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

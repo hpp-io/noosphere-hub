@@ -1,5 +1,6 @@
 package io.hpp.noosphere.hub.service.mapper;
 
+import io.hpp.noosphere.common.service.mapper.EntityMapper;
 import io.hpp.noosphere.hub.domain.Container;
 import io.hpp.noosphere.hub.domain.User;
 import io.hpp.noosphere.hub.domain.UserSubscription;
@@ -16,19 +17,19 @@ import org.mapstruct.Named;
  */
 @Mapper(componentModel = "spring", uses = { UserMapper.class, ContainerMapper.class })
 public interface UserSubscriptionMapper extends EntityMapper<UserSubscriptionDTO, UserSubscription> {
-    @Mapping(target = "owner", source = "owner", qualifiedByName = "ownerId")
-    @Mapping(target = "container", source = "container", qualifiedByName = "containerId")
-    UserSubscriptionDTO toDto(UserSubscription s);
+  @Mapping(target = "owner", source = "owner", qualifiedByName = "ownerId")
+  @Mapping(target = "container", source = "container", qualifiedByName = "containerId")
+  UserSubscriptionDTO toDto(UserSubscription s);
 
-    @Named("ownerId")
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", source = "id")
-    @Mapping(target = "name", source = "name") // Include other fields if needed
-    UserDTO toDtoUserId(User user);
+  @Named("ownerId")
+  @BeanMapping(ignoreByDefault = true)
+  @Mapping(target = "id", source = "id")
+  @Mapping(target = "name", source = "name") // Include other fields if needed
+  UserDTO toDtoUserId(User user);
 
-    @Named("containerId")
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "id", source = "id")
-    @Mapping(target = "name", source = "name")
-    ContainerDTO toDtoContainerId(Container container);
+  @Named("containerId")
+  @BeanMapping(ignoreByDefault = true)
+  @Mapping(target = "id", source = "id")
+  @Mapping(target = "name", source = "name")
+  ContainerDTO toDtoContainerId(Container container);
 }

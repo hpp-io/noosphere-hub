@@ -1,6 +1,7 @@
 package io.hpp.noosphere.hub.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.hpp.noosphere.common.domain.enumeration.StatusCode;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
@@ -16,7 +17,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
 
 /**
  * A Agent.
@@ -30,74 +30,73 @@ import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class Agent implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    @NotNull
-    @Id
-    @GeneratedValue
-    @JdbcTypeCode(SqlTypes.VARCHAR)
-    @Column(name = "id", length = 36, nullable = false)
-    private UUID id;
+  @NotNull
+  @Id
+  @GeneratedValue
+  @JdbcTypeCode(SqlTypes.VARCHAR)
+  @Column(name = "id", length = 36, nullable = false)
+  private UUID id;
 
-    @Column(name = "name")
-    private String name;
+  @Column(name = "name")
+  private String name;
 
-    @NotNull
-    @Column(name = "wallet_address", nullable = false)
-    private String walletAddress;
+  @NotNull
+  @Column(name = "wallet_address", nullable = false)
+  private String walletAddress;
 
-    @NotNull
-    @Column(name = "status_code", length = 20, nullable = false)
-    @Enumerated(EnumType.STRING)
-    private StatusCode statusCode;
+  @NotNull
+  @Column(name = "status_code", length = 20, nullable = false)
+  @Enumerated(EnumType.STRING)
+  private StatusCode statusCode;
 
-    @Lob
-    @Column(name = "description")
-    private String description;
+  @Lob
+  @Column(name = "description")
+  private String description;
 
-    @NotNull
-    @Column(name = "created_at", nullable = false)
-    private Instant createdAt;
+  @NotNull
+  @Column(name = "created_at", nullable = false)
+  private Instant createdAt;
 
-    @Column(name = "updated_at")
-    private Instant updatedAt;
+  @Column(name = "updated_at")
+  private Instant updatedAt;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(unique = true)
-    private User createdByUser;
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(unique = true)
+  private User createdByUser;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(unique = true)
-    private User updatedByUser;
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(unique = true)
+  private User updatedByUser;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "agent")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "agent", "container" }, allowSetters = true)
-    private Set<AgentContainer> agentContainers = new HashSet<>();
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "agent")
+  @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+  @JsonIgnoreProperties(value = { "agent", "container" }, allowSetters = true)
+  private Set<AgentContainer> agentContainers = new HashSet<>();
 
-    @JsonIgnoreProperties(value = { "agent" }, allowSetters = true)
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "agent")
-    private AgentStatus agentStatus;
+  @JsonIgnoreProperties(value = { "agent" }, allowSetters = true)
+  @OneToOne(fetch = FetchType.LAZY, mappedBy = "agent")
+  private AgentStatus agentStatus;
 
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Agent)) {
-            return false;
-        }
-        return getId() != null && getId().equals(((Agent) o).getId());
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
     }
-
-    @Override
-    public int hashCode() {
-        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
-        return getClass().hashCode();
+    if (!(o instanceof Agent)) {
+      return false;
     }
+    return getId() != null && getId().equals(((Agent) o).getId());
+  }
 
-    // prettier-ignore
+  @Override
+  public int hashCode() {
+    // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+    return getClass().hashCode();
+  }
+
+  // prettier-ignore
     @Override
     public String toString() {
         return "Agent{" +

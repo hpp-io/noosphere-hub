@@ -1,8 +1,8 @@
 package io.hpp.noosphere.hub.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import io.hpp.noosphere.common.domain.enumeration.StatusCode;
 import io.hpp.noosphere.hub.domain.Verifier;
-import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Lob;
 import jakarta.validation.constraints.NotNull;

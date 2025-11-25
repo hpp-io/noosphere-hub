@@ -1,10 +1,10 @@
 package io.hpp.noosphere.hub.web.rest;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import io.hpp.noosphere.common.exception.PermissionDeniedException;
 import io.hpp.noosphere.hub.config.OpenApiConfiguration;
 import io.hpp.noosphere.hub.exception.AgentNotFoundException;
 import io.hpp.noosphere.hub.exception.AgentRequestNotFoundException;
-import io.hpp.noosphere.hub.exception.PermissionDeniedException;
 import io.hpp.noosphere.hub.repository.AgentRequestRepository;
 import io.hpp.noosphere.hub.service.AgentRequestService;
 import io.hpp.noosphere.hub.service.AgentService;

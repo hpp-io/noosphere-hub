@@ -1,7 +1,7 @@
 package io.hpp.noosphere.hub.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
+import io.hpp.noosphere.common.domain.enumeration.StatusCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
@@ -27,52 +27,52 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @Schema
 public class AgentContainerDTO implements Serializable {
 
-    @JsonView(JsonViewType.Shallow.class)
-    private UUID id;
+  @JsonView(JsonViewType.Shallow.class)
+  private UUID id;
 
-    @NotNull
-    @JsonView(JsonViewType.Full.class)
-    private StatusCode statusCode;
+  @NotNull
+  @JsonView(JsonViewType.Full.class)
+  private StatusCode statusCode;
 
-    @JsonView(JsonViewType.Full.class)
-    private Instant createdAt;
+  @JsonView(JsonViewType.Full.class)
+  private Instant createdAt;
 
-    @JsonView(JsonViewType.Full.class)
-    private Instant updatedAt;
+  @JsonView(JsonViewType.Full.class)
+  private Instant updatedAt;
 
-    @JsonView(JsonViewType.Shallow.class)
-    private AgentDTO agent;
+  @JsonView(JsonViewType.Shallow.class)
+  private AgentDTO agent;
 
-    @JsonView(JsonViewType.Shallow.class)
-    private ContainerDTO container;
+  @JsonView(JsonViewType.Shallow.class)
+  private ContainerDTO container;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-
-        if (!(o instanceof AgentContainerDTO that)) {
-            return false;
-        }
-
-        return new EqualsBuilder().append(id, that.id).append(agent, that.agent).append(container, that.container).isEquals();
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
     }
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 37).append(id).append(agent).append(container).toHashCode();
+    if (!(o instanceof AgentContainerDTO that)) {
+      return false;
     }
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-            .append("id", id)
-            .append("statusCode", statusCode)
-            .append("createdAt", createdAt)
-            .append("updatedAt", updatedAt)
-            .append("agent", agent != null ? agent.getId() : null)
-            .append("container", container != null ? container.getId() : null)
-            .toString();
-    }
+    return new EqualsBuilder().append(id, that.id).append(agent, that.agent).append(container, that.container).isEquals();
+  }
+
+  @Override
+  public int hashCode() {
+    return new HashCodeBuilder(17, 37).append(id).append(agent).append(container).toHashCode();
+  }
+
+  @Override
+  public String toString() {
+    return new ToStringBuilder(this)
+      .append("id", id)
+      .append("statusCode", statusCode)
+      .append("createdAt", createdAt)
+      .append("updatedAt", updatedAt)
+      .append("agent", agent != null ? agent.getId() : null)
+      .append("container", container != null ? container.getId() : null)
+      .toString();
+  }
 }

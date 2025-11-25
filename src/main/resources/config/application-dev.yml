@@ -47,6 +47,7 @@ spring:
       discovery:
         instanceId: noosphere-hub:${spring.application.instance-id:${random.value}}
         service-name: noosphere-hub
+        health-check-critical-timeout: 1m
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3356/nshub?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
@@ -121,7 +122,7 @@ application:
       enable-cron: true
       cron: 0 5/10 * * * ?
   keystore:
-    path: ./hpp-keystore.p12
+    path: ./keystore.p12
     store-password: '${HPP_KEYSTORE_PASSWORD}'
     keys:
       eth: '${HPP_ETH_KEY_ALIAS}'

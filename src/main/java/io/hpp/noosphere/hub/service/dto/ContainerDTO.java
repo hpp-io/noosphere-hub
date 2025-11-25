@@ -1,7 +1,7 @@
 package io.hpp.noosphere.hub.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import io.hpp.noosphere.hub.domain.enumeration.StatusCode;
+import io.hpp.noosphere.common.domain.enumeration.StatusCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Lob;
 import jakarta.validation.constraints.NotNull;
@@ -87,15 +87,28 @@ public class ContainerDTO implements Serializable {
       return false;
     }
 
-    return new EqualsBuilder().append(id, that.id).append(name, that.name).append(imageName, that.imageName)
-      .append(port, that.port).append(statusCode, that.statusCode)
-      .append(createdAt, that.createdAt).append(updatedAt, that.updatedAt).isEquals();
+    return new EqualsBuilder()
+      .append(id, that.id)
+      .append(name, that.name)
+      .append(imageName, that.imageName)
+      .append(port, that.port)
+      .append(statusCode, that.statusCode)
+      .append(createdAt, that.createdAt)
+      .append(updatedAt, that.updatedAt)
+      .isEquals();
   }
 
   @Override
   public int hashCode() {
-    return new HashCodeBuilder(17, 37).append(id).append(name).append(imageName).append(port)
-      .append(statusCode).append(createdAt).append(updatedAt).toHashCode();
+    return new HashCodeBuilder(17, 37)
+      .append(id)
+      .append(name)
+      .append(imageName)
+      .append(port)
+      .append(statusCode)
+      .append(createdAt)
+      .append(updatedAt)
+      .toHashCode();
   }
 
   @Override

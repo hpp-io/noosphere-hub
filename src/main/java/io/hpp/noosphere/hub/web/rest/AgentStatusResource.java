@@ -1,8 +1,8 @@
 package io.hpp.noosphere.hub.web.rest;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import io.hpp.noosphere.common.exception.PermissionDeniedException;
 import io.hpp.noosphere.hub.exception.AgentNotFoundException;
-import io.hpp.noosphere.hub.exception.PermissionDeniedException;
 import io.hpp.noosphere.hub.service.AgentContainerService;
 import io.hpp.noosphere.hub.service.AgentStatusService;
 import io.hpp.noosphere.hub.service.UserSubscriptionService;
@@ -34,57 +34,58 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/agents")
 public class AgentStatusResource {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AgentStatusResource.class);
+  private static final Logger LOG = LoggerFactory.getLogger(AgentStatusResource.class);
 
-    private static final String ENTITY_NAME = "agentStatus";
-    private final AgentStatusService agentStatusService;
-    private final AgentContainerService agentContainerService;
-    private final UserSubscriptionService userSubscriptionService;
-    private final IAuthenticationFacade authenticationFacade;
+  private static final String ENTITY_NAME = "agentStatus";
+  private final AgentStatusService agentStatusService;
+  private final AgentContainerService agentContainerService;
+  private final UserSubscriptionService userSubscriptionService;
+  private final IAuthenticationFacade authenticationFacade;
 
-    @Value("${jhipster.clientApp.name}")
-    private String applicationName;
+  @Value("${jhipster.clientApp.name}")
+  private String applicationName;
 
-    public AgentStatusResource(
-      AgentStatusService agentStatusService,
-      AgentContainerService agentContainerService,
-      UserSubscriptionService userSubscriptionService,
-      IAuthenticationFacade authenticationFacade) {
-        this.agentStatusService = agentStatusService;
-        this.agentContainerService = agentContainerService;
-        this.userSubscriptionService = userSubscriptionService;
-        this.authenticationFacade = authenticationFacade;
+  public AgentStatusResource(
+    AgentStatusService agentStatusService,
+    AgentContainerService agentContainerService,
+    UserSubscriptionService userSubscriptionService,
+    IAuthenticationFacade authenticationFacade
+  ) {
+    this.agentStatusService = agentStatusService;
+    this.agentContainerService = agentContainerService;
+    this.userSubscriptionService = userSubscriptionService;
+    this.authenticationFacade = authenticationFacade;
+  }
+
+  @Tag(name = "Agent", description = "Agent Controller")
+  @Operation(summary = "Keep Alive Agent")
+  @ApiResponses(
+    {
+      @ApiResponse(
+        responseCode = "200",
+        content = @Content(mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE),
+        description = "Successful operation"
+      ),
+      @ApiResponse(
+        responseCode = "500",
+        content = @Content(mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE),
+        description = "Internal server error"
+      ),
     }
+  )
+  @JsonView(JsonViewType.Shallow.class)
+  @CrossOrigin(origins = "*")
+  @PutMapping("/{agentId}/keep-alive")
+  public ResponseEntity<KeepAliveResponse> keepAlive(
+    @Parameter(description = "Agent ID", required = true) @PathVariable(value = "agentId", required = true) final UUID agentId
+  ) throws AgentNotFoundException, PermissionDeniedException {
+    LOG.debug("REST request to keep alive agent : {}", agentId);
 
-    @Tag(name = "Agent", description = "Agent Controller")
-    @Operation(summary = "Keep Alive Agent")
-    @ApiResponses(
-        {
-            @ApiResponse(
-                responseCode = "200",
-                content = @Content(mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE),
-                description = "Successful operation"
-            ),
-            @ApiResponse(
-                responseCode = "500",
-                content = @Content(mediaType = MediaType.APPLICATION_JSON_UTF8_VALUE),
-                description = "Internal server error"
-            ),
-        }
-    )
-    @JsonView(JsonViewType.Shallow.class)
-    @CrossOrigin(origins = "*")
-    @PutMapping("/{agentId}/keep-alive")
-    public ResponseEntity<KeepAliveResponse> keepAlive(
-        @Parameter(description = "Agent ID", required = true) @PathVariable(value = "agentId", required = true) final UUID agentId
-    ) throws AgentNotFoundException, PermissionDeniedException {
-        LOG.debug("REST request to keep alive agent : {}", agentId);
-
-        Instant now = Instant.now();
-        KeepAliveResponse keepAliveResponse = new KeepAliveResponse();
-        agentStatusService.updateKeepAlive(authenticationFacade.getUserId(), agentId, now);
-        Long count = userSubscriptionService.countAllByAgentId(agentContainerService, agentId);
-        keepAliveResponse.setCount(count);
-        return ResponseEntity.ok().body(keepAliveResponse);
-    }
+    Instant now = Instant.now();
+    KeepAliveResponse keepAliveResponse = new KeepAliveResponse();
+    agentStatusService.updateKeepAlive(authenticationFacade.getUserId(), agentId, now);
+    Long count = userSubscriptionService.countAllByAgentId(agentContainerService, agentId);
+    keepAliveResponse.setCount(count);
+    return ResponseEntity.ok().body(keepAliveResponse);
+  }
 }
