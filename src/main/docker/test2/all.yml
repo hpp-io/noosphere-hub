@@ -77,7 +77,7 @@ services:
       - APPLICATION_CHAIN_ROUTER_ADDRESS=${HPP_ROUTER_ADDRESS}
       - LOGGING_FILE_PATH=/app/logs
     volumes:
-      - /data/noosphere/config/hpp-keystore.p12:/app/hpp-keystore.p12
+      - /data/noosphere/config/keystore/keystore0.p12:/app/hpp-keystore.p12
       - /data/noosphere/config/truststore.p12:/app/truststore.p12
       - /data/noosphere/logs/scheduler-logs:/app/logs
     ports:
@@ -116,6 +116,7 @@ services:
       - HPP_APP_KIT_PROJECT_ID=${HPP_APP_KIT_PROJECT_ID}
       - HPP_ENV=${HPP_ENV}
     volumes:
+      - /data/noosphere/config/keystore/keystore0.p12:/app/hpp-keystore.p12
       - /data/noosphere/config/truststore.p12:/app/truststore.p12
       - /data/noosphere/logs/ng-logs:/app/logs
     ports:
