@@ -5,34 +5,46 @@ services:
     image: ghcr.io/hpp-io/noosphere-hub:test2
     container_name: noosphere-hub
     environment:
-      - _JAVA_OPTIONS=-Xmx512m -Xms256m
+      - _JAVA_OPTIONS=-Xmx2048m -Xms1024m -Djava.net.preferIPv4Stack=true -Djavax.net.ssl.trustStore=/app/truststore.p12 -Djavax.net.ssl.trustStorePassword=${HPP_KEYSTORE_PASSWORD}
       - SPRING_PROFILES_ACTIVE=development,api-docs
       - MANAGEMENT_PROMETHEUS_METRICS_EXPORT_ENABLED=true
-      - SPRING_CLOUD_CONSUL_HOST=noosphere-consul
-      - SPRING_CLOUD_CONSUL_PORT=8500
       - SPRING_DATASOURCE_USERNAME=${DATABASE_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${DATABASE_PASSWORD}
-      - SPRING_DATASOURCE_URL=jdbc:mysql://noosphere-mysql:3306/nshub?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
-      - SPRING_LIQUIBASE_URL=jdbc:mysql://noosphere-mysql:3306/nshub?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
-      - SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI=http://noosphere-auth:9080/realms/noosphere
+      - SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3356/nshub?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&createDatabaseIfNotExist=true
+      - SPRING_LIQUIBASE_URL=jdbc:mysql://host.docker.internal:3356/nshub?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false
+      - SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI=https://authtest.hpp.io/realms/noosphere
       - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET=${HPP_AUTH_WEB_APP_SECRET}
-      - SPRING_PULSAR_CLIENT_SERVICE_URL=pulsar://noosphere-pulsar:6650
-      - SPRING_PULSAR_ADMINISTRATION_SERVICE_URL=http://noosphere-pulsar:9082
+      - SPRING_PULSAR_CLIENT_SERVICE_URL=pulsar://host.docker.internal:6650
+      - SPRING_PULSAR_ADMINISTRATION_SERVICE_URL=http://host.docker.internal:9082
+      - SPRING_CLOUD_CONSUL_HOST=host.docker.internal
+      - SPRING_CLOUD_CONSUL_DISCOVERY_PREFER_IP_ADDRESS=false
+      - SPRING_CLOUD_CONSUL_DISCOVERY_SCHEME=http
+      - SPRING_CLOUD_CONSUL_DISCOVERY_HOSTNAME=host.docker.internal
+      - SPRING_CLOUD_CONSUL_DISCOVERY_PORT=8500
+      - SPRING_CLOUD_CONSUL_DISCOVERY_HEALTH_CHECK_CRITICAL_TIMEOUT=5m
+      - APPLICATION_KEYCLOAK_AUTH_URL=http://host.docker.internal:7080
       - APPLICATION_KEYCLOAK_ADMIN_CLIENT_SECRET=${HPP_AUTH_ADMIN_CLI_SECRET}
       - APPLICATION_KEYSTORE_STORE_PASSWORD=${HPP_KEYSTORE_PASSWORD}
       - APPLICATION_KEYSTORE_PATH=/app/hpp-keystore.p12
       - APPLICATION_KEYSTORE_KEYS_ETH=${HPP_ETH_KEY_ALIAS}
       - APPLICATION_BLOCKCHAIN_ROUTER_ADDRESS=${HPP_ROUTER_ADDRESS}
+      - HPP_APP_KIT_PROJECT_ID=${HPP_APP_KIT_PROJECT_ID}
+      - HPP_ENV=${HPP_ENV}
+      - LOGGING_FILE_PATH=/app/logs
     volumes:
-      - ../../../hpp-keystore.p12:/app/hpp-keystore.p12
+      - ./keystore0.p12:/app/hpp-keystore.p12
+      - ./truststore.p12:/app/truststore.p12
+      - ./logs:/app/logs
     ports:
       - 8085:8085
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
     healthcheck:
       test:
         - CMD
         - curl
         - -f
-        - http://localhost:8085/management/health
+        - http://host.docker.internal:8085/management/health
       interval: 5s
       timeout: 5s
       retries: 40
