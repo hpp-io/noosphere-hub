@@ -62,11 +62,11 @@ public class CacheConfiguration {
     this.registration = registration;
   }
 
-  @PreDestroy
-  public void destroy() {
-    LOG.info("Closing Cache Manager");
-    Hazelcast.shutdownAll();
-  }
+  //  @PreDestroy
+  //  public void destroy() {
+  //    LOG.info("Closing Cache Manager");
+  //    Hazelcast.shutdownAll();
+  //  }
 
   @Bean
   public CacheManager cacheManager(HazelcastInstance hazelcastInstance) {
