@@ -3,11 +3,10 @@ package io.hpp.noosphere.hub.config;
 import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.oauth2.core.oidc.StandardClaimNames.PREFERRED_USERNAME;
 
+import io.hpp.noosphere.common.security.AuthoritiesConstants;
+import io.hpp.noosphere.common.security.oauth2.AudienceValidator;
 import io.hpp.noosphere.hub.security.ApiKeyAuthFilter;
-import io.hpp.noosphere.hub.security.ApiKeyAuthManager;
-import io.hpp.noosphere.hub.security.AuthoritiesConstants;
 import io.hpp.noosphere.hub.security.SecurityUtils;
-import io.hpp.noosphere.hub.security.oauth2.AudienceValidator;
 import io.hpp.noosphere.hub.service.UserService;
 import io.hpp.noosphere.hub.web.filter.SpaWebFilter;
 import java.util.Collection;
@@ -49,6 +48,7 @@ public class SecurityConfiguration {
   private final CorsFilter corsFilter;
   private final ApiKeyAuthFilter apiKeyAuthFilter;
   private final UserService userService;
+
   @Value("${spring.security.oauth2.client.provider.oidc.issuer-uri}")
   private String issuerUri;
 
