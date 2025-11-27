@@ -41,7 +41,6 @@ spring:
     consul:
       discovery:
         instanceId: noosphere-hub:${spring.application.instance-id:${random.value}}
-        service-name: noosphere-hub
       host: noosphere-consul
   datasource:
     type: com.zaxxer.hikari.HikariDataSource

@@ -46,7 +46,6 @@ spring:
         profile-separator: '-'
       discovery:
         instanceId: noosphere-hub:${spring.application.instance-id:${random.value}}
-        service-name: noosphere-hub
         health-check-critical-timeout: 1m
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
