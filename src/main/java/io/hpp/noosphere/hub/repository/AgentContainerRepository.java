@@ -74,7 +74,7 @@ class AgentContainerRepositoryCustomImpl implements AgentContainerRepositoryCust
     if (statusCode != null) {
       builder.and(qAgentContainer.statusCode.eq(statusCode));
     }
-    JPQLQuery<UUID> query = jpaQueryFactory.selectDistinct(qAgentContainer.container.id).where(builder);
+    JPQLQuery<UUID> query = jpaQueryFactory.selectDistinct(qAgentContainer.container.id).from(qAgentContainer).where(builder);
     return query.fetch();
   }
 
