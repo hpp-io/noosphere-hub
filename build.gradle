@@ -104,6 +104,16 @@ springBoot {
     mainClass = "io.hpp.noosphere.hub.NoosphereHubApp"
 }
 
+
+bootRun {
+    jvmArgs = [
+            "-Xms512m",
+            "-Xmx2048m",
+            "-XX:+HeapDumpOnOutOfMemoryError",
+            "-Dspring.output.ansi.enabled=always",
+    ]
+}
+
 test {
     useJUnitPlatform()
     exclude "**/*IT*", "**/*IntTest*"
