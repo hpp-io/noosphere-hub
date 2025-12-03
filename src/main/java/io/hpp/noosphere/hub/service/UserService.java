@@ -163,16 +163,8 @@ public class UserService {
     LOG.debug("Created User: {}", user);
   }
 
-  /**
-   * Update basic information (first name, last name, email, language) for the current user.
-   *
-   * @param firstName first name of user.
-   * @param lastName  last name of user.
-   * @param email     email id of user.
-   * @param langKey   language key.
-   * @param imageUrl  image URL of user.
-   */
   public void updateUser(
+    String userId,
     String firstName,
     String lastName,
     String email,
@@ -181,8 +173,7 @@ public class UserService {
     String imageUrl,
     String walletAddress
   ) {
-    SecurityUtils.getCurrentUserLogin()
-      .flatMap(userRepository::findOneByEmail)
+    userRepository.findById(userId)
       .ifPresent(user -> {
         user.setName(CommonUtils.buildFullName(langKey, firstName, lastName));
         user.setFirstName(firstName);
@@ -297,6 +288,7 @@ public class UserService {
         if (idpModifiedDate.isAfter(dbModifiedDate)) {
           LOG.debug("Updating user '{}' in local database", user.getLogin());
           updateUser(
+            user.getId(),
             user.getFirstName(),
             user.getLastName(),
             user.getEmail(),
@@ -312,6 +304,7 @@ public class UserService {
       } else {
         LOG.debug("Updating user '{}' in local database", user.getLogin());
         updateUser(
+          user.getId(),
           user.getFirstName(),
           user.getLastName(),
           user.getEmail(),
@@ -482,10 +475,10 @@ public class UserService {
   }
 
   public String createAndUpdateWallet(String userId, String ownerAddress, Instant timestamp) {
-    UserDTO userDTO = this.findById(userId);
-    if (CommonUtils.isValid(userDTO.getWalletAddress())) {
-      throw new InvalidDataException(PROPERTY_NAME_USER, "wallet exists");
-    }
+//    UserDTO userDTO = this.findById(userId);
+//    if (CommonUtils.isValid(userDTO.getWalletAddress())) {
+//      throw new InvalidDataException(PROPERTY_NAME_USER, "wallet exists");
+//    }
     return this.updateWithNewWallet(userId, ownerAddress, timestamp);
   }
 

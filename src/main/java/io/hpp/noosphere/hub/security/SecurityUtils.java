@@ -37,6 +37,11 @@ public final class SecurityUtils {
     return Optional.ofNullable(extractPrincipal(securityContext.getAuthentication()));
   }
 
+  public static Optional<String> getCurrentUserId() {
+    SecurityContext securityContext = SecurityContextHolder.getContext();
+    return Optional.ofNullable(extractUserId(securityContext.getAuthentication()));
+  }
+
   private static String extractPrincipal(Authentication authentication) {
     if (authentication == null) {
       return null;
@@ -51,6 +56,20 @@ public final class SecurityUtils {
       }
     } else if (authentication.getPrincipal() instanceof String s) {
       return s;
+    }
+    return null;
+  }
+
+  private static String extractUserId(Authentication authentication) {
+    if (authentication == null) {
+      return null;
+    } else if (authentication.getPrincipal() instanceof UserDetails springSecurityUser) {
+      return (String) ((JwtAuthenticationToken) authentication).getToken().getClaims().get("sub");
+    } else if (authentication.getPrincipal() instanceof DefaultOidcUser) {
+      Map<String, Object> attributes = ((DefaultOidcUser) authentication.getPrincipal()).getAttributes();
+      if (attributes.containsKey("sub")) {
+        return (String) attributes.get("sub");
+      }
     }
     return null;
   }

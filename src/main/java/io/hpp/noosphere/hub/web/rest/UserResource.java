@@ -1,6 +1,7 @@
 package io.hpp.noosphere.hub.web.rest;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import io.hpp.noosphere.common.service.dto.IUserDTO;
 import io.hpp.noosphere.hub.config.OpenApiConfiguration;
 import io.hpp.noosphere.hub.service.UserService;
 import io.hpp.noosphere.hub.service.dto.JsonViewType;
@@ -75,7 +76,7 @@ public class UserResource {
 
   @JsonView(JsonViewType.Shallow.class)
   @PostMapping("/mine/api-key")
-  public ResponseEntity<String> createApiKey(@RequestBody UserDTO userDTO) {
+  public ResponseEntity<String> createApiKey() {
     LOG.debug("REST request to create apiKey");
     Instant now = Instant.now();
     String apiKey = userService.createAndUpdateApiKey(authenticationFacade.getUserId(), now);
@@ -101,7 +102,7 @@ public class UserResource {
 
   @JsonView(JsonViewType.Update.class)
   @PutMapping("/profile")
-  public ResponseEntity<Void> updateUserProfile(@RequestBody UserDTO userDTO) {
+  public ResponseEntity<Void> updateUserProfile(@RequestBody IUserDTO userDTO) {
     LOG.debug("REST request to update User Profile");
     Instant now = Instant.now();
     userService.updateUserProfile(
