@@ -399,7 +399,7 @@ public class UserService {
   @Transactional(readOnly = true)
   public User findEntityById(String userId) {
     Optional<User> optionalUser = this.findOptionalEntityById(userId);
-    return optionalUser.orElse(null);
+    return optionalUser.orElseThrow();
   }
 
   public UserDTO findById(String userId) {
