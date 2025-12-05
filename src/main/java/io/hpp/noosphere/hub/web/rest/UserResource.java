@@ -6,6 +6,7 @@ import io.hpp.noosphere.hub.config.OpenApiConfiguration;
 import io.hpp.noosphere.hub.service.UserService;
 import io.hpp.noosphere.hub.service.dto.JsonViewType;
 import io.hpp.noosphere.hub.service.dto.UserDTO;
+import io.hpp.noosphere.hub.web.rest.vm.CreateWalletVm;
 import io.hpp.noosphere.hub.web.rest.vm.UpdateWalletVm;
 import io.swagger.v3.oas.annotations.extensions.Extension;
 import io.swagger.v3.oas.annotations.extensions.ExtensionProperty;
@@ -29,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(
   name = "User",
   description = "User Controller",
-  extensions = {@Extension(properties = {@ExtensionProperty(name = OpenApiConfiguration.TAG_ORDER, value = "1")})}
+  extensions = { @Extension(properties = { @ExtensionProperty(name = OpenApiConfiguration.TAG_ORDER, value = "1") }) }
 )
 public class UserResource {
 
@@ -49,20 +50,20 @@ public class UserResource {
 
   @JsonView(JsonViewType.Shallow.class)
   @PostMapping("/mine/wallet")
-  public ResponseEntity<String> createWallet(@Valid @RequestBody UpdateWalletVm updateWalletVm) {
+  public ResponseEntity<String> createWallet(@Valid @RequestBody CreateWalletVm createWalletVm) {
     LOG.debug("REST request to create wallet");
     Instant now = Instant.now();
-    String walletAddress = userService.createAndUpdateWallet(authenticationFacade.getUserId(), updateWalletVm.getOwnerAddress(), now);
+    String walletAddress = userService.createAndUpdateWallet(authenticationFacade.getUserId(), createWalletVm.getOwnerAddress(), now);
     return ResponseEntity.ok().body(walletAddress);
   }
 
   @JsonView(JsonViewType.Shallow.class)
   @PutMapping("/mine/wallet")
-  public ResponseEntity<String> updateWallet(@Valid @RequestBody UpdateWalletVm updateWalletVm) {
+  public ResponseEntity<Void> updateWallet(@Valid @RequestBody UpdateWalletVm updateWalletVm) {
     LOG.debug("REST request to update wallet");
     Instant now = Instant.now();
-    String walletAddress = userService.updateWithNewWallet(authenticationFacade.getUserId(), updateWalletVm.getOwnerAddress(), now);
-    return ResponseEntity.ok().body(walletAddress);
+    userService.updateWithNewWallet(authenticationFacade.getUserId(), updateWalletVm.getWalletAddress(), now);
+    return ResponseEntity.ok().build();
   }
 
   @JsonView(JsonViewType.Shallow.class)

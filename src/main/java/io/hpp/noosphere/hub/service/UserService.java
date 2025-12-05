@@ -471,15 +471,12 @@ public class UserService {
       .orElse(null);
   }
 
-  public String updateWithNewWallet(String userId, String ownerAddress, Instant timestamp) {
-    String walletAddress = walletService.createWallet(ownerAddress);
-
+  public void updateWithNewWallet(String userId, String walletAddress, Instant timestamp) {
     if (CommonUtils.isValid(walletAddress)) {
       this.updateWalletAddress(userId, walletAddress, timestamp);
     } else {
       throw new IllegalStateException("Failed to extract wallet address from receipt for user ID: " + userId);
     }
-    return walletAddress;
   }
 
   public String createAndUpdateWallet(String userId, String ownerAddress, Instant timestamp) {
@@ -487,7 +484,9 @@ public class UserService {
     //    if (CommonUtils.isValid(userDTO.getWalletAddress())) {
     //      throw new InvalidDataException(PROPERTY_NAME_USER, "wallet exists");
     //    }
-    return this.updateWithNewWallet(userId, ownerAddress, timestamp);
+    String walletAddress = walletService.createWallet(ownerAddress);
+    this.updateWithNewWallet(userId, walletAddress, timestamp);
+    return walletAddress;
   }
 
   public String updateWithNewApiKey(String userId, Instant timestamp) {

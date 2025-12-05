@@ -6,8 +6,8 @@ import lombok.Data;
 
 @Data
 @Schema
-public class UpdateWalletVm {
+public class CreateWalletVm {
 
-  @Schema(description = "Wallet Address", requiredMode = RequiredMode.REQUIRED)
-  private String walletAddress;
+  @Schema(description = "Owner Address", requiredMode = RequiredMode.REQUIRED)
+  private String ownerAddress;
 }
