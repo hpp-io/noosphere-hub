@@ -37,10 +37,6 @@ public class VerifierDTO implements Serializable {
 
   @NotNull
   @JsonView(JsonViewType.Update.class)
-  private String walletAddress;
-
-  @NotNull
-  @JsonView(JsonViewType.Update.class)
   private String verifierAddress;
 
   @NotNull
@@ -123,7 +119,6 @@ public class VerifierDTO implements Serializable {
     return new ToStringBuilder(this)
       .append("id", id)
       .append("name", name)
-      .append("walletAddress", walletAddress)
       .append("verifierAddress", verifierAddress)
       .append("imageName", imageName)
       .append("port", port)

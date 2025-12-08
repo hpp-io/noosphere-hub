@@ -19,14 +19,7 @@ import org.springframework.stereotype.Repository;
 public interface ContainerRepository extends JpaRepository<Container, UUID>, ContainerRepositoryCustom {}
 
 interface ContainerRepositoryCustom {
-  Page<Container> search(
-    String searchText,
-    String name,
-    StatusCode statusCode,
-    String createdByUserId,
-    String walletAddress,
-    Pageable pageable
-  );
+  Page<Container> search(String searchText, String name, StatusCode statusCode, String createdByUserId, Pageable pageable);
 
   Page<Container> findActiveByName(String name, Pageable pageable);
 
@@ -45,14 +38,7 @@ class ContainerRepositoryCustomImpl implements ContainerRepositoryCustom {
   }
 
   @Override
-  public Page<Container> search(
-    String searchText,
-    String name,
-    StatusCode statusCode,
-    String createdByUserId,
-    String walletAddress,
-    Pageable pageable
-  ) {
+  public Page<Container> search(String searchText, String name, StatusCode statusCode, String createdByUserId, Pageable pageable) {
     QContainer qContainer = QContainer.container;
     BooleanBuilder builder = new BooleanBuilder();
     if (statusCode != null) {
@@ -63,9 +49,6 @@ class ContainerRepositoryCustomImpl implements ContainerRepositoryCustom {
     }
     if (CommonUtils.isValid(createdByUserId)) {
       builder.and(qContainer.createdByUser.id.eq(createdByUserId));
-    }
-    if (CommonUtils.isValid(walletAddress)) {
-      builder.and(qContainer.walletAddress.eq(walletAddress));
     }
     if (CommonUtils.isValid(searchText)) {
       BooleanBuilder searchBuilder = new BooleanBuilder();
@@ -83,11 +66,11 @@ class ContainerRepositoryCustomImpl implements ContainerRepositoryCustom {
 
   @Override
   public Page<Container> findActiveByName(String name, Pageable pageable) {
-    return this.search(null, name, StatusCode.ACTIVE, null, null, pageable);
+    return this.search(null, name, StatusCode.ACTIVE, null, pageable);
   }
 
   @Override
   public Page<Container> findActiveByCreatedByUserId(String userId, Pageable pageable) {
-    return this.search(null, null, StatusCode.ACTIVE, userId, null, pageable);
+    return this.search(null, null, StatusCode.ACTIVE, userId, pageable);
   }
 }

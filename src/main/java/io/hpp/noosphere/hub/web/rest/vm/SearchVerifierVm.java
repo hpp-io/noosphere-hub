@@ -15,9 +15,6 @@ public class SearchVerifierVm {
   @Schema(description = "Search Text", requiredMode = RequiredMode.NOT_REQUIRED)
   private String searchText;
 
-  @Schema(description = "Wallet Address", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  private String walletAddress;
-
   @Schema(description = "Verifier Address", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   private String verifierAddress;
 

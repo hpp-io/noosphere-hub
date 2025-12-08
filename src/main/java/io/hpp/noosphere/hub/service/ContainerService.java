@@ -85,7 +85,6 @@ public class ContainerService {
     container.setName(name);
     container.setCreatedAt(timestamp);
     container.setStatusCode(StatusCode.ACTIVE);
-    container.setWalletAddress(walletAddress);
     container = containerRepository.save(container);
     return containerMapper.toDto(container);
   }
@@ -119,16 +118,9 @@ public class ContainerService {
    * @return the list of entities.
    */
   @Transactional(readOnly = true)
-  public Page<ContainerDTO> search(
-    String searchText,
-    String name,
-    StatusCode statusCode,
-    String createdByUserId,
-    String walletAddress,
-    Pageable pageable
-  ) {
+  public Page<ContainerDTO> search(String searchText, String name, StatusCode statusCode, String createdByUserId, Pageable pageable) {
     LOG.debug("Request to search Containers");
-    return containerRepository.search(searchText, name, statusCode, createdByUserId, walletAddress, pageable).map(containerMapper::toDto);
+    return containerRepository.search(searchText, name, statusCode, createdByUserId, pageable).map(containerMapper::toDto);
   }
 
   /**

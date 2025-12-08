@@ -174,7 +174,6 @@ public class VerifierResource {
       searchVm.getName(),
       searchVm.getStatusCode(),
       searchVm.getCreatedByUserId(),
-      searchVm.getWalletAddress(),
       searchVm.getVerifierAddress(),
       pageable
     );

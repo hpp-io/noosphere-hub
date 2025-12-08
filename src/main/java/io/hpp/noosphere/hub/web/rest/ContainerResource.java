@@ -174,7 +174,6 @@ public class ContainerResource {
       searchVm.getName(),
       searchVm.getStatusCode(),
       searchVm.getCreatedByUserId(),
-      searchVm.getWalletAddress(),
       pageable
     );
     HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);

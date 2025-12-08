@@ -84,7 +84,6 @@ public class VerifierService {
     verifier.setName(name);
     verifier.setCreatedAt(timestamp);
     verifier.setStatusCode(StatusCode.ACTIVE);
-    verifier.setWalletAddress(walletAddress);
     verifier.setVerifierAddress(verifierAddress);
     verifier = verifierRepository.save(verifier);
     return verifierMapper.toDto(verifier);
@@ -118,14 +117,11 @@ public class VerifierService {
     String name,
     StatusCode statusCode,
     String createdByUserId,
-    String walletAddress,
     String verifierAddress,
     Pageable pageable
   ) {
     LOG.debug("Request to search all Verifiers");
-    return verifierRepository
-      .search(searchText, name, statusCode, createdByUserId, walletAddress, verifierAddress, pageable)
-      .map(verifierMapper::toDto);
+    return verifierRepository.search(searchText, name, statusCode, createdByUserId, verifierAddress, pageable).map(verifierMapper::toDto);
   }
 
   /**

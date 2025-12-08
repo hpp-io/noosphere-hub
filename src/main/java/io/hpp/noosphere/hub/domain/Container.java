@@ -57,10 +57,6 @@ public class Container implements Serializable {
   private String name;
 
   @NotNull
-  @Column(name = "wallet_address", nullable = false)
-  private String walletAddress;
-
-  @NotNull
   @Column(name = "image_name", nullable = false)
   private String imageName;
 
@@ -149,7 +145,6 @@ public class Container implements Serializable {
     return new ToStringBuilder(this)
       .append("id", id)
       .append("name", name)
-      .append("walletAddress", walletAddress)
       .append("imageName", imageName)
       .append("port", port)
       .append("command", command)

@@ -15,9 +15,6 @@ public class SearchContainerVm {
   @Schema(description = "Search Text", requiredMode = RequiredMode.NOT_REQUIRED)
   private String searchText;
 
-  @Schema(description = "Wallet Address", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  private String walletAddress;
-
   @Schema(description = "Container Status Code", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   private StatusCode statusCode;
 

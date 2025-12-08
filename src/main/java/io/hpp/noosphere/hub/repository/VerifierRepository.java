@@ -29,7 +29,6 @@ interface VerifierRepositoryCustom {
     String name,
     StatusCode statusCode,
     String createdByUserId,
-    String walletAddress,
     String verifierAddress,
     Pageable pageable
   );
@@ -58,7 +57,6 @@ class VerifierRepositoryCustomImpl implements VerifierRepositoryCustom {
     String name,
     StatusCode statusCode,
     String createdByUserId,
-    String walletAddress,
     String verifierAddress,
     Pageable pageable
   ) {
@@ -72,9 +70,6 @@ class VerifierRepositoryCustomImpl implements VerifierRepositoryCustom {
     }
     if (CommonUtils.isValid(createdByUserId)) {
       builder.and(qVerifier.createdByUser.id.eq(createdByUserId));
-    }
-    if (CommonUtils.isValid(walletAddress)) {
-      builder.and(qVerifier.walletAddress.eq(walletAddress));
     }
     if (CommonUtils.isValid(verifierAddress)) {
       builder.and(qVerifier.verifierAddress.eq(verifierAddress));
@@ -95,12 +90,12 @@ class VerifierRepositoryCustomImpl implements VerifierRepositoryCustom {
 
   @Override
   public Page<Verifier> findActiveByName(String name, Pageable pageable) {
-    return this.search(null, name, StatusCode.ACTIVE, null, null, null, pageable);
+    return this.search(null, name, StatusCode.ACTIVE, null, null, pageable);
   }
 
   @Override
   public Page<Verifier> findActiveByCreatedByUserId(String userId, Pageable pageable) {
-    return this.search(null, null, StatusCode.ACTIVE, userId, null, null, pageable);
+    return this.search(null, null, StatusCode.ACTIVE, userId, null, pageable);
   }
 
   @Override

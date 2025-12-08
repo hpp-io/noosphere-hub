@@ -36,10 +36,6 @@ public class ContainerDTO implements Serializable {
 
   @NotNull
   @JsonView(JsonViewType.Update.class)
-  private String walletAddress;
-
-  @NotNull
-  @JsonView(JsonViewType.Update.class)
   private String imageName;
 
   @NotNull
@@ -116,7 +112,6 @@ public class ContainerDTO implements Serializable {
     return new ToStringBuilder(this)
       .append("id", id)
       .append("name", name)
-      .append("walletAddress", walletAddress)
       .append("imageName", imageName)
       .append("port", port)
       .append("command", command)
